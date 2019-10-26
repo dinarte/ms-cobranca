@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class MsCobrancaApp {
-
+	
     public static void main(String[] args) {
         SpringApplication.run(MsCobrancaApp.class, args);
     }

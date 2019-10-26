@@ -2,12 +2,20 @@ package br.com.dfframeworck;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Description;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring5.ISpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import br.com.dfframeworck.autocrud.interceptions.AutoCrudInterceptions;
 import br.com.dfframeworck.messages.AppMessagesIntercption;
@@ -35,6 +43,46 @@ public class WebConfiguration implements WebMvcConfigurer{
 	    registry.addInterceptor(autoCrud);
 	    registry.addInterceptor(appMsg);
 	}
+	
+	
+	@Bean
+    @Description("Thymeleaf template resolver serving HTML 5")
+    public ClassLoaderTemplateResolver templateResolver() {
+
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+
+        templateResolver.setPrefix("/resources/");
+        templateResolver.setCacheable(false);
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setCharacterEncoding("UTF-8");
+
+        return templateResolver;
+    }
+
+    @Bean
+    @Description("Thymeleaf template engine with Spring integration")
+    public SpringTemplateEngine templateEngine() {
+
+    	SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver());
+
+        return templateEngine;
+    }
+
+    @Bean
+    @Description("Thymeleaf view resolver")
+    public ViewResolver viewResolver() {
+
+    	ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+
+        viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding("UTF-8");
+
+        return viewResolver;
+    }
+
+	
 	
 	
 	@Override

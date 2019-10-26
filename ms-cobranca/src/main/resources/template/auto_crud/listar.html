@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head th:replace="fragments/main :: head" />
-
-
 <body>
 
     <div id="wrapper">
@@ -43,6 +40,7 @@
             <div class="row">
        
 	            <table class="table" id="grid">
+	            	<caption>Foram encontrados [[${autoCrudData.pagination.totalResults}]]</caption>
 	            	<thead>
 	            		<tr>
 	            			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
