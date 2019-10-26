@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        
+        	<div class="row">
+                <div class="col-lg-10">
+                    <h1 class="page-header">Migração de Dados</h1>
+		
+		        	<div th:replace="fragments/main :: messages" />
+        
+                    <h3>Entidades do Sistema</h3>
+                </div>
+                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	<!-- 
+                	<a href="/jogo/novo" class="btn btn-primary"> + Nova Migração</a>
+                	 -->
+                </div>
+            </div>
+            
+            
+       
+	            <table class="table">
+	            	<thead>
+	            		<tr>
+	            			<th>Entidade</th>
+	            			<th></th>
+	            			<th></th>
+	            		</tr>
+	            	</thead>
+	            	<tbody>
+	            		<th:block th:each="clazz : ${classList}">
+        				<form method="POST" enctype="multipart/form-data" th:action="${'/upload/'+clazz.package.name+'/'+clazz.simpleName}">
+		             		<tr>
+		             			<td>
+		             			<span><strong th:text="${clazz.simpleName}">Entidde</strong></span><br />
+		             			<span th:text="${clazz.package.name}"> Pacote</span><br />
+		             			Registros: <span th:text="${gRepo.countEntity( clazz )}">N</span>
+		             			</td>
+		             			<td >
+									<input type="file" name="file"  class="custom-file-input"/>
+		             			</td>
+			             		<td>
+			             			<div class="custom-file">
+		                       			<input
+											type="submit" 
+											value="Migrar"
+											class="btn btn-primary"
+		                       				data-toggle="tooltip" 
+		                       				data-placement="top">
+		                       			</input>
+		             				</div>
+		             			</td>
+		             		</tr>
+						</form>
+	            		</th:block>
+	            	</tbody>
+	            </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+
+</html>

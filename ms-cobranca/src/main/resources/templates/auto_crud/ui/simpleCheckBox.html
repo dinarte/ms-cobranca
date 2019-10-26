@@ -1,0 +1,8 @@
+			
+			<div class="form-control" th:fragment="ui(field)">
+				<input th:id=${field.fieldName} type="checkbox" th:placeholder="${field.meta.label()}" />
+				<label th:for="${field.fieldName}"> [[${field.meta.label()}]] </label>
+			</div>
+			
+
+       

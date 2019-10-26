@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+    
+
+
+        <div id="page-wrapper">
+            
+	    	<div class="row">
+	            <div class="col-lg-12">
+	                <h1 class="page-header">Dashboard</h1>
+	            </div>
+	            <!-- /.col-lg-12 -->
+	        </div>
+	        
+           	<div th:replace="fragments/main :: messages"></div>
+           
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    <div>Clientes Ativos</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/copaAmerica2019/participantes">
+                            <div class="panel-footer">
+                                <span class="pull-left">Veja quem são</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge" th:text="${premioEstimado}">R$ 10.500,00</div>
+                                    <div>Receita Prevista</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/copaAmerica2019/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ver programação</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">R$ <span >1340,00</span></div>
+                                    <div><span>1</span>ª  Receita Realizada</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/copaAmerica2019/ranking">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ver mais</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    <div>Inadiplencia</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/copaAmerica2019/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Veja agora</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            
+            
+            <div class="panel panel-default">
+               <div class="panel-heading">
+                   <i class="fa fa-bar-chart-o fa-fw"></i> Receita Realizada
+               </div>
+               <div class="panel-body">
+                   <div id="morris-area-chart"></div>
+               </div>
+            </div>
+             
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Cobranças Vencidas 
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Mais Cobranças
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="#">Cobranças a Vencer</a></li>
+                                        <li><a href="#">Cobranças a Pagas</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body" style="padding: 10px">
+                            <div th:replace="fragments/game_cards :: cards"></div>
+                            
+                            <a href="/palpite/consultar" class="btn btn-default btn-block">Ver todas as cobranças</a>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                </div>
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-tachometer fa-fw"></i> Top 10 Inadiplentes
+                        </div>
+                        <!-- /.panel-heading -->
+                        <style>
+			        	.participante td{
+			        		background-color: #eee;
+			        	}
+			        	</style>
+                        <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th>Cliente</th>
+                        			<th>Parcelas</th>
+                        			<th>Total</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="participante : ${top10}">
+	                        		<tr th:class="">
+	                        			<td><bage th:if="true" th:text="${'ª'}">1</bage></td>
+	                        			<td th:id="22" ><a th:href="${'/palpite/consultar'}" th:text="${teste'}">Dinarte</a></td>
+	                        			<td th:text="${'5'}">5</td>
+	                        			<td>R$ <span th:text="${'e'}">2.600,00</span></td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        
+                        	<tfoot>
+                        		<tr>
+                        			<td colspan="4">
+                        				<a href="/copaAmerica2019/ranking" class="btn btn-default btn-block">Ver inadiplencia completa</a>
+                        			</td>
+                        		</tr>
+                        	</tfoot>
+                        
+                        </table>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                  
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+    <script>
+    /*
+    	$(function() {
+			  $.ajax({
+			    type:"GET", 
+			    url: "/chart/desempenho/[[${5}]]", 
+			    success: function(data) {
+			    
+			    		data.xLabelFormat = function(x){return formatDate(x)};
+			    		data.dateFormat = function(x){return formatDate(new Date(x))};
+			    
+			    		Morris.Line(data);
+			        }, 
+			    error: function(jqXHR, textStatus, errorThrown) {
+			            alert(jqXHR.status);
+			        },
+			   dataType: "json"
+			});
+		});
+	*/		
+    </script>
+    
+
+</body>
+
+</html>

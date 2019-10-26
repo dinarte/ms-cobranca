@@ -1,0 +1,10 @@
+			
+			
+			<select th:fragment="ui(field)" type="text" th:placeholder="${field.meta.label()}" class="form-control">
+				<option value="-" th:label="${field.meta.label()}" selected="selected">
+				<option th:each="item : ${lookApFinder.getAll(field)}" th:label="${item.label}" th:value="${item.id}" />
+			</select>
+			
+			
+
+       

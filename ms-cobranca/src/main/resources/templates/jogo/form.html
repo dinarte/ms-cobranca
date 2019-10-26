@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Gerenciar Jogo</h1>
+                    <h3 th:if="${jogo.id == null}">Novo Jogo </h3>
+                    <h3 th:if="${jogo.id != null}">Editar </h3>
+                </div>
+            </div>
+        
+        	<form th:action="@{/jogo/salvar}" th:object="${jogo}" method="post">
+        			
+        		 <input type="hidden" th:field="*{id}">
+        		 
+        		 <div class="form-group">
+				    <label for="nome">Fase:</label>
+        		 <select th:field="*{fase}" class="form-control">
+				  	<option th:each="f : ${faseList}" 
+				          th:value="${f.id}" 
+				          th:text="${f.nome}">Wireframe</option>
+				 </select>
+				 </div>
+				 
+				 <div class="form-group">
+				    <label for="nome">Time A:</label>
+        		 <select th:field="*{timeA}" class="form-control">
+				  	<option th:each="t : ${timeList}" 
+				          th:value="${t.id}" 
+				          th:text="${t.nome}">Brasil</option>
+				 </select>
+				 </div>
+				 
+				 <div class="form-group">
+				    <label for="nome">Time B:</label>
+        		 <select th:field="*{timeB}" class="form-control">
+				  	<option th:each="t : ${timeList}" 
+				          th:value="${t.id}" 
+				          th:text="${t.nome}">Brasil</option>
+				 </select>
+				 </div>
+				 
+				 
+        		 
+        		 <div class="form-group">
+				    <label for="nome">Grupo:</label>
+				    <input type="text" class="form-control" id="grupo" th:value="*{grupo}" th:field="*{grupo}">
+				  </div>
+        	
+	        	  <div class="form-group">
+				    <label for="nome">Data:</label>
+				    <input type="datetime-local" class="form-control" id="data" th:value="*{data}" th:field="*{data}">
+				  </div>
+				  
+				  <div class="form-group">
+				    <label for="permaLink">Limite dos Palpites:</label>
+				    <input type="datetime-local" class="form-control" id="limiteAoposta" th:value="*{limiteAposta}" th:field="*{limiteAposta}">
+				  </div>
+				  
+				  <div class="form-group">
+				    <label for="permaLink">Libera Criação de Palpites?:</label>
+				  <input type="checkbox" class="form-control" id="liberarCriacaoPalpites" th:value="*{liberarCriacaoPalpites}" th:field="*{liberarCriacaoPalpites}">
+				  </div>
+				  
+				  
+				  
+				  <button type="submit" class="btn btn-info btn-block" th:text="${jogo.id == 0 ? 'Cadastrar' : 'Salvar'}">Salvar</button>
+				  
+				
+        	</form>
+            
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>
+
+
+
+
+

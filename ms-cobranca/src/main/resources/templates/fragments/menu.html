@@ -1,0 +1,29 @@
+			<div th:fragment="menu_admin" class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li th:each="node : ${menuRoot.children}">
+                           
+                            <a th:href="${node.item.path}"><i class="fa fa-book fa-fw"></i> [[${node.item.name}]] <span th:if="${#lists.size(node.children)}>0" class="fa arrow"></span></a>
+                            
+                            <ul th:if="${#lists.size(node.children)}>0" class="nav nav-second-level">
+                                <li th:each="node2 : ${node.children}">
+                                    
+                                    <a th:href="${node2.item.path}">[[${node2.item.name}]] <span th:if="${#lists.size(node2.children)}>0" class="fa arrow"></span></a>
+                                    
+                                    	<ul th:if="${#lists.size(node2.children)}>0" class="nav nav-third-level">
+		                                <li th:each="node3 : ${node2.children}">
+		                                    <a th:href="${node3.item.path}">[[${node3.item.name}]] <span th:if="${#lists.size(node3.children)}>0" class="fa arrow"></span></a>
+		                                </li>
+		                            </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+                            
+            </div>
+            <!-- /.navbar-static-side -->
+            
+       
+       

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Gerenciar Bolão</h1>
+                    <h3>Bolões</h3>
+                </div>
+            </div>
+        
+        
+            <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th>Nome</th>
+                        			<th>Link</th>
+                        			<th>Valor da Cota</th>
+                        			<th>Taxa Administrativa</th>
+                        			<th></th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<th:block th:each="bolao : ${bolaoList}">
+	                        		<tr>
+	                        			<td th:text="${bolao.nome}">Nome do Bolao</td>
+	                        			<td th:text="${bolao.permalink}">/linkDoBolao</td>
+	                        			<td th:text="${bolao.valor}"> R$30,00 </td>
+	                        			<td><span th:text="${bolao.taxaAdministrativa}">10</span>%</td>
+	                        			<td>
+		                        			<a class="btn btn-primary" th:href="${bolao.id+'/editar'}"
+		                        				data-toggle="tooltip" 
+		                        				data-placement="top" 
+		                        				title="Editar Dados do Bolão">
+		                        				<span class="glyphicon glyphicon-pencil"></span>
+		                        			</a>
+		                        			
+		                        			<a class="btn btn-success" th:href="${'/'+bolao.permalink+''}"
+		                        				data-toggle="tooltip" 
+		                        				data-placement="top" 
+		                        				title="Administrar Bolão">
+		                        				<span class="glyphicon glyphicon-log-in"></span>
+		                        			</a>
+		                        			
+	                        			</td>
+	                        		</tr>
+                        		</th:block>
+                        	</tbody>
+                        </table>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

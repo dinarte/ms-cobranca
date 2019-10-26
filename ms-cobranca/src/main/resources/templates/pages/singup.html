@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+   <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Bem vindo, preencha seu cadastaro</h3>
+                    </div>
+                    
+             
+                    <div th:if="${appMessages} != null">
+                   	   <div th:each="msg : ${appMessages.successList}">
+                           <div class="alert alert-success" >
+                              <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                    
+                       <div th:each="msg : ${appMessages.infoList}">    
+                           <div class="alert alert-info" >
+                            <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                           
+                       <div th:each="msg : ${appMessages.warningList}">   
+                           <div class="alert alert-warning">
+                               <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                       </div>
+                           
+                        <div th:each="msg : ${appMessages.errorList}">  
+                           <div class="alert alert-danger">
+                               <span th:text="${msg}"> menssagem do sistema</span>
+                           </div>
+                     	 </div>
+                    </div>       
+                    
+                    
+                    
+                    <div class="panel-body">
+                        <form role="form" action="/#" th:action="@{/singup}"  method="post">
+                            <fieldset>
+                            	<div class="form-group">
+                                    <input class="form-control" placeholder="Seu nome"  name="name" autofocus>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="E-mail"  name="email" type="email">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Senha" name="pass" type="password" value="">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Repita a senha" name="passConfirm" type="password" value="">
+                                </div>
+                                
+                                <!-- Change this to a button or input when using this as a form -->
+                                <button type="submit" class="btn btn-lg btn-success btn-block">Criar Conta</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+
+</body>
+
+</html>

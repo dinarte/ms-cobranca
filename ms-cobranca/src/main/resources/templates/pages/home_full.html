@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+            
+            <!-- 
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Bolão Guimas na Copa - 2018</h1>
+                </div>
+            </div>
+            
+             -->
+             
+             
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">38</div>
+                                    <div>Participantes!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Veja quem são!</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-usd fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">R$ 1.500,00</div>
+                                    <div>Prêmio Estimado!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Saiba mais</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-trophy fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">340 pts</div>
+                                    <div>4™ </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Ranking completo</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge"></div>
+                                    <div>Consulte o  Regulamento!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/russia2018/regulamento">
+                            <div class="panel-footer">
+                                <span class="pull-left">Leia agora</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Acompanhe seus palpites 
+                            <div class="pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        Outros Palpites
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu pull-right" role="menu">
+                                        <li><a href="#">Henrrique</a>
+                                        </li>
+                                        <li><a href="#">Leonardo</a>
+                                        </li>
+                                        <li><a href="#">Zambrota</a>
+                                        </li>
+                                        <li><a href="#">Pedro</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <img alt="tabela" src="/img/tabela.PNG" width="100%">
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                </div>
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-tachometer fa-fw"></i> Ranking
+                        </div>
+                        <!-- /.panel-heading -->
+                        <table class="table">
+                        	<thead>
+                        		<tr>
+                        			<th></th>
+                        			<th>Jogador</th>
+                        			<th>Pontos</th>
+                        			<th>Aproveitamento</th>
+                        		</tr>
+                        	</thead>
+                        	<tbody>
+                        		<tr>
+                        			<td>1ª</td>
+                        			<td>Dinarte filho</td>
+                        			<td>180</td>
+                        			<td>100%</td>
+                        		</tr>
+                        		<tr>
+                        			<td>2ª</td>
+                        			<td>Dinarte filho</td>
+                        			<td>180</td>
+                        			<td>100%</td>
+                        		</tr>
+                        		<tr>
+                        			<td>3ª</td>
+                        			<td>Dinarte filho</td>
+                        			<td>180</td>
+                        			<td>100%</td>
+                        		</tr>
+                        		<tr>
+                        			<td>4ª</td>
+                        			<td>Dinarte filho</td>
+                        			<td>180</td>
+                        			<td>100%</td>
+                        		</tr>
+                        		<tr>
+                        			<td>5ª</td>
+                        			<td>Dinarte filho</td>
+                        			<td>180</td>
+                        			<td>100%</td>
+                        		</tr>
+                        	</tbody>
+                        
+                        	<tfoot>
+                        		<tr>
+                        			<td colspan="4">
+                        				<button class="btn btn-default btn-block">Ver Ranking completo</button>
+                        			</td>
+                        		</tr>
+                        	</tfoot>
+                        
+                        </table>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    
+                  
+                </div>
+                <!-- /.col-lg-4 -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>
