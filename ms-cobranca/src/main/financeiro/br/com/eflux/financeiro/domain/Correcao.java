@@ -1,6 +1,5 @@
 package br.com.eflux.financeiro.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -14,14 +13,21 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
+import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.repository.Migrable;
+import br.com.dfframeworck.security.Functionality;
+
 /**
  * Mapeamento das correções monetárias a serem aplcadas nas parcelas.
  * @author dinarte
  *
  */
+@AutoCrud(name="Pessoas", description="Pedro Vitor", 
+funtionality=@Functionality(isPublic=false, name="Teste Pedro", menu="root->Cadastros Básicos->pedro"))
 @Entity
 @Table(schema="financeiro", name="correcao")
-public class Correcao implements Persistable<Long>{
+public class Correcao implements Persistable<Long>, Migrable<Long>{
 	
 	@Id
 	@GeneratedValue(generator = "correcaoGenerator")
@@ -30,11 +36,14 @@ public class Correcao implements Persistable<Long>{
 	@Column(name = "id_correcao", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
+	@EnableAutoCrudField(label="Descrição", enableForFilter=true)
 	private String descricao;
 	
 	private Double porcentagem;
 	
 	private Date DataCorrecao;
+	
+	private String originalId;
 
 	public Long getId() {
 		return id;
@@ -73,7 +82,14 @@ public class Correcao implements Persistable<Long>{
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}
-	
+
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
+	}
 	
 
 }

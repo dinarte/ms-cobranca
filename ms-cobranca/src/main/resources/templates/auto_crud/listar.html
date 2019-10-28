@@ -27,6 +27,8 @@
             
             <div class="row">
             
+            	<form action="#" th:action="@{/crud/Municipio/busca}" th:object="${obj}" method="post">
+            
             	<div th:each="field : ${autoCrudData.entity.fieldsOnList}" class="col-lg-2">
             		
             		<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
@@ -35,14 +37,21 @@
             	<div class="col-lg-2">
             		<button type="submit" class="btn btn-info btn-block">Buscar</button>
             	</div>
+            	
+            	</form>
             </div>
             
             <br />
             <br />
             
             <div class="row">
+            
+            	<div class="row text-center"> 
+		         	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination})" ></ui>
+		         </div> 
        
 	            <table class="table" id="grid">
+	            	<caption>Encontrados [[${autoCrudData.pagination.totalResults}]] registros, exibindo do: [[${autoCrudData.pagination.initPosition}]] ao [[${autoCrudData.pagination.finalPosition}]]</caption>
 	            	<thead>
 	            		<tr>
 	            			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
@@ -72,7 +81,7 @@
 	            </table>
 	         </div>
 	       	 <div class="row text-center"> 
-	         	<a th:each="item : ${autoCrudData.pagination.pageList}" th:text="${item.index}" th:href="${item.path}" class="btn btn-default btn-circle"> 1 </a>
+	       	 	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination})" ></ui>
 	         </div>   
         </div>
         <!-- /#page-wrapper -->

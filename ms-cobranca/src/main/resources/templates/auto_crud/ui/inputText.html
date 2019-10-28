@@ -1,6 +1,6 @@
 			
 			
-			<input th:fragment="ui(field)" type="text" th:placeholder="${field.meta.label()}" class="form-control"  />
+			<input th:fragment="ui(field)" th:name="${field.entity.entityName +'.'+ field.fieldName}" type="text" th:placeholder="${field.meta.label()}" class="form-control"  />
 			
 			
 

@@ -1,0 +1,7 @@
+<th:block th:fragment="ui(pagination)">
+	<a 	th:each="item : ${pagination.smallPageList}" 
+		th:text="${item.index}" 
+		th:href="${item.path}"  
+		th:class="${pagination.resolveBtnCssClass('btn btn-default btn-circle','btn btn-primary btn-circle', item.index)}" 
+		class="btn btn-default btn-circle"> 1 </a>
+</th:block>

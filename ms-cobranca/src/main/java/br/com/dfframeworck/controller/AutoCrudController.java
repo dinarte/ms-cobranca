@@ -1,9 +1,10 @@
 package br.com.dfframeworck.controller;
 
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -12,21 +13,22 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.annotation.RequestScope;
 
+import br.com.dfframeworck.autocrud.AutoCrudData;
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudField;
 import br.com.dfframeworck.autocrud.AutoCrudPagination;
-import br.com.dfframeworck.autocrud.AutoCrudData;
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.exception.ErroException;
 import br.com.dfframeworck.security.Functionality;
+import br.com.dfframeworck.util.ObjectToMap;
 import br.com.dfframeworckservice.AutoCrudService;
+import br.com.eflux.comum.domain.Pessoa;
 /**
  * Controller responsável por gerenciar as operações de crud de qualquer entidade.. heheheh
  * @author dinarte
@@ -52,7 +54,7 @@ public class AutoCrudController {
 	 */
 	@Functionality(isPublic=false, name="Listar", menu="none")
 	@RequestMapping("/crud/{entity}")
-	public String index(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException {
+	public String index(@PathVariable("entity") String entity, Map<String,Object> filtros, Model model, HttpServletRequest request) throws ErroException {
 		
 		EntityType<?> meta = validateIsAutoCrudEnabledAndReturnEntity(entity);
 		AutoCrudEntity crudEntity = getAutoCrudEntity(entity, meta);
@@ -71,7 +73,36 @@ public class AutoCrudController {
 		
 		model.addAttribute("autoCrudData", autoCrudList);
 		
+		/*
+		try {
+			model.addAttribute(ObjectToMap.toMap(crudEntity.getType().newInstance()));
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new ErroException("Não foi possível instanciar a entidade: "+e.getMessage());
+		}
+		*/
+		
 		return getIndexView();
+	}
+	
+	@Functionality(isPublic=false, name="Buscar", menu="none")
+	@RequestMapping("/crud/{entity}/busca")
+	public String buscar(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException {
+		
+		Map<String,Object> filtros = new HashMap<String, Object>();
+		
+		request.getParameterMap()
+			.keySet()
+			.stream()
+			.filter(k -> k.contains(entity+"."))
+			.forEach(k -> {
+				System.out.println(k + " like '" + request.getParameter(k) +"'" );
+				
+				filtros.put(k.replace(entity+".", ""), request.getParameter(k));
+				
+			});
+		
+		
+		return index(entity, filtros, model, request);
 	}
 
 	private AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta) {
@@ -144,6 +175,10 @@ public class AutoCrudController {
 	 */
 	private ErroException throwAutoCrudNotAllowadException(String entity) {
 		return new ErroException(entity + " Não é uma entidade do sistema, ou não é acessível pelo Auto Crud");
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(ObjectToMap.toMap(new Pessoa()));
 	}
 	
 	

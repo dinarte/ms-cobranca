@@ -8,8 +8,6 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.springframework.data.domain.Persistable;
-
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 
 public class AutoCrudField {
