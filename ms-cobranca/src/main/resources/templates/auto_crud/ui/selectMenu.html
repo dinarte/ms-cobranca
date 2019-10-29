@@ -5,7 +5,7 @@
 					th:name="${field.entity.entityName +'.'+ field.fieldName}"
 					th:value="${field.value}" 
 					class="form-control">
-				<option value="" th:label="${field.meta.label()}">
+				<option value="" th:label="${field.meta.label()}" selected="selected">
 				<option th:each="item : ${lookApFinder.getAll(field)}" 
 						th:label="${item.label}" 
 						th:value="${item.id}" 

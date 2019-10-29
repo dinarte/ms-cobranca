@@ -69,6 +69,7 @@ public class DynamicMenuInterception implements HandlerInterceptor {
 							mi.setHierarchy(funcionality.menu());
 							mi.setName(funcionality.name());
 							mi.setPath(rquestMapping.value()[0]);
+							mi.setIcon(funcionality.icon());
 							menuService.getMenuItens().add(mi);
 						}
 					}
@@ -94,6 +95,7 @@ public class DynamicMenuInterception implements HandlerInterceptor {
 								mi.setName(funcionality.name());
 								mi.setPath(method.getAnnotation(RequestMapping.class).value()[0].replace("{entity}", iten.getName()));
 								if (mi.getPath() == null) mi.setPath("#");
+								mi.setIcon(funcionality.icon());
 								menuService.getMenuItens().add(mi);
 							}	
 						}

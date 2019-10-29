@@ -44,6 +44,7 @@ public class MenuNode {
 					final String hierarchyFound = hierarchySearched;
 					newNode = node.getChildren().stream().filter(i -> i.getHierarchy().equals(hierarchyFound)).findFirst().get();
 					newNode.setItem(new MenuItem());
+					newNode.getItem().setIcon("fa fa-folder");
 					newNode.getItem().setPath("#");
 					newNode.getItem().setName(hierarchyFound.split("->")[hierarchyFound.split("->").length-1]);
 				}else {

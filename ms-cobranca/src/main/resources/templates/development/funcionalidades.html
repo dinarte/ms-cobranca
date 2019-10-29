@@ -17,7 +17,7 @@
                 
                 <div class="col-lg-10">
                     <h1 class="page-header">Funcionalidades
-                    <small>FunÁıes do Sistema</small>
+                    <small>Fun√ß√µes do Sistema</small>
                     </h1>
                 </div>
             </div>
@@ -25,42 +25,33 @@
             <div class="row">
        
 	            <table class="table" id="grid">
-	            	<caption>Encontrados [[${autoCrudData.pagination.totalResults}]] registros, exibindo do: [[${autoCrudData.pagination.initPosition}]] ao [[${autoCrudData.pagination.finalPosition}]]</caption>
+	            	<caption></caption>
 	            	<thead>
 	            		<tr>
-	            			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
-		            			<th>[[${field.meta.label()}]]</th>
-	            			</th:block>		            			
-	            			<th></th>
+	            			<th>Funcionalidade</th>
+	            			<th>Menu</th>
+	            			<th>Path</th>
+	            			<th>√çcone</th>
+            				<th></th>
 	            		</tr>
 	            	</thead>
 	            	<tbody>
-	            		<th:block th:each="item : ${autoCrudData.data}">
+	            		<th:block th:each="item : ${menuItems}">
 	             		<tr>
-	             			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
-	             			
-	             			
-	             			<td th:if="${!field.lookUp}"  th:text="${item.get(field.fieldName)}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${item.get(field.fieldName).get(field.meta.lookUpFieldName())}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${item.get(field.fieldName)}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
-	             			
-	             			</th:block>
+
+	             			<td><strong>[[${item.name}]]</strong><br />
+	             			[[${item.controller.name}]].[[${item.method.name}]]
+	             			</td>
+	            			<td>[[${item.hierarchy}]]</td>
+	            			<td>[[${item.path}]]</td>
+	            			<td>[[${item.icon}]]</td>
+	             	
 	             			<td class="text-right">
                       			<a class="btn btn-primary btn-circle" 
-                      				th:href="${'/crud/'+ autoCrudData.entity.entityName +'/'+item.id}"
                       				data-toggle="tooltip" 
                       				data-placement="top" 
-                      				title="Editar Dados">
+                      				title="Editar Dados do Menu">
                       				<span class="glyphicon glyphicon-pencil"></span>
-                      			</a>
-                      			
-                      			<a	class="btn btn-danger btn-circle"
-                      				th:href="${'/crud/'+ autoCrudData.entity.entityName +'/'+item.id + '/del'}"
-                      				data-toggle="tooltip" 
-                      				data-placement="top" 
-                      				title="Deletar Dados">
-                      				<span class="glyphicon glyphicon-trash"></span>
                       			</a>
                      		</td>
 	             		</tr>	
@@ -68,9 +59,6 @@
 	            	</tbody>
 	            </table>
 	         </div>
-	       	 <div class="row text-center"> 
-	       	 	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination})" ></ui>
-	         </div>   
         </div>
         <!-- /#page-wrapper -->
 

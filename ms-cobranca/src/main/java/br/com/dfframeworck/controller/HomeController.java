@@ -12,7 +12,7 @@ import br.com.dfframeworck.security.Functionality;
 @RequestScope
 public class HomeController {
 
-	@Functionality(isPublic=false, name="Página Principal", menu="root->home")
+	@Functionality(isPublic=false, name="Página Principal", menu="root->home", icon="fa fa-dashboard")
 	@RequestMapping({"/home"})
 	public String home(Model m) throws AppException {
 		return "pages/home"; 

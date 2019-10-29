@@ -15,6 +15,7 @@ public class MenuItemService {
 
 	public List<MenuItem> getMenuItens() {
 		return menuItens;
+		//return menuItens.stream().sorted(Comparator.comparing(MenuItem::getPath)).collect(Collectors.toList());
 	}
 
 	public void setMenuItens(List<MenuItem> menuItens) {

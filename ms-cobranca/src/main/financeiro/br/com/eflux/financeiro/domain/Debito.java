@@ -34,6 +34,10 @@ public class Debito implements Persistable<Long> {
 	private Long id;
 	
 	private Integer numero;
+	
+	@ManyToOne
+	@JoinColumn(name="id_contrato")
+	private Contrato contrato;
 
 	@ManyToOne
 	@JoinColumn(name="id_tipo_lancamento")
@@ -44,6 +48,8 @@ public class Debito implements Persistable<Long> {
 	private BigDecimal jurosAtrazo;
 
 	private BigDecimal multaAtrazo;
+	
+	private BigDecimal jurosRemuneratorio;
 	
 	private BigDecimal correcao;
 	
@@ -169,5 +175,23 @@ public class Debito implements Persistable<Long> {
 	public void setQuitada(boolean quitada) {
 		this.quitada = quitada;
 	}
+
+	public Contrato getContrato() {
+		return contrato;
+	}
+
+	public void setContrato(Contrato contrato) {
+		this.contrato = contrato;
+	}
+
+	public BigDecimal getJurosRemuneratorio() {
+		return jurosRemuneratorio;
+	}
+
+	public void setJurosRemuneratorio(BigDecimal jurosRemuneratorio) {
+		this.jurosRemuneratorio = jurosRemuneratorio;
+	}
+	
+	
 
 }
