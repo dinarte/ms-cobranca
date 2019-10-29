@@ -35,7 +35,7 @@ public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 	@GeneratedValue(generator = "incorporadoraGenerator")
 	@GenericGenerator(name = "incorporadoraGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "empreendimento.encorporadora_seq") })
-	@Column(name = "id_encorporadora", unique = true, nullable = false, insertable = true, updatable = true)
+	@Column(name = "id_incorporadora", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
 	/**
@@ -43,7 +43,7 @@ public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 	 */
 	@OneToOne
 	@JoinColumn(name="id_pessoa")
-	@EnableAutoCrudField(label="Incorporadora")
+	@EnableAutoCrudField(label="Incorporadora", enableForList=true, enableForFilter=true, lookUpFieldName="nome")
 	private Pessoa pessoa;
 	
 	@JoinColumn(name="original_id")
@@ -79,5 +79,10 @@ public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 		this.originalId = originalId;
 	}
 	
-	
+	@Override
+	public String toString() {
+		if (Objects.isNull(pessoa))
+			return super.toString();
+		return pessoa.getNome();
+	}
 }

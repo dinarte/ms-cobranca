@@ -16,6 +16,7 @@ import org.springframework.data.domain.Persistable;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
 
 /**
@@ -27,7 +28,7 @@ import br.com.dfframeworck.security.Functionality;
 @Table(schema="empreendimento", name="emprendimento")
 @AutoCrud(name="Emmpreendimento", description="Empreendimentos disponíveis", 
 funtionality=@Functionality(isPublic=false, name="Gerenciar Empreendimentos", menu="root->Empreendimentos->empreendimento"))
-public class Empreendimento implements Persistable<Long> {
+public class Empreendimento implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
 	@GeneratedValue(generator = "empreendimentoGenerator")
@@ -37,19 +38,22 @@ public class Empreendimento implements Persistable<Long> {
 	private Long id;
 	
 	/**
-	 * Decreve de forma objetiva o empreendimento, exemplo: Solar de Pinun... 
-	 */
-	@EnableAutoCrudField(label="Nome", enableForFilter=true)
-	@Column(name = "nome", unique = true, nullable = false, insertable = true, updatable = true, length=80)
-	private String nome;
-	
-	/**
 	 * Incorporadora a qual pertence o empreendimento
 	 */
 	@ManyToOne
 	@JoinColumn(name = "id_empresa")
-	@EnableAutoCrudField(label="Incorporadora", enableForFilter=true)
+	@EnableAutoCrudField(label="Incorporadora", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="pessoa")
 	private Incorporadora incorporadora;
+
+	/**
+	 * Decreve de forma objetiva o empreendimento, exemplo: Solar de Pinun... 
+	 */
+	@EnableAutoCrudField(label="Nome", enableForFilter=true, enableForList=true, ordinal=2)
+	@Column(name = "nome", unique = true, nullable = false, insertable = true, updatable = true, length=80)
+	private String nome;
+	
+	@Column(name = "originalId")
+	private String originalId;
 
 	public Long getId() {
 		return id;
@@ -68,7 +72,6 @@ public class Empreendimento implements Persistable<Long> {
 	}
 	
 	
-	
 	public Incorporadora getIncorporadora() {
 		return incorporadora;
 	}
@@ -81,6 +84,13 @@ public class Empreendimento implements Persistable<Long> {
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}
-	
+
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
+	}
 	
 }

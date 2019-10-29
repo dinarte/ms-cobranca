@@ -19,16 +19,31 @@ public class AutoCrudLookUpFinder {
 	
 	
 	public List<AutoCrudSelectItem> getAll(AutoCrudField field) {
+		if(!field.getType().isEnum()) {
+			return getLookUpEntity((field.getType().getSimpleName()));
+		}else {
+			return getLookUpEnum(field);
+		}
+	}
+	
+	public List<AutoCrudSelectItem> getAll(String entity) {
+		return getLookUpEntity(entity);
+	}
+
+	private List<AutoCrudSelectItem> getLookUpEntity(String entity) {
 		List<AutoCrudSelectItem> ret = new ArrayList<AutoCrudSelectItem>();
-		List<Persistable<?>> list = service.findAll(field.getType().getSimpleName());
+		List<Persistable<?>> list = service.findAll(entity);
 		list.forEach(i-> ret.add(new AutoCrudSelectItem(i.getId(), i.toString())));
 		return ret;
 	}
 	
-	public List<AutoCrudSelectItem> getAll(String entity) {
-		List<AutoCrudSelectItem> ret = new ArrayList<AutoCrudSelectItem>();
-		List<Persistable<?>> list = service.findAll(entity);
-		list.forEach(i-> ret.add(new AutoCrudSelectItem(i.getId(), i.toString())));
+	
+	private List<AutoCrudSelectItem> getLookUpEnum(AutoCrudField field) {
+		List<AutoCrudSelectItem> ret = new ArrayList<AutoCrudSelectItem>(); 
+		Enum[] consts =	(Enum[]) field.getType().getEnumConstants();
+		for (Enum object : consts) {
+			ret.add(new AutoCrudSelectItem(object.name(), object.toString()));
+		}
 		return ret;
 	}
 

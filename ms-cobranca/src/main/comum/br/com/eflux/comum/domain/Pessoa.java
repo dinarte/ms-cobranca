@@ -43,73 +43,93 @@ public class Pessoa implements Persistable<Long>, Migrable<Long>{
 	@Column(name = "id_pessoa", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 
-	@EnableAutoCrudField(label="Nome", enableForFilter=true)
+	@EnableAutoCrudField(label="Nome", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name = "nome", nullable = false)
 	private String nome;
 
-
+	@EnableAutoCrudField(label="Nome Abreviado", ordinal=2)
 	@Column(name = "abreviacao")
 	private String abreviacao;
+	
+	
+	@EnableAutoCrudField(label="CPF", enableForFilter=true, enableForList=true, ordinal=3)
+	@Column(name = "cpf", nullable = true, unique = false)
+	private String cpf;
 
+	@EnableAutoCrudField(label="RG", enableForFilter=true, enableForList=true, ordinal=4)
+	@Column(name = "rg")
+	private String rg;
+	
+	@EnableAutoCrudField(label="Email", enableForList=true, ordinal=5)
+	@Column(name = "email")
+	private String email;
+
+	@EnableAutoCrudField(label="Data de Nascimento", enableForList=true, ordinal=6)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "data_nascimento")
 	private Date dataNascimento;
 
+	@EnableAutoCrudField(label="Sexo", enableForList=true, ordinal=7)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "sexo")
 	private SexoEnum sexo;
 
+	@EnableAutoCrudField(label="Estado Civil", lookUpFieldName="descricao", ordinal=8)
 	@Enumerated(EnumType.STRING)
 	@Column(name = "estado_civil", nullable = true)
 	private EstadoCivilEnum estadoCivil;
 
-	@Column(name = "naturalidade")
-	private String naturalidade;
-
+	@EnableAutoCrudField(label="Pais de Nascimento", lookUpFieldName="nome", ordinal=9)
 	@ManyToOne
 	@JoinColumn(name = "id_pais_nascimento")
 	private Pais paisNascimento;
 
-	@Column(name = "cpf", nullable = true, unique = false)
-	private String cpf;
+	@EnableAutoCrudField(label="Cidade Nascimento", ordinal=10)
+	@Column(name = "naturalidade")
+	private String naturalidade;
 
-	@Column(name = "rg")
-	private String rg;
-
+	@EnableAutoCrudField(label="Orgão Emissor", ordinal=11)
 	@Column(name = "orgao_emissor_rg")
 	private String orgaoEmissorRg;
 
+	@EnableAutoCrudField(label="Inscrição Municipal", ordinal=12)
 	@Column(name = "inscricao_municipal")
 	private String inscricaoMunicipal;
 
-	@Column(name = "email")
-	private String email;
-
+	@EnableAutoCrudField(label="Cep", ordinal=13)
+	@Column(name = "cep")
+	private String cep;
+	
+	@EnableAutoCrudField(label="Rua", ordinal=14)
 	@Column(name = "logradouro")
 	private String logradouro;
-
+	
+	@EnableAutoCrudField(label="Número", ordinal=15)
 	@Column(name = "numero")
 	private String numero;
 
+	@EnableAutoCrudField(label="Complemento", ordinal=16)
 	@Column(name = "complemento")
 	private String complemento;
 
+	@EnableAutoCrudField(label="Bairro", ordinal=17)
 	@Column(name = "bairro")
 	private String bairro;
 
-	@Column(name = "cep")
-	private String cep;
-
+	@EnableAutoCrudField(label="Município", lookUpFieldName="nome", ordinal=18)
 	@ManyToOne
 	@JoinColumn(name = "municipio_id")
 	private Municipio municipio;
 
+	@EnableAutoCrudField(label="Telefone", ordinal=19)
 	@Column(name = "telefone_fixo")
 	private String telefoneFixo;
 
+	@EnableAutoCrudField(label="Celular", ordinal=20)
 	@Column(name = "telefone_celular")
 	private String telefoneCelular;
 
+	@EnableAutoCrudField(label="Telefone Comercial", ordinal=21)
 	@Column(name = "telefone_corporativo")
 	private String telefoneCorporativo;
 	
@@ -305,5 +325,8 @@ public class Pessoa implements Persistable<Long>, Migrable<Long>{
 		this.originalId = originalId;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return nome;
+	}	
 }

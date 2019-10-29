@@ -1,8 +1,14 @@
 package br.com.dfframeworck.controller;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import javax.security.auth.login.LoginException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,23 +33,22 @@ public class LoginController {
 	@Autowired
 	AppMessages appMessages;
 	
+	@Value("${dfframeworck.development.auto_login}")
+	private String autoLogin;
 		
 	@PostMapping("/login")
-	public String login( Usuario usuario, Model model) throws LoginException {
+	public String login( Usuario usuario) throws LoginException {
 		autenticacao.setUsuario(uRepo.findOneByEmailSenha(usuario.getEmail(), usuario.getPass()));
-		if ( autenticacao.getUsuario() != null) {
-			autenticacao.setAutenticado(true);
-			model.addAttribute(autenticacao);
-			return "redirect:/home";
-		}
-		else {
-			throw new LoginException("Não foi possível authenticar com os dados informados!");
-		}	
+		return autenticacao.processarAutenticacao();	
 	}
-	
-	
+
 	@GetMapping({"/login","/"})
-	public String login() throws LoginException {
+	public String login(Model model) throws LoginException, IOException {
+		 if (Objects.nonNull(autoLogin)){ 
+			 autenticacao.setUsuario(uRepo.findOneByEmail(autoLogin)); 
+			 return autenticacao.processarAutenticacao(); 
+		 }
+		 
 		return "pages/login";
 	}
 	

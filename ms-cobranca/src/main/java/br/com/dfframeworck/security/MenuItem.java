@@ -9,6 +9,7 @@ public class MenuItem {
 	String hierarchy;
 	String name;
 	String path;
+	String icon;
 	
 	
 	public Class<?> getController() {
@@ -46,6 +47,13 @@ public class MenuItem {
 	public String getMethodName() {
 		return controller.getName().concat(".").concat(method.getName());
 	}
+	public String getIcon() {
+		return icon;
+	}
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+	
 	
 	
 }

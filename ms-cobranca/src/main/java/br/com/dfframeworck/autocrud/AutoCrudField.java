@@ -48,6 +48,8 @@ public class AutoCrudField {
 				ui = "inputText";
 			if(!type.isPrimitive() && type.isAnnotationPresent(Entity.class))
 				ui = "selectMenu";
+			if(type.isEnum())
+				ui = "selectMenu";
 			return ui;
 		}
 		return getMeta().ui();
@@ -67,6 +69,10 @@ public class AutoCrudField {
 		}
 		
 		return null;
+	}
+	
+	public int getOrdinal() {
+		return getMeta().ordinal();
 	}
 	
 	public boolean isCrudEnabled() {

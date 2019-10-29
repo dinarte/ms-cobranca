@@ -36,7 +36,7 @@ import br.com.dfframeworck.security.Functionality;
 @Table(name = "unidade_federativa", schema = "comum")
 @Cacheable
 @AutoCrud(name="Unidade Federativa", description = "Representa os Estados ou Províncias de um País", 
-	funtionality= @Functionality(name="Estados do BR", isPublic=false, menu="root->Cadastros Básicos->uf"))
+	funtionality= @Functionality(name="Gerenciar Estados", isPublic=false, menu="root->Cadastros Básicos->uf"))
 public class UnidadeFederativa implements Persistable<Long>, Migrable<Long>{
 
 	@Id
@@ -46,18 +46,20 @@ public class UnidadeFederativa implements Persistable<Long>, Migrable<Long>{
 	@Column(name = "id_unidade_federativa")
 	private Long id;
 
-	@EnableAutoCrudField(label="Estado")
-	@Column(name = "nome")
-	private String nome;
-
-	@EnableAutoCrudField(label="Sigla")
-	@Column(name = "sigla")
-	private String sigla;
-
-	@EnableAutoCrudField(label="País", lookUpFieldName="nome")
+	@EnableAutoCrudField(label="País", lookUpFieldName="nome", enableForFilter=true, enableForList=true, ordinal=0)
 	@ManyToOne
 	@JoinColumn(name = "id_pais")
 	private Pais pais;
+	
+
+	@EnableAutoCrudField(label="Sigla",  enableForFilter=true, enableForList=true, ordinal=1)
+	@Column(name = "sigla")
+	private String sigla;
+
+	@EnableAutoCrudField(label="Estado", enableForFilter=true, enableForList=true, ordinal=2)
+	@Column(name = "nome")
+	private String nome;
+
 	
 	@Column(name = "original_id")
 	private String originalId;

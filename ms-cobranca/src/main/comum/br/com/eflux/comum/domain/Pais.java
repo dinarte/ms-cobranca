@@ -27,7 +27,7 @@ import br.com.dfframeworck.security.Functionality;
 @Table(name = "pais", schema = "comum")
 @Cacheable
 @AutoCrud(name="País", description="Países do Sistema", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Pais", menu="root->Cadastros Básicos->pais"))
+funtionality=@Functionality(isPublic=false, name="Gerenciar Países", menu="root->Cadastros Básicos->pais"))
 public class Pais implements Persistable<Long>, Migrable<Long> {
 
 	@Id
@@ -37,11 +37,11 @@ public class Pais implements Persistable<Long>, Migrable<Long> {
 	@Column(name = "id_pais")
 	private Long id;
 
-	@EnableAutoCrudField(label="País")
+	@EnableAutoCrudField(label="País", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name = "nome_pais")
 	private String nome;
 
-	@EnableAutoCrudField(label="Ativo", ui="simpleCheckBox")
+	@EnableAutoCrudField(label="Ativo", ui="simpleCheckBox", enableForList=true, ordinal=2)
 	@Column(name = "ativo")
 	private boolean ativo;
 	

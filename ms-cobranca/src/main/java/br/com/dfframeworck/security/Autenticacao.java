@@ -5,11 +5,12 @@ import javax.security.auth.login.LoginException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.springframework.web.context.annotation.SessionScope;
 
 import br.com.eflux.comum.domain.Usuario;
 
 @Component
-@Scope("session")
+@SessionScope
 public class Autenticacao{
 
 	private Usuario usuario = new Usuario();
@@ -37,6 +38,17 @@ public class Autenticacao{
 					+ "você não éfetuou login ou seu tempo de conexão expirou");
 	}
 	
+	
+	public String processarAutenticacao() throws LoginException {
+		if ( getUsuario() != null) {
+			setAutenticado(true);
+			
+			return "redirect:/home";
+		}
+		else {
+			throw new LoginException("Não foi possível authenticar com os dados informados!");
+		}
+	}
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;

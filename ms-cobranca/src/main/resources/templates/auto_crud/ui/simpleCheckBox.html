@@ -1,8 +1,14 @@
-			
-			<div class="form-control" th:fragment="ui(field)">
-				<input th:id=${field.fieldName} type="checkbox" th:placeholder="${field.meta.label()}" />
-				<label th:for="${field.fieldName}"> [[${field.meta.label()}]] </label>
-			</div>
-			
+
+<div class="form-control" th:fragment="ui(field)">
+	<input 
+			th:id=${field.fieldName} type="checkbox" 
+			th:placeholder="${field.meta.label()}" 
+			th:name="${field.entity.entityName +'.'+ field.fieldName}" 
+			th:value="${field.value}"
+			th:checked="${field.value}"
+			/>
+	<label th:for="${field.fieldName}"> [[${field.meta.label()}]] </label>
+</div>
+
 
        

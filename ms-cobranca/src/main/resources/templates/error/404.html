@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div class="col-lg-10">
+                    <h1 class="page-header">404 :(
+                    <small>Recusro inexistente ou removido!</small>
+                    </h1>
+                </div>
+            </div>
+            
+            <div class="row">
+            
+            	<div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+            
+            </div>
+            
+            	
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+	<script>
+	    $(document).ready( function () {
+	    $('#grid').DataTable();
+		} );
+	</script>
+
+</body>
+
+
+</html>

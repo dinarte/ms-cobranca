@@ -1,8 +1,15 @@
 			
 			
-			<select th:fragment="ui(field)" type="text" th:placeholder="${field.meta.label()}" class="form-control">
-				<option value="-" th:label="${field.meta.label()}" selected="selected">
-				<option th:each="item : ${lookApFinder.getAll(field)}" th:label="${item.label}" th:value="${item.id}" />
+			<select th:fragment="ui(field)" 
+					th:placeholder="${field.meta.label()}" 
+					th:name="${field.entity.entityName +'.'+ field.fieldName}"
+					th:value="${field.value}" 
+					class="form-control">
+				<option value="" th:label="${field.meta.label()}">
+				<option th:each="item : ${lookApFinder.getAll(field)}" 
+						th:label="${item.label}" 
+						th:value="${item.id}" 
+						th:selected="${field.value == item.id ? 'selected' : ''}" />
 			</select>
 			
 			

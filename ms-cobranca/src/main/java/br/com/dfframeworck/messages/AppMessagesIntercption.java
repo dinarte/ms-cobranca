@@ -22,21 +22,24 @@ public class AppMessagesIntercption extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		HandlerMethod hMMethod = (HandlerMethod) handler;
-		if (hMMethod.getMethod().isAnnotationPresent(SucessMsg.class)) {
-			appMessages.getSuccessList().add( hMMethod.getMethod().getAnnotation(SucessMsg.class).message() );
+		
+		if (handler instanceof HandlerMethod) {
+			HandlerMethod hMMethod = (HandlerMethod) handler;
+			if (hMMethod.getMethod().isAnnotationPresent(SucessMsg.class)) {
+				appMessages.getSuccessList().add( hMMethod.getMethod().getAnnotation(SucessMsg.class).message() );
+			}
+			appMessages.getErrorList().addAll(appFlashMesg.getMessages().getErrorList());
+			appMessages.getSuccessList().addAll(appFlashMesg.getMessages().getSuccessList());
+			appMessages.getInfoList().addAll(appFlashMesg.getMessages().getInfoList());
+			appMessages.getWarningList().addAll(appFlashMesg.getMessages().getWarningList());
+			
+			appFlashMesg.getMessages().getErrorList().clear();
+			appFlashMesg.getMessages().getSuccessList().clear();
+			appFlashMesg.getMessages().getInfoList().clear();
+			appFlashMesg.getMessages().getWarningList().clear();
+			
+			request.setAttribute("appMessages", appMessages);
 		}
-		appMessages.getErrorList().addAll(appFlashMesg.getMessages().getErrorList());
-		appMessages.getSuccessList().addAll(appFlashMesg.getMessages().getSuccessList());
-		appMessages.getInfoList().addAll(appFlashMesg.getMessages().getInfoList());
-		appMessages.getWarningList().addAll(appFlashMesg.getMessages().getWarningList());
-		
-		appFlashMesg.getMessages().getErrorList().clear();
-		appFlashMesg.getMessages().getSuccessList().clear();
-		appFlashMesg.getMessages().getInfoList().clear();
-		appFlashMesg.getMessages().getWarningList().clear();
-		
-		request.setAttribute("appMessages", appMessages);
 	}
 
 }

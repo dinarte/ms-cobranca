@@ -1,6 +1,23 @@
 			<div th:fragment="menu_admin" class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
+                    
+                    	 <li >
+                           
+                            <a href="#"><i class="fa fa-wrench fa-fw"></i> Desenvolvedor <span class="fa arrow"></span></a>
+                            
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/pages/index.html"> Elementos Front-end</a>
+                                </li>
+                                <li>
+                                    <a href="/funcionalidades"> Funcinalidades </a>
+                                </li>
+                            </ul>
+                            
+                        </li>
+                    
+                    
                         <li th:each="node : ${menuRoot.children}">
                            
                             <a th:href="${node.item.path}"><i class="fa fa-book fa-fw"></i> [[${node.item.name}]] <span th:if="${#lists.size(node.children)}>0" class="fa arrow"></span></a>
@@ -20,6 +37,7 @@
                         </li>
                     </ul>
                 </div>
+                
                 <!-- /.sidebar-collapse -->
                             
             </div>

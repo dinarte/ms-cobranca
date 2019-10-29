@@ -29,13 +29,13 @@ public @interface EnableAutoCrudField {
 	 * Indica se o campo será exibido como um filtro da listagem</br>
 	 * valor padrão: false;
 	 */
-	public boolean enableForFilter() default true;
+	public boolean enableForFilter() default false;
 	
 	/**
 	 * Indica se o campo vai ser exibido na listagem da entidade
-	 * valor padrão: true;
+	 * valor padrão: false;
 	 */
-	public boolean enableForList() default true;
+	public boolean enableForList() default false;
 	
 	/**
 	 * Indica se o campo será exibido no formulário de criação da entidade
@@ -65,6 +65,12 @@ public @interface EnableAutoCrudField {
 	 * @return
 	 */
 	public String ui() default "default";
+	
+	/**
+	 * Tipo de componente UI que será usado para renderizar o campo no formulário
+	 * @return
+	 */
+	public int ordinal() default 9999;
 	
 	
 	

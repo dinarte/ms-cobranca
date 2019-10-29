@@ -34,31 +34,31 @@
 
 <div th:fragment="messages">
 
-<div th:if="${appMessages} != null">
-	   <div th:each="msg : ${appMessages.successList}">
-        <div class="alert alert-success" >
-           <span th:text="${msg}"> menssagem do sistema</span>
-        </div>
-    </div>
- 
-    <div th:each="msg : ${appMessages.infoList}">    
-        <div class="alert alert-info" >
-         <span th:text="${msg}"> menssagem do sistema</span>
-        </div>
-    </div>
-        
-    <div th:each="msg : ${appMessages.warningList}">   
-        <div class="alert alert-warning">
-            <span th:text="${msg}"> menssagem do sistema</span>
-        </div>
-    </div>
-        
-     <div th:each="msg : ${appMessages.errorList}">  
-        <div class="alert alert-danger">
-            <span th:text="${msg}"> menssagem do sistema</span>
-        </div>
-  	 </div>
- </div> 
+<div th:if="${appMessages} != null" style="margin-top: 5px;">
+		  <div th:each="msg : ${appMessages.successList}">
+	        <div class="alert alert-success" >
+	           <span th:text="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	 
+	    <div th:each="msg : ${appMessages.infoList}">    
+	        <div class="alert alert-info" >
+	         <span th:text="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	        
+	    <div th:each="msg : ${appMessages.warningList}">   
+	        <div class="alert alert-warning">
+	            <span th:text="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	        
+	     <div th:each="msg : ${appMessages.errorList}">  
+	        <div class="alert alert-danger">
+	            <span th:text="${msg}"> menssagem do sistema</span>
+	        </div>
+	  	 </div>
+	 </div> 
 </div>
 
 <scriptblock th:fragment="scrptsblock">

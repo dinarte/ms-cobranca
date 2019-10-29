@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -40,7 +39,7 @@ public class Municipio implements Persistable<Long> , Migrable<Long>{
 	@Column(name = "id_municipio")
 	private Long id;
 
-	@EnableAutoCrudField(label="Município", enableForFilter=true)
+	@EnableAutoCrudField(label="Município", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name = "nome")
 	private String nome;
 
@@ -48,7 +47,7 @@ public class Municipio implements Persistable<Long> , Migrable<Long>{
 	@Column(name = "cep")
 	private String cep;
 
-	@EnableAutoCrudField(label="Estado / Província", lookUpFieldName="nome", enableForFilter=true)
+	@EnableAutoCrudField(label="Estado / Província", lookUpFieldName="nome", enableForFilter=true, enableForList=true, ordinal=1)
 	@JoinColumn(name = "uf_id")
 	@ManyToOne
 	private UnidadeFederativa uf;
@@ -57,7 +56,7 @@ public class Municipio implements Persistable<Long> , Migrable<Long>{
 	@Column(name = "cod_ibge")
 	private String codIBGE;
 
-	@EnableAutoCrudField(label="Ativo", enableForFilter=true)
+	@EnableAutoCrudField(label="Ativo", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name = "ativo")
 	private boolean ativo;
 	

@@ -1,8 +1,5 @@
-/application.properties
-/banner.txt
-/br/
 /static/
-/templates/
 /Library.class
 /LibraryTest.class
-/.DS_Store
+/br/
+/templates/

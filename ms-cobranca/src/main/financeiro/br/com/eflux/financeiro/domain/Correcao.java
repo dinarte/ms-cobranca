@@ -23,8 +23,6 @@ import br.com.dfframeworck.security.Functionality;
  * @author dinarte
  *
  */
-@AutoCrud(name="Pessoas", description="Pedro Vitor", 
-funtionality=@Functionality(isPublic=false, name="Teste Pedro", menu="root->Cadastros Básicos->pedro"))
 @Entity
 @Table(schema="financeiro", name="correcao")
 public class Correcao implements Persistable<Long>, Migrable<Long>{

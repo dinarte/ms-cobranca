@@ -33,17 +33,17 @@ public class Usuario implements Persistable<Long> {
 	@Column(name = "id_usuario", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
-	@EnableAutoCrudField(label="Nome", enableForFilter=true)
+	@EnableAutoCrudField(label="Nome", enableForFilter=true, enableForList=true, ordinal=1)
 	private String name;
 	
-	@EnableAutoCrudField(label="Email", enableForFilter=true)
+	@EnableAutoCrudField(label="Email", enableForFilter=true, enableForList=true, ordinal=2)
 	private String email;
 	
-	@EnableAutoCrudField(label="Senha", enableForList=false)
+	@EnableAutoCrudField(label="Senha", enableForList=false, ordinal=3)
 	private String pass;
 	
 	@Transient
-	@EnableAutoCrudField(label="Confirmacao da Senha", enableForList=false)
+	@EnableAutoCrudField(label="Confirmacao da Senha", enableForList=false, ordinal=4)
 	private String passConfirm;
 	
 	private String faceId;

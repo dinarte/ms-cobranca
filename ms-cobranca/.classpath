@@ -13,6 +13,5 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/dinarte/Downloads/trugger-5.1/trugger-5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

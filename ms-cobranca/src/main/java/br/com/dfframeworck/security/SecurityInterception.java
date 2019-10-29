@@ -6,30 +6,49 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.com.dfframeworck.repository.UserRepository;
+
 
 @Component
 @RequestScope
 public class SecurityInterception implements HandlerInterceptor {
+
 	
 	@Autowired
-	ApplicationContext context; 
+	Autenticacao autenticacao;
+	
+	@Value("${dfframeworck.development.auto_login}")
+	String autoLogin;
+	
+	@Autowired
+	UserRepository uRepo;
+
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception{
 
-		HandlerMethod hMMethod = (HandlerMethod) handler;
-		Functionality functionality = hMMethod.getMethodAnnotation(Functionality.class);
-		if (Objects.nonNull(functionality) && !functionality.isPublic())
-			context.getBean(Autenticacao.class).checkAthorization();
-		
+		if (handler instanceof HandlerMethod) {
+			HandlerMethod hMMethod = (HandlerMethod) handler;
+			Functionality functionality = hMMethod.getMethodAnnotation(Functionality.class);
+			if (Objects.nonNull(functionality) && !functionality.isPublic()) {
+				
+				
+				 if (! autenticacao.isAutenticado() && Objects.nonNull(autoLogin)){ 
+					 autenticacao.setUsuario(uRepo.findOneByEmail(autoLogin)); 
+					 autenticacao.processarAutenticacao(); 
+				 }
+				
+				autenticacao.checkAthorization();
+			}
+		}
 		return true;
 			
 	}
@@ -40,7 +59,6 @@ public class SecurityInterception implements HandlerInterceptor {
 	  HttpServletResponse response,
 	  Object handler, 
 	  ModelAndView modelAndView) throws Exception {
-		Autenticacao autenticacao = context.getBean(Autenticacao.class); 
 		if (autenticacao != null && modelAndView != null)
 			modelAndView.addObject(autenticacao);
 	}

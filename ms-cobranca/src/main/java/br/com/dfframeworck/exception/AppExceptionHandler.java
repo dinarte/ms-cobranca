@@ -22,12 +22,11 @@ public class AppExceptionHandler {
 	
 	@ExceptionHandler(value = Exception.class)
     public String generalExceptionHandler(Exception e, Model model){
- 		appMessages.getErrorList().add("Que é isso companheiro? O Programador comenteu uma falta durísima, "
-				+ "e agora esta operação está impossibilitada de ser processada :( "
+ 		appMessages.getErrorList().add(" Um problema ocorreu que impede que esta operação seja processada "
 				+ "" + e.getMessage());
 		e.printStackTrace();
 		model.addAttribute(appMessages);
-        return "pages/login";
+        return "/error";
     }
 	
 	@ExceptionHandler(value = AppException.class)

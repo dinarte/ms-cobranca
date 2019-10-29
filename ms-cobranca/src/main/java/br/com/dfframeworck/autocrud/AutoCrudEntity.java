@@ -1,5 +1,6 @@
 package br.com.dfframeworck.autocrud;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class AutoCrudEntity {
 	
 	
 	public List<AutoCrudField> getFieldsOnCrud(){
-		return fields.stream().filter(AutoCrudField::isCrudEnabled).collect(Collectors.toList());
+		return fields.stream().filter(AutoCrudField::isCrudEnabled).sorted(Comparator.comparingInt(AutoCrudField::getOrdinal)).collect(Collectors.toList());
 	}
 	
 	public List<AutoCrudField> getFieldsOnFilter(){
@@ -32,6 +33,10 @@ public class AutoCrudEntity {
 	
 	public List<AutoCrudField> getFieldsOnUpdate(){
 		return getFieldsOnCrud().stream().filter(f->f.getMeta().enableForUpdate()).collect(Collectors.toList());
+	}
+	
+	public AutoCrudField getField(String name){
+		return fields.stream().filter(f->f.getFieldName().equals(name)).findFirst().get();
 	}
 	
 

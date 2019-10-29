@@ -1,30 +1,30 @@
 package br.com.dfframeworck.controller;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.annotation.RequestScope;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.dfframeworck.autocrud.AutoCrudData;
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
-import br.com.dfframeworck.autocrud.AutoCrudField;
 import br.com.dfframeworck.autocrud.AutoCrudPagination;
-import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.components.AutoCrudHelper;
 import br.com.dfframeworck.exception.ErroException;
+import br.com.dfframeworck.messages.SucessMsg;
+import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
 import br.com.dfframeworck.util.ObjectToMap;
 import br.com.dfframeworckservice.AutoCrudService;
@@ -42,7 +42,8 @@ public class AutoCrudController {
 	AutoCrudService crudService;
 	
 	@Autowired
-	EntityManager em;
+	AutoCrudHelper helper;
+	
 
 	/**
 	 * Exibe uma página com a listagem dos registros encontrados referentes 
@@ -54,73 +55,33 @@ public class AutoCrudController {
 	 */
 	@Functionality(isPublic=false, name="Listar", menu="none")
 	@RequestMapping("/crud/{entity}")
-	public String index(@PathVariable("entity") String entity, Map<String,Object> filtros, Model model, HttpServletRequest request) throws ErroException {
-		
-		EntityType<?> meta = validateIsAutoCrudEnabledAndReturnEntity(entity);
-		AutoCrudEntity crudEntity = getAutoCrudEntity(entity, meta);
-				
-		String page = request.getParameter("page");
-		String size = request.getParameter("size");
-		AutoCrudPagination pagination = new AutoCrudPagination(page, size);
-		Long count = crudService.count(entity);
-		pagination.setTotalResults(count.intValue());
-		List<?> entityList = crudService.findAll(entity,pagination.getFirstRow(), pagination.getSize());
-		
-		AutoCrudData autoCrudList = new AutoCrudData();
-		autoCrudList.setEntity(crudEntity);
-		autoCrudList.parseData(entityList);
-		autoCrudList.setPagination(pagination);
-		
-		model.addAttribute("autoCrudData", autoCrudList);
-		
-		/*
-		try {
-			model.addAttribute(ObjectToMap.toMap(crudEntity.getType().newInstance()));
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new ErroException("Não foi possível instanciar a entidade: "+e.getMessage());
-		}
-		*/
-		
+	public String index(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException {
+		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
+		processListing(entity, model, request, crudEntity);
 		return getIndexView();
 	}
-	
-	@Functionality(isPublic=false, name="Buscar", menu="none")
-	@RequestMapping("/crud/{entity}/busca")
-	public String buscar(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException {
+
+
+
+	private void processListing(String entity, Model model, HttpServletRequest request, AutoCrudEntity crudEntity) {
+		List<String> filters = helper.processFilters(crudEntity, request);
+		String page = request.getParameter("page");
+		String size = request.getParameter("size");
+		AutoCrudPagination pagination = new AutoCrudPagination(page, size );
+		Long count = crudService.count(entity, filters);
+		pagination.setTotalResults(count.intValue());
+		List<?> entityList = crudService.findAll(entity,pagination.getFirstRow(), pagination.getSize(), filters);
 		
-		Map<String,Object> filtros = new HashMap<String, Object>();
+		AutoCrudData autoCrudData = new AutoCrudData();
+		autoCrudData.setEntity(crudEntity);
+		autoCrudData.parseData(entityList);
+		autoCrudData.setPagination(pagination);
 		
-		request.getParameterMap()
-			.keySet()
-			.stream()
-			.filter(k -> k.contains(entity+"."))
-			.forEach(k -> {
-				System.out.println(k + " like '" + request.getParameter(k) +"'" );
-				
-				filtros.put(k.replace(entity+".", ""), request.getParameter(k));
-				
-			});
-		
-		
-		return index(entity, filtros, model, request);
+		model.addAttribute("autoCrudData", autoCrudData);
 	}
 
-	private AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta) {
-		AutoCrudEntity crudEntity = new AutoCrudEntity();
-		crudEntity.setEntityName(entity);
-		crudEntity.setType(meta.getJavaType());
-		crudEntity.setFields(new ArrayList<AutoCrudField>());
-		
-		meta.getAttributes().forEach( atribute -> {
-			AutoCrudField field = new AutoCrudField();
-			field.setType(atribute.getJavaType());
-			field.setFieldName(atribute.getName());
-			field.setEntity(crudEntity);;
-			crudEntity.getFields().add(field);
-		});
-		return crudEntity;
-	}
-	
+
+
 	/**
 	 * Seleciona uma entidade de um determinado id e exibe o formulário de edição.
 	 * @param entity
@@ -132,10 +93,80 @@ public class AutoCrudController {
 	@Functionality(isPublic=false, name="Selecionar", menu="none")
 	@RequestMapping("/crud/{entity}/{id}")
 	public String select(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model) throws ErroException {
-		validateIsAutoCrudEnabledAndReturnEntity(entity);
-		model.addAttribute("entityList", crudService.findOne(entity, id));
-		return "/pages/home";
+		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity, crudService.findOne(entity, id));
+		model.addAttribute("autoCrudEntity", crudEntity);
+		return getFormView();
 	}
+	
+	
+	
+	/**
+	 * Direciona para o formulário de cadastro da entidade.
+	 * @param entity
+	 * @param id
+	 * @param model
+	 * @return
+	 * @throws ErroException 
+	 */
+	@Functionality(isPublic=false, name="Adicionar", menu="none")
+	@RequestMapping("/crud/{entity}/add")
+	public String add(@PathVariable("entity") String entity, Model model) throws ErroException {
+		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
+		model.addAttribute("autoCrudEntity",crudEntity);
+		return getFormView();
+	}
+	
+	
+	
+	/**
+	 * Salva a entidade no banco.
+	 * @param entity
+	 * @param id
+	 * @param model
+	 * @return
+	 * @throws ErroException 
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	@Functionality(isPublic=false, name="Savlar", menu="none")
+	@RequestMapping(path="/crud/{entity}/save", method=RequestMethod.POST)
+	@SucessMsg
+	public String save(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException, JsonParseException, JsonMappingException, IOException {
+		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
+		Object obj =  helper.processEntityObject(crudEntity, request);
+		crudService.save((Persistable<?>)obj);
+		processListing(entity, model, request, crudEntity);
+		return getIndexView();
+	}
+	
+	
+	/**
+	 * Remove a entidade do banco de dados.
+	 * @param entity
+	 * @param id
+	 * @param model
+	 * @return
+	 * @throws ErroException 
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	@Functionality(isPublic=false, name="Remover", menu="none")
+	@RequestMapping(path="/crud/{entity}/{id}/del")
+	@SucessMsg
+	public String del(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model, HttpServletRequest request) throws ErroException, JsonParseException, JsonMappingException, IOException {
+		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
+		request.setAttribute(entity+".id", id);
+		Migrable<Long> obj =  (Migrable<Long>) helper.processEntityObject(crudEntity, request);
+		obj.setId(id);
+		obj = (Migrable<Long>) crudService.findOne(entity, id);
+		crudService.remover((Persistable<?>)obj);
+		processListing(entity, model, request, crudEntity);
+		return getIndexView();
+	}
+	
+	
 	
 	/**
 	 * Retorna a view padrão para a istagem do Auto Crud
@@ -152,30 +183,7 @@ public class AutoCrudController {
 	protected String getFormView(){
 		return "/auto_crud/form";
 	}
-	
-	
-	/**
-	 * Valida se a entidade que está endo acessada existe ou possue a anotação AuntoCrud
-	 * @param entity
-	 * @throws ErroException
-	 */
-	@SuppressWarnings("deprecation")
-	private EntityType<?> validateIsAutoCrudEnabledAndReturnEntity(String entity) throws ErroException {
-	  Set<javax.persistence.metamodel.EntityType<?>> entities = ((Session) em.getDelegate()).getSessionFactory().getMetamodel().getEntities() ;
-      EntityType<?> entityType = entities.stream().filter(e -> e.getName().equals(entity)).findFirst().orElseThrow(()->throwAutoCrudNotAllowadException(entity));
-      if (!entityType.getJavaType().isAnnotationPresent(AutoCrud.class))
-    	 throw throwAutoCrudNotAllowadException(entity);
-      return entityType;
-	}
 
-	/**
-	 * Cria um ErroException no sistema para o caso de a entidade ue está sendo acessada não estar acessível pelo AutoCrud
-	 * @param entity
-	 * @return
-	 */
-	private ErroException throwAutoCrudNotAllowadException(String entity) {
-		return new ErroException(entity + " Não é uma entidade do sistema, ou não é acessível pelo Auto Crud");
-	}
 	
 	public static void main(String[] args) {
 		System.out.println(ObjectToMap.toMap(new Pessoa()));

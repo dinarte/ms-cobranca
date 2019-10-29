@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,7 +21,7 @@ public class AutoCrudInterceptions implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception{
 
-		HandlerMethod hMMethod = (HandlerMethod) handler;
+		//HandlerMethod hMMethod = (HandlerMethod) handler;
 		return true; //hMMethod.getBean().getClass().equals(AutoCrudController.class);
 			
 	}

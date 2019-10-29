@@ -49,8 +49,8 @@ public class MigracaoController {
 		if (Objects.isNull(file))
 			throw new ValidacaoException("Arquivo de migração precisa ser informado.");
 		
-		if (!file.getContentType().equals("text/csv")) 
-			throw new ValidacaoException("O tipo de arquivo deve ser text/csv.");
+		if (!file.getContentType().equals("text/csv") && !file.getContentType().equals("text/plain")) 
+			throw new ValidacaoException("Tipo de arquivo errado: ("+file.getContentType()+"). O tipo de arquivo deve ser txt ou csv.");
 		
 		
 		migrationService.migrar(file, packageName, className);

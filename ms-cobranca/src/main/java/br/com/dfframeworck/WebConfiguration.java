@@ -15,7 +15,7 @@ import br.com.dfframeworck.security.DynamicMenuInterception;
 import br.com.dfframeworck.security.FirstUserInterception;
 import br.com.dfframeworck.security.SecurityInterception;
 
-@EnableWebMvc
+//@EnableWebMvc
 @Configuration
 @EntityScan("br.com.*")  
 @ComponentScan("br.com.*")
@@ -37,10 +37,9 @@ public class WebConfiguration implements WebMvcConfigurer{
 	}
 	
 	
-	@Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		//registry
-        //.addResourceHandler("/resources/**")
-        //.addResourceLocations("/resources/");     
-		}
+	/*
+	 * @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	 * registry .addResourceHandler("/resources/**")
+	 * .addResourceLocations("/resources/"); }
+	 */
 }
