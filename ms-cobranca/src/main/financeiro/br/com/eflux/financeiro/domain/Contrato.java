@@ -18,6 +18,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
+import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.repository.Migrable;
+import br.com.dfframeworck.security.Functionality;
 import br.com.eflux.comum.domain.Pessoa;
 import br.com.eflux.empreendimento.domain.Unidade;
 
@@ -28,7 +32,9 @@ import br.com.eflux.empreendimento.domain.Unidade;
  */
 @Entity
 @Table(schema="financeiro", name="contrato")
-public class Contrato implements Persistable<Long> {
+@AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
+funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato"))
+public class Contrato implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
 	@GeneratedValue(generator = "contatoGenerator")
@@ -37,12 +43,14 @@ public class Contrato implements Persistable<Long> {
 	@Column(name = "id_contrato", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
+	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name="numero_contrato")
 	private String numeroContrato;
 	
 	/**
 	 * Unidade negociada no contrato
 	 */
+	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2)
 	@ManyToOne
 	@JoinColumn(name="id_unidade", nullable=false)
 	private Unidade unidade;
@@ -50,6 +58,7 @@ public class Contrato implements Persistable<Long> {
 	/**
 	 * Cliente / parte / contratante que está sendo assiciada a unidade em questão. 
 	 */
+	@EnableAutoCrudField(label="Contratante", enableForFilter=true, enableForList=true, ordinal=3)
 	@ManyToOne
 	@JoinColumn(name="id_pessoa", nullable=false)
 	private Pessoa pessoa;
@@ -57,24 +66,28 @@ public class Contrato implements Persistable<Long> {
 	/**
 	 * Data em que o contrato foi firmado
 	 */
+	@EnableAutoCrudField(label="Data do Contrato", enableForList=true, ordinal=4)
 	@Column(name="data", nullable=false)
 	private Date data;
 	
 	/**
 	 * Data base para correção financeira do contrato
 	 */
+	@EnableAutoCrudField(label="Data Base", enableForList=true, ordinal=5)
 	@Column(name="data_base")
 	private Date dataBase;
 	
 	/**
 	 * Valor da unidade em questão previsto na tabela de preços
 	 */
+	@EnableAutoCrudField(label="Valor de Tabela", ordinal=6)
 	@Column(name="valor_tabela", nullable=false)
 	private BigDecimal valorTabela;
 	
 	/**
 	 * Valor no qual o contrato foi firmado
 	 */
+	@EnableAutoCrudField(label="Valor do Contrato", enableForList=true, ordinal=7)
 	@Column(name="valor", nullable=false)
 	private BigDecimal valor;
 	
@@ -82,24 +95,28 @@ public class Contrato implements Persistable<Long> {
 	 * Caso true, impede que seja gerado boletos ou pagamentos via 
 	 * cartão de crédito para o contrato em questão.
 	 */
+	@EnableAutoCrudField(label="Bloquear Cobrança", enableForList=true, ordinal=8)
 	@Column(name="bloquear_cobranca", nullable=false)
 	private boolean bloquearCobranca;
 	
 	/**
 	 * Determina em que situação o contrato em questão se encontra
 	 */
+	@EnableAutoCrudField(label="Situação", enableForList=true, ordinal=9)
 	@ManyToOne
-	@JoinColumn(name="id_situacao_venda", nullable=false)
-	private SituacaoContrato situacaoVenda;
+	@JoinColumn(name="id_situacao_contrato", nullable=false)
+	private SituacaoContrato situacaoContrato;
 	
 	/**
 	 * Determina a natureza do contrato
 	 */
+	@EnableAutoCrudField(label="Natureza do Contrato", enableForFilter=true, enableForList=true, ordinal=10)
 	@Enumerated(EnumType.STRING)
 	@Column(name="natureza", nullable=false)
 	private NaturezaContratoEnum natureza;
 
-	
+	@Column(name="original_id")
+	private String originalId;
 	
 	public Long getId() {
 		return id;
@@ -181,12 +198,14 @@ public class Contrato implements Persistable<Long> {
 		this.bloquearCobranca = bloquearCobranca;
 	}
 
-	public SituacaoContrato getSituacaoVenda() {
-		return situacaoVenda;
+
+
+	public SituacaoContrato getSituacaoContrato() {
+		return situacaoContrato;
 	}
 
-	public void setSituacaoVenda(SituacaoContrato situacaoVenda) {
-		this.situacaoVenda = situacaoVenda;
+	public void setSituacaoContrato(SituacaoContrato situacaoContrato) {
+		this.situacaoContrato = situacaoContrato;
 	}
 
 	public NaturezaContratoEnum getNatureza() {
@@ -202,4 +221,12 @@ public class Contrato implements Persistable<Long> {
 		return Objects.isNull(id) || id.equals(0L);
 	}
 
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
+	}
+	
 }

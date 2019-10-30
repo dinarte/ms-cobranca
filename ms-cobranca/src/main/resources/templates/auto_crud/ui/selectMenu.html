@@ -1,15 +1,17 @@
 			
 			
-			<select th:fragment="ui(field)" 
+			<select th:fragment="ui(field)"
+					th:with="valueId = ${field.value == null ? null : field.value.get('id')}" 
 					th:placeholder="${field.meta.label()}" 
 					th:name="${field.entity.entityName +'.'+ field.fieldName}"
-					th:value="${field.value}" 
+					th:id="${field.entity.entityName +'.'+ field.fieldName}"
+					th:value="${valueId}" 
 					class="form-control">
-				<option value="" th:label="${field.meta.label()}" selected="selected">
+				<option value="" th:label="${field.meta.label()}" th:selected="${valueId == null || valueId == 0}">
 				<option th:each="item : ${lookApFinder.getAll(field)}" 
 						th:label="${item.label}" 
 						th:value="${item.id}" 
-						th:selected="${field.value == item.id ? 'selected' : ''}" />
+						th:selected="${valueId == item.id}" />
 			</select>
 			
 			

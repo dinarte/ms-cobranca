@@ -16,6 +16,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
+import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.repository.Migrable;
+import br.com.dfframeworck.security.Functionality;
+
 /**
  * Débitos gerados a partir de um contrato que foi firmado, 
  * nem todo contrato gera débidos, o que vai determinar isso é a natureza e a situacao do contrato.
@@ -24,7 +29,9 @@ import org.springframework.data.domain.Persistable;
  */
 @Entity
 @Table(schema="financeiro", name="debito")
-public class Debito implements Persistable<Long> {
+@AutoCrud(name="Débitos", description="Débitos do Contrato", 
+funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito"))
+public class Debito implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
 	@GeneratedValue(generator = "lancamentoGenerator")
@@ -33,37 +40,54 @@ public class Debito implements Persistable<Long> {
 	@Column(name = "id_lancamento", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
+	@EnableAutoCrudField(label="Número", enableForList=true, ordinal=1)
 	private Integer numero;
 	
+	@EnableAutoCrudField(label="Contrato", enableForFilter=true, enableForList=true, ordinal=2, lookUpFieldName="numero")
 	@ManyToOne
 	@JoinColumn(name="id_contrato")
 	private Contrato contrato;
 
+	@EnableAutoCrudField(label="Tipo", enableForFilter=true, enableForList=true, ordinal=3, lookUpFieldName="nome")
 	@ManyToOne
 	@JoinColumn(name="id_tipo_lancamento")
 	private TipoLancamento tipoLancamento;
 	
+	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=4)
 	private BigDecimal valorOriginal;
 	
+	@EnableAutoCrudField(label="Júros por Atrazo", enableForList=true, ordinal=5)
 	private BigDecimal jurosAtrazo;
 
+	@EnableAutoCrudField(label="Multa por Atrazo", enableForList=true, ordinal=6)
 	private BigDecimal multaAtrazo;
 	
+	@EnableAutoCrudField(label="Júros Remuneratório", enableForList=true, ordinal=7)
 	private BigDecimal jurosRemuneratorio;
 	
+	@EnableAutoCrudField(label="Correção", enableForList=true, ordinal=8)
 	private BigDecimal correcao;
 	
+	@EnableAutoCrudField(label="Data", enableForList=true, ordinal=9)
 	private Date dataLancamento;
 	
+	@EnableAutoCrudField(label="Vencimento", enableForList=true, ordinal=10)
 	private Date dataVencimento;
 	
+	@EnableAutoCrudField(label="Data", ordinal=11)
 	private Date dataUltimoPagamento;
 	
+	@EnableAutoCrudField(label="Valor Pago", ordinal=12)
 	private  BigDecimal valorPago;
 	
+	@EnableAutoCrudField(label="Quitada", ordinal=13)
 	private boolean quitada;
 	
+	@EnableAutoCrudField(label="Observações", ordinal=14)
 	private String descricao;
+	
+	@Column(name="originalId")
+	private String originalId;
 
 	public Long getId() {
 		return id;
@@ -191,7 +215,13 @@ public class Debito implements Persistable<Long> {
 	public void setJurosRemuneratorio(BigDecimal jurosRemuneratorio) {
 		this.jurosRemuneratorio = jurosRemuneratorio;
 	}
-	
-	
+
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
+	}
 
 }
