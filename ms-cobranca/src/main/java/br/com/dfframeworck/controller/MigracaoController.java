@@ -32,7 +32,7 @@ public class MigracaoController {
 	
 
 	@RequestMapping("/index")
-	@Functionality(isPublic=false, name="Migração de Dados", menu="root->Configurações->migracao")
+	@Functionality(isPublic=false, name="Migração de Dados", menu="root->Configurações->migracao", icon="fa fa-database")
 	public String index(Model model) throws ClassNotFoundException {	
 		List<Class<?>> classList = migrationService.getAllMigrables();
 		model.addAttribute("classList",classList);

@@ -17,6 +17,9 @@ public class DateConverter implements IConverter<Date> {
 			return null;
 		else if(value.equals("NULL")){
 			return null;
+				
+		}else if (value.trim().equals("")){
+			return null;
 		}		
 		else {
 			SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");

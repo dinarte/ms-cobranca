@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Persistable;
+
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 
 public class AutoCrudEntity {
@@ -13,6 +15,8 @@ public class AutoCrudEntity {
 	private String entityName;
 	
 	private List<AutoCrudField> fields;
+	
+	private Persistable<?> obj;
 	
 	
 	public List<AutoCrudField> getFieldsOnCrud(){
@@ -72,4 +76,11 @@ public class AutoCrudEntity {
 		this.fields = fields;
 	}
 
+	public Persistable<?> getObj() {
+		return obj;
+	}
+
+	public void setObj(Persistable<?> obj) {
+		this.obj = obj;
+	}
 }

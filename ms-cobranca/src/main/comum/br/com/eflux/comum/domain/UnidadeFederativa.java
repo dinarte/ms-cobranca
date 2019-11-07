@@ -112,4 +112,9 @@ public class UnidadeFederativa implements Persistable<Long>, Migrable<Long>{
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}
+	
+	@Override
+	public String toString() {
+		return nome;
+	}
 }

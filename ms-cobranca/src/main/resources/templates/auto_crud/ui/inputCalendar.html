@@ -1,12 +1,15 @@
 			
 			
-			<input	th:fragment="ui(field)" 
+			<input	
+					data-date-format="mm/dd/yyyy"
+					th:fragment="ui(field)" 
 					th:name="${field.entity.entityName +'.'+ field.fieldName}" 
-					type="text" 
+					type="date" 
 					th:placeholder="${field.meta.label()}"
 					th:value="${field.value}" 
+					th:readonly="${field.readOnly}" 
 					class="form-control"  />
-			
-			
+					
+					
 
        

@@ -24,7 +24,7 @@ import br.com.dfframeworck.security.Functionality;
 @Entity
 @Table(schema="financeiro", name="tipo_lancamento")
 @AutoCrud(name="Tipo de Lançamento", description="Tipos de Lançamentos de Débito", 
-funtionality=@Functionality(isPublic=false, name="Tipos de Lançamento", menu="root->Financeiro->tipoLancamento"))
+funtionality=@Functionality(isPublic=false, name="Tipos de Lançamento", menu="root->Financeiro->Tabelas->tipoLancamento", icon="fa fa-table"))
 public class TipoLancamento  implements Persistable<Long>, Migrable<Long>{
 	
 	@Id
@@ -44,7 +44,6 @@ public class TipoLancamento  implements Persistable<Long>, Migrable<Long>{
 	public Long getId() {
 		return id;
 	}
-
 
 	public void setId(Long id) {
 		this.id = id;
@@ -72,6 +71,11 @@ public class TipoLancamento  implements Persistable<Long>, Migrable<Long>{
 
 	public void setOriginalId(String originalId) {
 		this.originalId = originalId;
+	}
+	
+	@Override
+	public String toString() {
+		return nome;
 	}
 	
 }

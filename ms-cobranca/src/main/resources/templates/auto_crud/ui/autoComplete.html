@@ -1,0 +1,40 @@
+			
+<div th:fragment="ui(field)">			
+	
+	<input	type="hidden"
+			th:name="${field.entity.entityName +'.'+ field.fieldName}"
+			th:id="${field.entity.entityName + field.fieldName}"
+			/>
+	
+	<input	
+			th:name="${'_'+field.entity.entityName +'_autocomplete_'+ field.fieldName}" 
+			th:id="${'_'+field.entity.entityName + field.fieldName}" 
+			type="text" 
+			th:placeholder="${field.meta.label()}"
+			th:value="${field.value}" 
+			th:readonly="${field.readOnly}"
+			th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  />
+
+<script>
+$(document).ready(function(){
+	$('#_[[${field.entity.entityName + field.fieldName}]]').autocomplete({
+	    serviceUrl: '/lookup/[[${field.type.simpleName}]]/[[${field.meta.lookUpFieldName()}]]',
+	    onSelect: function (suggestion) {
+	      //alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+	      $('#[[${field.entity.entityName + field.fieldName}]]').attr('value',suggestion.data);
+	    }
+	});
+});
+</script>
+
+<style>
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+</style>
+
+	
+</div>

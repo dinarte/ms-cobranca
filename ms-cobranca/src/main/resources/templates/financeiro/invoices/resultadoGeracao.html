@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+                
+                <div class="col-lg-10">
+                    <h1 class="page-header">Invoices
+                    <small>Resultado do Processo de Geração de Invoices</small>
+                    </h1>
+                </div>
+                
+            </div>
+            
+            
+            <div class="row">
+            
+	            <table class="table" id="grid">
+	            	<thead>
+	            		<tr>
+		            		<th>Geração</th>
+		            		<th>Contrato</th>
+		            		<th>Tipo</th>
+		            		<th>Número</th>
+		            		<th>Status</th>
+	            		</tr>
+	            	</thead>
+	            	<tbody>
+	            		<th:block th:each="debito : ${debitosNaoGerados}">
+	             		<tr>
+	             			<td th:text="${debito.dataCriacaoInvoice}">Data Geracao</td>
+	             			<td th:text="${debito.contrato}">Contrato</td>
+	             			<td th:text="${debito.tipoLancamento}">Contrato</td>
+	             			<td th:text="${debito.numero}">Contrato</td>
+	             			<td>
+	             				<span th:text="${debito.statusCriacaoInvoiceMap.erro.status}" style="font-weight: bolder;">status</span>
+	             				<em th:text="${debito.statusCriacaoInvoiceMap.erro.tipo}">tipo</em>
+	             				<ul>
+	             					<li th:each="item : ${debito.statusCriacaoInvoiceMap.erro.causas}"> 
+	             						<a	th:href="${'/financeiro/invoices/quikfix/'+item.codigo+'/'+debito.id}"   
+	             							th:text="${'#'+item.codigo+' '+item.mensagem}" 
+	             							title="Clique para tentar corrigir rápido"
+	             							style="color: red;">menssagem</a></li>
+	             				</ul>
+	             			
+	             			</td>
+	             			
+	             			</th:block>
+	             			
+	             		</tr>	
+	            		</th:block>
+	            	</tbody>
+	            </table>
+	         </div> 
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+	<script>
+	    $(document).ready( function () {
+	    $('#grid').DataTable();
+		} );
+	</script>
+
+</body>
+
+
+</html>

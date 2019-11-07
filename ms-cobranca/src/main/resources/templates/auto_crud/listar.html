@@ -89,20 +89,14 @@
 	             			
 	             			</th:block>
 	             			<td class="text-right">
-                      			<a class="btn btn-primary btn-circle" 
-                      				th:href="${'/crud/'+ autoCrudData.entity.entityName +'/'+item.id}"
+                      			<a  th:each="action : ${item.actions}"
+                      				th:class="${action.cssClass}"
+                      				style="margin:2px;" 
+                      				th:href="${action.path}"
                       				data-toggle="tooltip" 
                       				data-placement="top" 
-                      				title="Editar Dados">
-                      				<span class="glyphicon glyphicon-pencil"></span>
-                      			</a>
-                      			
-                      			<a	class="btn btn-danger btn-circle"
-                      				th:href="${'/crud/'+ autoCrudData.entity.entityName +'/'+item.id + '/del'}"
-                      				data-toggle="tooltip" 
-                      				data-placement="top" 
-                      				title="Deletar Dados">
-                      				<span class="glyphicon glyphicon-trash"></span>
+                      				th:title="${action.description}">
+                      				<span th:class="${action.icon}"></span>
                       			</a>
                      		</td>
 	             		</tr>	
@@ -121,11 +115,6 @@
 
     <srcript th:replace="fragments/main :: scrptsblock" />
     
-	<script>
-	    $(document).ready( function () {
-	    $('#grid').DataTable();
-		} );
-	</script>
 
 </body>
 

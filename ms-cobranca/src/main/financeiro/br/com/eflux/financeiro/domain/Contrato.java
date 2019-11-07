@@ -33,7 +33,7 @@ import br.com.eflux.empreendimento.domain.Unidade;
 @Entity
 @Table(schema="financeiro", name="contrato")
 @AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato"))
+funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato", icon="fa fa-file-text-o"))
 public class Contrato implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -43,22 +43,23 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	@Column(name = "id_contrato", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
-	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1)
+	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1, readOnlyForUpdate=true)
 	@Column(name="numero_contrato")
 	private String numeroContrato;
 	
 	/**
 	 * Unidade negociada no contrato
 	 */
-	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2)
+	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2, readOnlyForUpdate=true)
 	@ManyToOne
 	@JoinColumn(name="id_unidade", nullable=false)
 	private Unidade unidade;
 	
 	/**
-	 * Cliente / parte / contratante que está sendo assiciada a unidade em questão. 
+	 * Cliente / parte / contratante que está sendo associada a unidade em questão. 
 	 */
-	@EnableAutoCrudField(label="Contratante", enableForFilter=true, enableForList=true, ordinal=3)
+	@EnableAutoCrudField(label="Contratante", enableForFilter=true, enableForList=true, ordinal=3, lookUpFieldName="nome", readOnlyForUpdate=true,
+			ui="autoComplete")
 	@ManyToOne
 	@JoinColumn(name="id_pessoa", nullable=false)
 	private Pessoa pessoa;
@@ -66,28 +67,28 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Data em que o contrato foi firmado
 	 */
-	@EnableAutoCrudField(label="Data do Contrato", enableForList=true, ordinal=4)
+	@EnableAutoCrudField(label="Data do Contrato", enableForList=true, enableForCreate=false, ordinal=4, readOnlyForUpdate=true)
 	@Column(name="data", nullable=false)
-	private Date data;
+	private Date data = new Date();
 	
 	/**
 	 * Data base para correção financeira do contrato
 	 */
-	@EnableAutoCrudField(label="Data Base", enableForList=true, ordinal=5)
+	@EnableAutoCrudField(label="Data Base", enableForList=true, ordinal=5, readOnlyForUpdate=true)
 	@Column(name="data_base")
-	private Date dataBase;
+	private Date dataBase = new Date();
 	
 	/**
 	 * Valor da unidade em questão previsto na tabela de preços
 	 */
-	@EnableAutoCrudField(label="Valor de Tabela", ordinal=6)
+	@EnableAutoCrudField(label="Valor de Tabela", ordinal=6, readOnlyForUpdate=true)
 	@Column(name="valor_tabela", nullable=false)
 	private BigDecimal valorTabela;
 	
 	/**
 	 * Valor no qual o contrato foi firmado
 	 */
-	@EnableAutoCrudField(label="Valor do Contrato", enableForList=true, ordinal=7)
+	@EnableAutoCrudField(label="Valor do Contrato", enableForList=true, ordinal=7, readOnlyForUpdate=true)
 	@Column(name="valor", nullable=false)
 	private BigDecimal valor;
 	
@@ -110,7 +111,7 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Determina a natureza do contrato
 	 */
-	@EnableAutoCrudField(label="Natureza do Contrato", enableForFilter=true, enableForList=true, ordinal=10)
+	@EnableAutoCrudField(label="Natureza do Contrato", enableForFilter=true, enableForList=true, ordinal=10, readOnlyForUpdate=true)
 	@Enumerated(EnumType.STRING)
 	@Column(name="natureza", nullable=false)
 	private NaturezaContratoEnum natureza;
@@ -227,6 +228,13 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 
 	public void setOriginalId(String originalId) {
 		this.originalId = originalId;
+	}
+	
+	@Override
+	public String toString() {
+		if (Objects.nonNull(pessoa))
+			return numeroContrato +" - "+ pessoa.getNome();
+		return numeroContrato;
 	}
 	
 }

@@ -47,6 +47,8 @@ public class ConverterUtil {
 	
 	
 	public void invoke(String value, Class<?> type, Method methode, Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if (converters.get(type) == null)
+			throw new RuntimeException("Não foi possível encontrar um converter para o tipo "+ type.getName());
 		methode.invoke(obj, converters.get(type).parse(value, type));
 	}
 

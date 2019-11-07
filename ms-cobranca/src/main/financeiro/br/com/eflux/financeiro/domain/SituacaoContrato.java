@@ -24,7 +24,7 @@ import br.com.dfframeworck.security.Functionality;
 @Entity
 @Table(schema="financeiro", name="situacao_contrato")
 @AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
-funtionality=@Functionality(isPublic=false, name="Situação Contrato", menu="root->Financeiro->situacaoContrato"))
+funtionality=@Functionality(isPublic=false, name="Situação Contrato", menu="root->Financeiro->Tabelas->situacaoContrato", icon="fa fa-tags"))
 public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -121,4 +121,9 @@ public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 		this.originalId = originalId;
 	}
 	
+	@Override
+	public String toString() {
+		return nome;
+	}
+
 }

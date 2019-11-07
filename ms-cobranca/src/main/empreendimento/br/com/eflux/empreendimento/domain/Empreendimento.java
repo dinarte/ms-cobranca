@@ -27,7 +27,7 @@ import br.com.dfframeworck.security.Functionality;
 @Entity
 @Table(schema="empreendimento", name="emprendimento")
 @AutoCrud(name="Emmpreendimento", description="Empreendimentos disponíveis", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Empreendimentos", menu="root->Empreendimentos->empreendimento"))
+		funtionality=@Functionality(isPublic=false, name="Gerenciar Empreendimentos", menu="root->Empreendimentos->empreendimento", icon="fa fa-building-o"))
 public class Empreendimento implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -42,7 +42,7 @@ public class Empreendimento implements Persistable<Long>, Migrable<Long> {
 	 */
 	@ManyToOne
 	@JoinColumn(name = "id_empresa")
-	@EnableAutoCrudField(label="Incorporadora", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="pessoa")
+	@EnableAutoCrudField(label="Incorporadora", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="nome")
 	private Incorporadora incorporadora;
 
 	/**
@@ -91,6 +91,11 @@ public class Empreendimento implements Persistable<Long>, Migrable<Long> {
 
 	public void setOriginalId(String originalId) {
 		this.originalId = originalId;
+	}
+	
+	@Override
+	public String toString() {
+		return nome;
 	}
 	
 }

@@ -28,7 +28,7 @@ repositories {
 task createWar(type : War){
     destinationDir = file("$buildDir")
     baseName = "ms-cobranca"
-    version = "1.0.1"
+    version = "1.0.7"
     caseSensitive = true
     from "src"
 }
@@ -48,8 +48,18 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
    //compile("org.flywaydb:flyway-core:5.0.7")
     compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1212.jre7'
+	compile group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '2.29.1'
+
+	// https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common
+	compile group: 'org.glassfish.jersey.core', name: 'jersey-common', version: '2.29.1'
+	// https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2
+compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.29.1'
+	
+	
+
     testCompile("junit:junit")
 }
+
 
 sourceSets {
 main {
@@ -59,6 +69,8 @@ main {
 	  srcDir 'src/main/financeiro'
 	  srcDir 'src/main/empreendimento'
 	  srcDir 'src/main/comum'
+	  srcDir 'src/main/config'
+	  srcDir 'src/main/payments'
 	 }
 	}
 }

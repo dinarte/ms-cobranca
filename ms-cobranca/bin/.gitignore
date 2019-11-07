@@ -1,5 +1,7 @@
-/br/
-/static/
-/templates/
 /Library.class
 /LibraryTest.class
+/br/
+/test/
+/templates/
+/ExportadorBoletosController/
+/static/

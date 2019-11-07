@@ -1,13 +1,24 @@
 
-<div class="form-control" th:fragment="ui(field)">
-	<input 
-			th:id=${field.fieldName} type="checkbox" 
+<div th:fragment="ui(field)"  style="width: 100%">
+	<input  
+			th:id="${field.entity.entityName + field.fieldName}"
+			type="checkbox" 
 			th:placeholder="${field.meta.label()}" 
 			th:name="${field.entity.entityName +'.'+ field.fieldName}" 
 			th:value="${field.value}"
 			th:checked="${field.value}"
-			/>
-	<label th:for="${field.fieldName}"> [[${field.meta.label()}]] </label>
+			th:readonly="${field.readOnly}" 
+			th:class="${field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  
+			data-width="100%"
+			/>	
+	<script>
+	
+	$('#[[${field.entity.entityName + field.fieldName}]]').bootstrapToggle({
+	      on: '[[${field.meta.label()}]]',
+	      off: 'Não [[${field.meta.label()}]]'
+	    });
+	
+	</script>
 </div>
 
 

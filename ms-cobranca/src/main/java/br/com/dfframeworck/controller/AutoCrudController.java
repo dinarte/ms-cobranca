@@ -2,11 +2,14 @@ package br.com.dfframeworck.controller;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,10 +26,12 @@ import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudPagination;
 import br.com.dfframeworck.autocrud.components.AutoCrudHelper;
 import br.com.dfframeworck.exception.ErroException;
+import br.com.dfframeworck.exception.ValidacaoException;
 import br.com.dfframeworck.messages.SucessMsg;
 import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
-import br.com.dfframeworck.util.ObjectToMap;
+import br.com.dfframeworck.util.SerializationException;
+import br.com.dfframeworck.util.SerializationUtils;
 import br.com.dfframeworckservice.AutoCrudService;
 import br.com.eflux.comum.domain.Pessoa;
 /**
@@ -44,6 +49,30 @@ public class AutoCrudController {
 	@Autowired
 	AutoCrudHelper helper;
 	
+	@Autowired
+	ApplicationContext context;
+		
+	
+	
+	/**
+	 * Carrega o been de customização do Auto Crud para a entidade em questão, caso não haja, retorna um customaizer padrão.
+	 * @param type
+	 * @return
+	 */
+	private AutoCrudControllerCustomizer getCustomizer(Class<?> type){
+		
+		AutoCrudControllerCustomizer customizer = (AutoCrudControllerCustomizer) 
+				context.getBeansWithAnnotation(Customizer.class)
+				.values()
+				.stream()
+				.filter(bean->bean.getClass().getDeclaredAnnotation(Customizer.class).value().equals(type))
+				.findFirst()
+				.orElse(new AutoCrudControllerCustomizer());
+		
+		return customizer;
+				
+	}
+	
 
 	/**
 	 * Exibe uma página com a listagem dos registros encontrados referentes 
@@ -52,19 +81,32 @@ public class AutoCrudController {
 	 * @param model
 	 * @return
 	 * @throws ErroException
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	@Functionality(isPublic=false, name="Listar", menu="none")
 	@RequestMapping("/crud/{entity}")
-	public String index(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException {
+	public String index(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException, InstantiationException, IllegalAccessException {
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
 		processListing(entity, model, request, crudEntity);
-		return getIndexView();
+		return getCustomizer(crudEntity.getType()).getIndexView();
 	}
 
-
-
 	private void processListing(String entity, Model model, HttpServletRequest request, AutoCrudEntity crudEntity) {
-		List<String> filters = helper.processFilters(crudEntity, request);
+		processListing(entity, model, request, crudEntity, false);
+	}
+	
+	private void processListingNoFilter(String entity, Model model, HttpServletRequest request, AutoCrudEntity crudEntity) {
+		processListing(entity, model, request, crudEntity, true);
+	}
+
+	private void processListing(String entity, Model model, HttpServletRequest request, AutoCrudEntity crudEntity, boolean noFilter) {
+		
+		List<String> filters = new ArrayList<String>();
+		
+		if (!noFilter)		
+			filters = helper.processFilters(crudEntity, request);
+		
 		String page = request.getParameter("page");
 		String size = request.getParameter("size");
 		AutoCrudPagination pagination = new AutoCrudPagination(page, size );
@@ -74,8 +116,9 @@ public class AutoCrudController {
 		
 		AutoCrudData autoCrudData = new AutoCrudData();
 		autoCrudData.setEntity(crudEntity);
-		autoCrudData.parseData(entityList);
 		autoCrudData.setPagination(pagination);
+		getCustomizer(crudEntity.getType()).addActions(autoCrudData.getActions());
+		autoCrudData.parseData(entityList);
 		
 		model.addAttribute("autoCrudData", autoCrudData);
 	}
@@ -89,13 +132,15 @@ public class AutoCrudController {
 	 * @param model
 	 * @return
 	 * @throws ErroException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	@Functionality(isPublic=false, name="Selecionar", menu="none")
 	@RequestMapping("/crud/{entity}/{id}")
-	public String select(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model) throws ErroException {
+	public String select(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model) throws ErroException, InstantiationException, IllegalAccessException {
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity, crudService.findOne(entity, id));
 		model.addAttribute("autoCrudEntity", crudEntity);
-		return getFormView();
+		return getCustomizer(crudEntity.getType()).getFormView();
 	}
 	
 	
@@ -107,13 +152,16 @@ public class AutoCrudController {
 	 * @param model
 	 * @return
 	 * @throws ErroException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
 	@Functionality(isPublic=false, name="Adicionar", menu="none")
 	@RequestMapping("/crud/{entity}/add")
-	public String add(@PathVariable("entity") String entity, Model model) throws ErroException {
+	public String add(@PathVariable("entity") String entity, Model model) throws ErroException, InstantiationException, IllegalAccessException {
+	
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
 		model.addAttribute("autoCrudEntity",crudEntity);
-		return getFormView();
+		return getCustomizer(crudEntity.getType()).getFormView();
 	}
 	
 	
@@ -128,16 +176,22 @@ public class AutoCrudController {
 	 * @throws IOException 
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws SerializationException 
 	 */
 	@Functionality(isPublic=false, name="Savlar", menu="none")
 	@RequestMapping(path="/crud/{entity}/save", method=RequestMethod.POST)
 	@SucessMsg
-	public String save(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException, JsonParseException, JsonMappingException, IOException {
+	public String save(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException, 
+		IOException, InstantiationException, IllegalAccessException, SerializationException {
+		
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
 		Object obj =  helper.processEntityObject(crudEntity, request);
 		crudService.save((Persistable<?>)obj);
-		processListing(entity, model, request, crudEntity);
-		return getIndexView();
+		processListingNoFilter(entity, model, request, crudEntity);
+		return getCustomizer(crudEntity.getType()).getIndexView();
+		
 	}
 	
 	
@@ -151,43 +205,33 @@ public class AutoCrudController {
 	 * @throws IOException 
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws ValidacaoException 
+	 * @throws SerializationException 
 	 */
+	@SuppressWarnings("unchecked")
 	@Functionality(isPublic=false, name="Remover", menu="none")
 	@RequestMapping(path="/crud/{entity}/{id}/del")
 	@SucessMsg
-	public String del(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model, HttpServletRequest request) throws ErroException, JsonParseException, JsonMappingException, IOException {
+	public String del(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model, HttpServletRequest request) 
+		throws ErroException, InstantiationException, IllegalAccessException, ValidacaoException, SerializationException {
+		
+		
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
 		request.setAttribute(entity+".id", id);
 		Migrable<Long> obj =  (Migrable<Long>) helper.processEntityObject(crudEntity, request);
 		obj.setId(id);
 		obj = (Migrable<Long>) crudService.findOne(entity, id);
-		crudService.remover((Persistable<?>)obj);
+		try {
+			crudService.remover((Persistable<?>)obj);
+		}catch (DataIntegrityViolationException e) {
+			throw new ValidacaoException("Impossível remover este registro, pois ele ainda está sendo referenciado pelo sistema");
+		}{
+			
+		}
 		processListing(entity, model, request, crudEntity);
-		return getIndexView();
+		return getCustomizer(crudEntity.getType()).getIndexView();
 	}
-	
-	
-	
-	/**
-	 * Retorna a view padrão para a istagem do Auto Crud
-	 * @return
-	 */
-	protected String getIndexView(){
-		return "/auto_crud/listar";
-	}
-	
-	/**
-	 * Retorna a view padrão do formulário de adição / edição do AutoCrud
-	 * @return
-	 */
-	protected String getFormView(){
-		return "/auto_crud/form";
-	}
-
-	
-	public static void main(String[] args) {
-		System.out.println(ObjectToMap.toMap(new Pessoa()));
-	}
-	
 	
 }

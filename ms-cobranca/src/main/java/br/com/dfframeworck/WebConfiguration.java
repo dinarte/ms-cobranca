@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -19,6 +20,7 @@ import br.com.dfframeworck.security.SecurityInterception;
 @Configuration
 @EntityScan("br.com.*")  
 @ComponentScan("br.com.*")
+@EnableJpaRepositories("br.com.*")
 public class WebConfiguration implements WebMvcConfigurer{
 
 	@Autowired FirstUserInterception firstUser;

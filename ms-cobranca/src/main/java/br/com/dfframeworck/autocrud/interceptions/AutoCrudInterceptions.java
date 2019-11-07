@@ -14,7 +14,7 @@ import br.com.dfframeworck.controller.AutoCrudLookUpFinder;
 public class AutoCrudInterceptions implements HandlerInterceptor {
 	
 	@Autowired
-	AutoCrudLookUpFinder lookApFinder;
+	AutoCrudLookUpFinder lookUpFinder;
 	
 	
 	@Override
@@ -32,7 +32,7 @@ public class AutoCrudInterceptions implements HandlerInterceptor {
 	  HttpServletResponse response,
 	  Object handler, 
 	  ModelAndView modelAndView) throws Exception {
-		request.setAttribute("lookApFinder", lookApFinder);
+		request.setAttribute("lookUpFinder", lookUpFinder);
 	}
 
 }

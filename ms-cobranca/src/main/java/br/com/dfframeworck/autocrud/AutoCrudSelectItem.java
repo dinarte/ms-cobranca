@@ -27,6 +27,12 @@ public class AutoCrudSelectItem {
 		this.label = label;
 	}
 
+	public Object getData() {
+		return id;
+	}
 	
+	public String getValue() {
+		return label;
+	}
 
 }

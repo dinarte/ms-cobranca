@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -27,8 +28,8 @@ import br.com.eflux.comum.domain.Pessoa;
  */
 @Entity
 @Table(schema="empreendimento", name="incorporadora")
-@AutoCrud(name="Incoirporadoras", description="Gerencias Incoorporadoras", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Incoirporadoras", menu="root->Empreendimentos->incorporadora"))
+@AutoCrud(name="Incorporadoras", description="Gerenciar Incoorporadoras", 
+funtionality=@Functionality(isPublic=false, name="Gerenciar Incorporadoras", menu="root->Empreendimentos->incorporadora", icon="fa fa-industry"))
 public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 	
 	@Id
@@ -49,6 +50,12 @@ public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 	@JoinColumn(name="original_id")
 	private String originalId;
 
+	@Transient 
+	public String getNome() {
+		if (pessoa != null)
+			return pessoa.getNome();
+		return "#"+id;
+	}
 	
 	public Long getId() {
 		return id;
@@ -85,4 +92,6 @@ public class Incorporadora implements Persistable<Long>, Migrable<Long>{
 			return super.toString();
 		return pessoa.getNome();
 	}
+	
+
 }

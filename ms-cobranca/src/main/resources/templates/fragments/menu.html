@@ -25,6 +25,9 @@
                                 <li>
                                     <a href="/funcionalidades"> Funcinalidades </a>
                                 </li>
+                                <li>
+                                    <a href="/doc/index.html"> Java Doc </a>
+                                </li>
                             </ul>
                             
                         </li>
@@ -37,11 +40,11 @@
                             <ul th:if="${#lists.size(node.children)}>0" class="nav nav-second-level">
                                 <li th:each="node2 : ${node.children}">
                                     
-                                    <a th:href="${node2.item.path}"><i th:class="${node2.item.icon}"></i>[[${node2.item.name}]] <span th:if="${#lists.size(node2.children)}>0" class="fa arrow"></span></a>
+                                    <a th:href="${node2.item.path}"><i th:class="${node2.item.icon}"></i> [[${node2.item.name}]] <span th:if="${#lists.size(node2.children)}>0" class="fa arrow"></span></a>
                                     
                                     	<ul th:if="${#lists.size(node2.children)}>0" class="nav nav-third-level">
 		                                <li th:each="node3 : ${node2.children}">
-		                                    <a th:href="${node3.item.path}"><i th:class="${node3.item.icon}"></i>[[${node3.item.name}]] <span th:if="${#lists.size(node3.children)}>0" class="fa arrow"></span></a>
+		                                    <a th:href="${node3.item.path}"><i th:class="${node3.item.icon}"></i> [[${node3.item.name}]] <span th:if="${#lists.size(node3.children)}>0" class="fa arrow"></span></a>
 		                                </li>
 		                            </ul>
                                 </li>

@@ -1,6 +1,5 @@
 package br.com.dfframeworck.autocrud.components;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudField;
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.exception.ErroException;
-import br.com.dfframeworck.util.ObjectToMap;
+import br.com.dfframeworck.util.SerializationException;
+import br.com.dfframeworck.util.SerializationUtils;
 import br.com.dfframeworckservice.AutoCrudService;
 
 @Component
@@ -59,7 +57,7 @@ public class AutoCrudHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object processEntityObject(AutoCrudEntity crudEntity, HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException{
+	public Object processEntityObject(AutoCrudEntity crudEntity, HttpServletRequest request) throws SerializationException {
 		
 		Map<String, Object> data = new HashMap<>();
 		
@@ -68,13 +66,13 @@ public class AutoCrudHelper {
 			.stream()
 			.filter(k -> k.contains(crudEntity.getEntityName()+"."))
 			.forEach(k -> {
-			
+				System.out.println(k);
 				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
 					
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
 					System.out.println(field.getFieldName());
 					Object value =  request.getParameter(k);
-					if (field.isLookUp() && !field.getType().isEnum()) {
+					if (field.isLookUp()) {
 						value = new HashMap<String, Object>();
 						((HashMap<String,Object>)value).put("id", request.getParameter(k));
 					}
@@ -84,29 +82,35 @@ public class AutoCrudHelper {
 				
 			});
 		
-		return ObjectToMap.toObject(data, crudEntity.getType());
+		return SerializationUtils.toObject(data, crudEntity.getType());
 	}
 
 	
-	public AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta) {
-		return getAutoCrudEntity(entity, meta, null);
+	public AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta) throws InstantiationException, IllegalAccessException {
+		return getAutoCrudEntity(entity, meta, meta.getJavaType().newInstance());
 	}
 	
 	
-	public AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta, Object obj) {
+	public AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta, Object obj) throws InstantiationException, IllegalAccessException {
 		AutoCrudEntity crudEntity = new AutoCrudEntity();
 		crudEntity.setEntityName(entity);
 		crudEntity.setType(meta.getJavaType());
 		crudEntity.setFields(new ArrayList<AutoCrudField>());
+		crudEntity.setObj((Persistable<?>) obj);
 		
 		meta.getAttributes().forEach( atribute -> {
 			AutoCrudField field = new AutoCrudField();
 			field.setType(atribute.getJavaType());
 			field.setFieldName(atribute.getName());
-			field.setEntity(crudEntity);;
+			field.setEntity(crudEntity);
+			
 			if (Objects.nonNull(obj)) {
 				Map<String, Object> data = new HashMap<String, Object>();
-				data = ObjectToMap.toMap(obj);
+				try {
+					data = SerializationUtils.toMap(obj);
+				} catch (SerializationException e) {
+					throw new RuntimeException(e);
+				}
 				field.setValue(data.get(field.getFieldName()));
 			}
 			
@@ -116,12 +120,14 @@ public class AutoCrudHelper {
 	}
 
 
-	public AutoCrudEntity constructCrudEntity(String entity) throws ErroException {
+	public AutoCrudEntity constructCrudEntity(String entity) throws ErroException, InstantiationException, IllegalAccessException {
 		return constructCrudEntity(entity, null);
 	}
 
-	public AutoCrudEntity constructCrudEntity(String entity, Object obj) throws ErroException {
+	public AutoCrudEntity constructCrudEntity(String entity, Object obj) throws ErroException, InstantiationException, IllegalAccessException {
 		EntityType<?> meta = validateIsAutoCrudEnabledAndReturnEntity(entity);
+		if (Objects.isNull(obj))
+			obj = meta.getJavaType().newInstance();
 		AutoCrudEntity crudEntity = getAutoCrudEntity(entity, meta, obj);
 		return crudEntity;
 	}

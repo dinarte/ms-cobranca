@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
 	<wb-module deploy-name="ms-cobranca">
 		<property name="context-root" value="ms-cobranca"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
@@ -6,6 +7,7 @@
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/financeiro"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/empreendimento"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/comum"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/config"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/payments"/>
 	</wb-module>
 </project-modules>

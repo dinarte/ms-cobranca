@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -42,6 +43,10 @@ public class Pessoa implements Persistable<Long>, Migrable<Long>{
 			@Parameter(name = "sequence_name", value = "comum.pessoa_seq") })
 	@Column(name = "id_pessoa", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
+	
+	@Enumerated(EnumType.STRING)
+	@EnableAutoCrudField(label="Tipo", enableForFilter=true, enableForList=true, ordinal=0)
+	private TipoPessoaEnum tipoPessoa;
 
 	@EnableAutoCrudField(label="Nome", enableForFilter=true, enableForList=true, ordinal=1)
 	@Column(name = "nome", nullable = false)
@@ -117,7 +122,7 @@ public class Pessoa implements Persistable<Long>, Migrable<Long>{
 	private String bairro;
 
 	@EnableAutoCrudField(label="Município", lookUpFieldName="nome", ordinal=18)
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "municipio_id")
 	private Municipio municipio;
 
@@ -198,6 +203,14 @@ public class Pessoa implements Persistable<Long>, Migrable<Long>{
 
 	public void setPaisNascimento(Pais paisNascimento) {
 		this.paisNascimento = paisNascimento;
+	}
+	
+	public TipoPessoaEnum getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(TipoPessoaEnum tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
 	}
 
 	public String getCpf() {

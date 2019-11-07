@@ -15,6 +15,8 @@ import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
 import br.com.eflux.comum.domain.Pessoa;
 
@@ -26,8 +28,8 @@ import br.com.eflux.comum.domain.Pessoa;
 @Entity
 @Table(schema="empreendimento", name="unidade")
 @AutoCrud(name="Unidades", description="Lotes, Casas, Apartamentos, etc...", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Unidades", menu="root->Empreendimentos->unidades"))
-public class Unidade implements Persistable<Long>{
+funtionality=@Functionality(isPublic=false, name="Gerenciar Unidades", menu="root->Empreendimentos->unidades", icon="fa fa-th"))
+public class Unidade implements Persistable<Long>, Migrable<Long>{
 	
 	@Id
 	@GeneratedValue(generator = "unidadeGenerator")
@@ -36,39 +38,53 @@ public class Unidade implements Persistable<Long>{
 	@Column(name = "id_unidade", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
+	@ManyToOne
+	@JoinColumn(name="id_zona")
+	@EnableAutoCrudField(label="Zona", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="nome")
+	private Zona zona;
+	
 	/**
 	 * Nome da unidade em questão, pode ser por exempo o número do lote L-01, ou o número de um apartamento 302, etc...
 	 */
+	@EnableAutoCrudField(label="Nome", enableForFilter=true, enableForList=true, ordinal=2)
 	@Column(name = "nome", unique = false, nullable = false, insertable = true, updatable = true, length=80)
 	private String nome;
 	
 	/**
 	 * Descrição das características da unidade, como por exemplo: casa com 2 quartos, etc..  
 	 */
+	@EnableAutoCrudField(label="Descrição", enableForList=true, ordinal=3)
 	@Column(name = "descricao", unique = false, nullable = true, insertable = true, updatable = true, length=800)
 	private String descricao;
 	
 	/**
 	 * áera da unidade em metros quadrados.
 	 */
+	@EnableAutoCrudField(label="Área", enableForList=true, ordinal=4)
 	@Column(name = "area", unique = false, nullable = true, insertable = true, updatable = true)
 	private Double area;
 	
 	/**
 	 * Seequencial imobiliário da unidade 
 	 */
+	@EnableAutoCrudField(label="Sequencial Imobiliário", ordinal=5)
 	@Column(name = "sequencial_imobiliario", unique = false, nullable = true, insertable = true, updatable = true, length=80)
 	private String sequancialImobiliario;
 	
+	@EnableAutoCrudField(label="Matrícula", ordinal=6)
 	@Column(name = "matricula", unique = false, nullable = true, insertable = true, updatable = true, length=80)
 	private String matricula;
 	
 	/**
 	 * Preenchido com a pessoa que recebeu o imóvel em caso de permuta.
 	 */
+	@EnableAutoCrudField(label="Permuta", ordinal=7)
 	@ManyToOne
 	@JoinColumn(name="id_pessoa_permulta")
 	private Pessoa pessoaPermulta;
+	
+	@Column(name="original_id")
+	private String originalId;
 
 	
 	
@@ -131,6 +147,27 @@ public class Unidade implements Persistable<Long>{
 	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
+	}
+
+	public Zona getZona() {
+		return zona;
+	}
+
+	public void setZona(Zona zona) {
+		this.zona = zona;
+	}
+
+	public String getOriginalId() {
+		return originalId;
+	}
+
+	public void setOriginalId(String originalId) {
+		this.originalId = originalId;
+	}
+	
+	@Override
+	public String toString() {
+		return nome;
 	}
 	
 }

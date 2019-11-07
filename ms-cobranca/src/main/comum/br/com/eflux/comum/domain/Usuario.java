@@ -23,7 +23,8 @@ import br.com.dfframeworck.security.Functionality;
  */
 @Entity
 @Table(schema="comum", name="usuario")
-@AutoCrud(name="Usuário", description="Usuários do sistema", funtionality=@Functionality(isPublic=false, name="Usuários", menu="root->Configurações->usuario"))
+@AutoCrud(name="Usuário", description="Usuários do sistema", 
+funtionality=@Functionality(isPublic=false, name="Usuários", menu="root->Configurações->usuario", icon="fa fa-users"))
 public class Usuario implements Persistable<Long> {
 
 	@Id
@@ -126,5 +127,10 @@ public class Usuario implements Persistable<Long> {
 	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

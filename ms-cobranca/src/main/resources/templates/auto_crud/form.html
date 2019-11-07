@@ -29,13 +29,13 @@
             
             
             		<input 
-					th:name="id" 
+					th:name="${autoCrudEntity.entityName+'.id'}" 
 					type="hidden" 
 					th:value="${autoCrudEntity.getField('id').value}" 
 					class="form-control"  />
             
             		<div class="row" th:each="field : ${autoCrudEntity.fieldsOnCreate}">
-            			<div class="col-lg-4">
+            			<div class="col-lg-8">
 			            	<div class="form-group">
 			            		<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
 			            	</div>
@@ -43,7 +43,7 @@
 	            	</div>
 	            	
 	            	<div class="row" >
-		            	<div class="col-lg-2">
+		            	<div class="col-lg-6">
 			            	<div class="form-group">
 			            		<button type="submit" class="btn btn-info btn-block">Salvar</button>
 			            	</div>

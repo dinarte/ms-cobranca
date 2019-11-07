@@ -124,6 +124,9 @@ public class Municipio implements Persistable<Long> , Migrable<Long>{
 		this.originalId = originalId;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return nome;
+	}
 
 }

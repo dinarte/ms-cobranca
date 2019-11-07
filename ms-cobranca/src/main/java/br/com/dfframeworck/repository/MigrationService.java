@@ -91,6 +91,8 @@ public class MigrationService {
 			}else {
 			
 				System.out.println("------------------");
+				System.out.println("LINHA: "+ rowCont);
+				System.out.println("------------------");
 				
 				String[] values = linha.split(";");
 				for (int i=0; i<values.length; i++) {
@@ -105,7 +107,7 @@ public class MigrationService {
 						Method methode = obj.getClass().getDeclaredMethod("set"+firstCharUpper(cols[i]), types[i]);
 						converterUtil.invoke(values[i], types[i], methode, obj);
 					}catch (Exception e) {
-						throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className);
+						throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
 					}
 					
 				}

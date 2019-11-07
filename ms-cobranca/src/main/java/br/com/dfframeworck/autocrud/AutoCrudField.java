@@ -12,7 +12,7 @@ import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 
 public class AutoCrudField {
 	
-	private Map<Class, String> uiDefaultByType;
+	private Map<Class<?>, String> uiDefaultByType;
 	
 	private Map<String, String> uiDefaultByfieldName;
 
@@ -28,14 +28,11 @@ public class AutoCrudField {
 		uiDefaultByType = new HashMap<>();
 		uiDefaultByType.put(boolean.class, "simpleCheckBox");
 		uiDefaultByType.put(Boolean.class, "simpleCheckBox");
-		uiDefaultByType.put(int.class, "inputNumeric");
-		uiDefaultByType.put(Integer.class, "inputNumeric");
-		uiDefaultByType.put(Long.class, "inputNumeric");
 		uiDefaultByType.put(Date.class, "inputCalendar");
 		uiDefaultByType.put(String.class, "inputText");
 		
 		uiDefaultByfieldName = new HashMap<>();
-		uiDefaultByfieldName.put("cpf", "inputCpf");
+		uiDefaultByfieldName.put("email", "inputEmail");
 		uiDefaultByfieldName.put("cnpj", "inputCnpj");
 	}
 	
@@ -43,13 +40,17 @@ public class AutoCrudField {
 		if (getMeta().ui().equals( "default" )){
 			String ui = uiDefaultByType.get(getType());
 			if(Objects.isNull(ui))
-				ui = uiDefaultByfieldName.get(fieldName);
-			if(Objects.isNull(ui))
 				ui = "inputText";
+			
+			String uiName = uiDefaultByfieldName.get(fieldName);
+			
+			if (uiName != null)
+				ui=uiName;
+			
 			if(!type.isPrimitive() && type.isAnnotationPresent(Entity.class))
 				ui = "selectMenu";
 			if(type.isEnum())
-				ui = "selectMenu";
+				ui = "selectEnum";
 			return ui;
 		}
 		return getMeta().ui();
@@ -71,6 +72,15 @@ public class AutoCrudField {
 		return null;
 	}
 	
+	public boolean isReadOnly() {
+		
+		if (Objects.isNull(entity.getObj()))
+			return false;
+		
+		return !entity.getObj().isNew() && getMeta().readOnlyForUpdate();
+		
+	}
+	
 	public int getOrdinal() {
 		return getMeta().ordinal();
 	}
@@ -89,7 +99,9 @@ public class AutoCrudField {
 	}
 	
 	public boolean isLookUp(){
-		return getMeta().lookUpFieldName().length() > 0;
+		if (getMeta()==null)
+			return false;
+		return ((getMeta().lookUpFieldName().length() > 0 && !getType().isEnum()) || getType().isAnnotationPresent(Entity.class));
 	}
 	
 	public Class<?> getType() {

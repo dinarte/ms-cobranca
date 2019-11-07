@@ -30,38 +30,7 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-</head>
 
-<div th:fragment="messages">
-
-<div th:if="${appMessages} != null" style="margin-top: 5px;">
-		  <div th:each="msg : ${appMessages.successList}">
-	        <div class="alert alert-success" >
-	           <span th:text="${msg}"> menssagem do sistema</span>
-	        </div>
-	    </div>
-	 
-	    <div th:each="msg : ${appMessages.infoList}">    
-	        <div class="alert alert-info" >
-	         <span th:text="${msg}"> menssagem do sistema</span>
-	        </div>
-	    </div>
-	        
-	    <div th:each="msg : ${appMessages.warningList}">   
-	        <div class="alert alert-warning">
-	            <span th:text="${msg}"> menssagem do sistema</span>
-	        </div>
-	    </div>
-	        
-	     <div th:each="msg : ${appMessages.errorList}">  
-	        <div class="alert alert-danger">
-	            <span th:text="${msg}"> menssagem do sistema</span>
-	        </div>
-	  	 </div>
-	 </div> 
-</div>
-
-<scriptblock th:fragment="scrptsblock">
 	<!-- jQuery -->
     <script src="/vendor/jquery/jquery.min.js"></script>
 
@@ -77,11 +46,57 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="/dist/js/sb-admin-2.js"></script>
+
+    <!-- Mask Plugin JavaScript -->
+    <script src="/js/jquery.mask.min.js"></script>
+    
+    <!-- Auto Complete Plugin JavaScript -->
+    <script src="/js/jquery.autocomplete.min.js"></script>
+    
+    <!-- Tougle ("Checkbox") Plugin JavaScript -->
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+	
+
+</head>
+
+<div th:fragment="messages">
+
+<div th:if="${appMessages} != null" style="margin-top: 5px;">
+		  <div th:each="msg : ${appMessages.successList}">
+	        <div class="alert alert-success" >
+	           <span th:utext="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	 
+	    <div th:each="msg : ${appMessages.infoList}">    
+	        <div class="alert alert-info" >
+	         <span th:utext="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	        
+	    <div th:each="msg : ${appMessages.warningList}">   
+	        <div class="alert alert-warning">
+	            <span th:utext="${msg}"> menssagem do sistema</span>
+	        </div>
+	    </div>
+	        
+	     <div th:each="msg : ${appMessages.errorList}">  
+	        <div class="alert alert-danger">
+	            <span th:utext="${msg}"> menssagem do sistema</span>
+	        </div>
+	  	 </div>
+	 </div> 
+</div>
+
+<scriptblock th:fragment="scrptsblock">
     
     <script>
     $(function () {
-	  $('[data-toggle="tooltip"]').tooltip()
+	  $('[data-toggle="tooltip"]').tooltip()	  
 	})
+	
+	
 	
 	function formatDate(d) {
     		//alert(d);

@@ -66,6 +66,8 @@ public @interface EnableAutoCrudField {
 	 */
 	public String ui() default "default";
 	
+	public String mask() default "";
+	
 	/**
 	 * Tipo de componente UI que será usado para renderizar o campo no formulário
 	 * @return

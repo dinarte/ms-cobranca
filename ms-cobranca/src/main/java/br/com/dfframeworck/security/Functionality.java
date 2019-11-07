@@ -21,6 +21,6 @@ public @interface Functionality {
 	
 	String menu();
 	
-	String icon() default "fa fa-gears";
+	String icon() default "fa fa-table";
 
 }
