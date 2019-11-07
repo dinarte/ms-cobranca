@@ -14,7 +14,7 @@ import br.com.dfframeworck.repository.MigrationService;
  * @author dinarte
  *
  */
-public class PersistableConverter implements IConverter<Persistable<Long>> {
+public class PersistableMigrationConverter implements IConverter<Persistable<Long>> {
 
 	@Autowired
 	MigrationService mService;
@@ -26,7 +26,7 @@ public class PersistableConverter implements IConverter<Persistable<Long>> {
 		 try {
 			obj = (Persistable<Long>) type.newInstance();
 			Long newValue = mService.getIdByOriginal(type, value);
-			type.getMethod("setId", Long.class).invoke(obj, newValue);
+			type.getMethod("setId", Long.class).invoke(obj, newValue); 
 			
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException("Erros ao converter Entidade: " + e.getMessage());

@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudField;
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.converters.ConverteresProvider;
+import br.com.dfframeworck.converters.IConverter;
 import br.com.dfframeworck.exception.ErroException;
 import br.com.dfframeworck.util.SerializationException;
 import br.com.dfframeworck.util.SerializationUtils;
@@ -30,6 +32,12 @@ public class AutoCrudHelper {
 	@Autowired
 	EntityManager em;
 	
+	@Autowired
+	ConverteresProvider converterProvider;
+	
+	private IConverter<?> getConverter(Class<?> type){
+		return converterProvider.getForForm(type);
+	}
 	
 	public List<String> processFilters(AutoCrudEntity crudEntity, HttpServletRequest request) {
 		
@@ -71,13 +79,19 @@ public class AutoCrudHelper {
 					
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
 					System.out.println(field.getFieldName());
-					Object value =  request.getParameter(k);
-					if (field.isLookUp()) {
-						value = new HashMap<String, Object>();
-						((HashMap<String,Object>)value).put("id", request.getParameter(k));
-					}
-						
-					data.put(field.getFieldName(),  value);
+					Object value; 
+						value = getConverter(field.getType()).parse(request.getParameter(k),field.getType());
+						if (field.isLookUp()) { 
+							value = SerializationUtils.toMap(value);
+						//	((Map) value).remove("new");
+						}	
+						/*
+						 * if (field.isLookUp()) { value = new HashMap<String, Object>();
+						 * ((HashMap<String,Object>)value).put("id",
+						 * getConverter(field.getType()).parse(
+						 * request.getParameter(k),field.getType())); }
+						 */
+					data.put(field.getFieldName(), value);
 				}
 				
 			});

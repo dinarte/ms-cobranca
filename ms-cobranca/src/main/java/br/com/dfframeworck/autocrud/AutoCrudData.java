@@ -3,12 +3,14 @@ package br.com.dfframeworck.autocrud;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 
 import br.com.dfframeworck.util.SerializationUtils;
+import javassist.expr.Instanceof;
 
 public class AutoCrudData {
 
@@ -40,7 +42,8 @@ public class AutoCrudData {
 	public void parseData(List<?> list) {
 		data = new ArrayList<Map<String,Object>>();
 		list.forEach(obj->{ 
-			Map<String,Object> objMap = SerializationUtils.toMap(obj);
+			AutoCrudDataMap objMap = new AutoCrudDataMap();
+			objMap.putAll( SerializationUtils.toMap(obj) );
 			objMap.put("actions", parseActions(objMap.get("id").toString()));
 			data.add(objMap);
 		});

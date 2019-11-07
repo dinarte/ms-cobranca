@@ -12,6 +12,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.repository.Migrable;
@@ -108,6 +110,7 @@ public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 		this.contrato_ativo = contrato_ativo;
 	}
 	
+	@JsonIgnore
 	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);

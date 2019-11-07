@@ -11,7 +11,7 @@
 			th:id="${'_'+field.entity.entityName + field.fieldName}" 
 			type="text" 
 			th:placeholder="${field.meta.label()}"
-			th:value="${field.value}" 
+			th:value="${field.value.get(field.meta.lookUpFieldName())}" 
 			th:readonly="${field.readOnly}"
 			th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  />
 

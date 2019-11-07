@@ -1,12 +1,13 @@
 package br.com.dfframeworck.converters;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
 @Component
-@DataMigrationConverter(types= {BigDecimal.class})
+@DataConverter(types= {BigDecimal.class}, enableForForm=true, enableForMigration=true)
 public class BigDecimalConverter implements IConverter<BigDecimal> {
 
 	
@@ -21,8 +22,34 @@ public class BigDecimalConverter implements IConverter<BigDecimal> {
 			return null;
 		}		
 		else {
-			return BigDecimal.valueOf(Double.valueOf(value));
+			try {
+				return tryUsType(value);
+			}catch (Exception e) {
+				try {
+					return tryBrType(value);
+				} catch (Exception e2) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
+				}
+			}	
 		}
+		
+	}
+	
+	private BigDecimal tryUsType(String value) {
+			return BigDecimal.valueOf(Double.valueOf(value));
+	}
+	
+	private BigDecimal tryBrType(String value) throws ParseException {
+		value = value.replace(".", "").replace(",", ".");
+		return tryUsType(value);
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		BigDecimalConverter converter = new BigDecimalConverter();
+		System.out.println(converter.parse("58.400,00", BigDecimal.class));
 	}
 	
 }
+
+

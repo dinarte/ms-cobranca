@@ -5,10 +5,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Habilita o conversor para ser utilizado na interpretação da migração de dados
+ * @author Dinarte
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface DataMigrationConverter {
+public @interface DataConverter  {
 
 	public Class<?>[] types();
+	public boolean enableForMigration() default true;
+	public boolean enableForForm() default false;
 	
 }

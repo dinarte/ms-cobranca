@@ -16,6 +16,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Correcao que foi aplicada na parcela (memória de calculo)
  * @author dinarte
@@ -84,6 +86,7 @@ public class DebitoCorrecao implements Persistable<Long>{
 		this.correcao = correcao;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);

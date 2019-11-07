@@ -20,6 +20,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.domain.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
@@ -188,6 +189,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 		this.descricao = descricao;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);

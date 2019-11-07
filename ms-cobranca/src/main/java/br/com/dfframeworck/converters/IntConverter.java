@@ -3,7 +3,7 @@ package br.com.dfframeworck.converters;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataMigrationConverter(types= {Integer.class, int.class})
+@DataConverter(types= {Integer.class, int.class})
 public class IntConverter  implements IConverter<Integer>{
 
 	@Override

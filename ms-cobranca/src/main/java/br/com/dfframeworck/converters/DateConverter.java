@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataMigrationConverter(types= {Date.class})
+@DataConverter(types= {Date.class})
 public class DateConverter implements IConverter<Date> {
 
 	@Override
@@ -22,6 +22,14 @@ public class DateConverter implements IConverter<Date> {
 			return null;
 		}		
 		else {
+			
+			try {
+				return new Date( Long.parseLong(value) );
+			} catch (Exception e) {
+				//NADA POR FAZER
+			}
+			
+			
 			SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 				return formato.parse(value);
@@ -29,6 +37,12 @@ public class DateConverter implements IConverter<Date> {
 				throw new RuntimeException(e.getMessage());
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		 
+		System.out.println(new DateConverter().parse("1573142631708", Date.class));
+		
 	}
 
 }

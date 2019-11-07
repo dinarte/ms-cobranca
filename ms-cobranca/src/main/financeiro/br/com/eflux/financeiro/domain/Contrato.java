@@ -13,10 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
@@ -50,7 +53,7 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Unidade negociada no contrato
 	 */
-	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2, readOnlyForUpdate=true, lookUpFieldName="nome")
 	@ManyToOne
 	@JoinColumn(name="id_unidade", nullable=false)
 	private Unidade unidade;
@@ -103,7 +106,7 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Determina em que situação o contrato em questão se encontra
 	 */
-	@EnableAutoCrudField(label="Situação", enableForList=true, ordinal=9)
+	@EnableAutoCrudField(label="Situação", enableForList=true, ordinal=9, lookUpFieldName="nome")
 	@ManyToOne
 	@JoinColumn(name="id_situacao_contrato", nullable=false)
 	private SituacaoContrato situacaoContrato;
@@ -217,7 +220,6 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 		this.natureza = natureza;
 	}
 	
-	@Override
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}

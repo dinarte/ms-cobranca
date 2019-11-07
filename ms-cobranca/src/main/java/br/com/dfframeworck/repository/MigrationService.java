@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.dfframeworck.converters.ConverterUtil;
+import br.com.dfframeworck.converters.ConverteresProvider;
 import br.com.dfframeworck.exception.ValidacaoException;
 import br.com.dfframeworck.util.PackageUtils;
 
@@ -30,7 +31,7 @@ public class MigrationService {
 	EntityManager em;
 	
 	@Autowired
-	ConverterUtil converterUtil;
+	ConverteresProvider converterProvider;
 
 	public Long countEntity(Class<?> entity) {
 		return (long) em.createQuery( "select count(*) from "+entity.getSimpleName() ).getSingleResult();
@@ -39,6 +40,13 @@ public class MigrationService {
 	public Long getIdByOriginal(Class<?> entity, String originalId) {
 		return (long) em.createQuery( "select id from  "+entity.getSimpleName() + " where originalId = :originalId" )
 				.setParameter("originalId", originalId.toString())
+				.getSingleResult();
+	}
+	
+	
+	public Object findOne(Class<?> entity, Long id) {
+		return  em.createQuery( "from  "+entity.getSimpleName() + " where id = :id" )
+				.setParameter("id", id)
 				.getSingleResult();
 	}
 	
@@ -105,14 +113,13 @@ public class MigrationService {
 					
 					try {
 						Method methode = obj.getClass().getDeclaredMethod("set"+firstCharUpper(cols[i]), types[i]);
-						converterUtil.invoke(values[i], types[i], methode, obj);
+						converterProvider.invokeForMigration(values[i], types[i], methode, obj);
 					}catch (Exception e) {
 						throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
 					}
 					
 				}
 				
-				@SuppressWarnings("unchecked")
 				Persistable<Long> persistable = (Persistable<Long>) obj;
 				try {
 					persistir(persistable);

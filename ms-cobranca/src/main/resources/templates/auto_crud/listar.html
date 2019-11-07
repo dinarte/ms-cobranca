@@ -82,9 +82,9 @@
 	             			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
 	             			
 	             			
-	             			<td th:if="${!field.lookUp}"  th:text="${item.get(field.fieldName)}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${item.get(field.fieldName).get(field.meta.lookUpFieldName())}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${item.get(field.fieldName)}">Campo</td>
+	             			<td th:if="${!field.lookUp}"  th:text="${{item.getFormated(field)}}">Campo</td>
+	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${{item.get(field.fieldName).get(field.meta.lookUpFieldName())}}">Campo</td>
+	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${{item.getFormated(field)}}">Campo</td>
 	             			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
 	             			
 	             			</th:block>

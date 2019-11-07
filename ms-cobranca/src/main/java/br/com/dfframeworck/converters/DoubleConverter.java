@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataMigrationConverter(types= {Double.class})
+@DataConverter(types= {Double.class})
 public class DoubleConverter implements IConverter<Double> {
 
 	

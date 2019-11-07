@@ -3,7 +3,7 @@ package br.com.dfframeworck.converters;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataMigrationConverter(types={Long.class})
+@DataConverter(types={Long.class})
 public class LongConverter  implements IConverter<Long>{
 
 	@Override
