@@ -50,6 +50,10 @@ public class MigrationService {
 				.getSingleResult();
 	}
 	
+	public void deleteEntity(String entity) {
+		em.createQuery("delete from "+entity).executeUpdate();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void persistir(Persistable<Long> obj) {
 		((Migrable<Long>) obj).setOriginalId(obj.getId().toString());
@@ -87,10 +91,10 @@ public class MigrationService {
 				types = new Class<?>[cols.length];
 				for(int i = 0; i < cols.length; i++) {
 					try {
-						types[i] = 	obj.getClass().getMethod("get" +  firstCharUpper(cols[i].trim()), null).getReturnType();
+						types[i] = 	obj.getClass().getMethod("get" +  converterProvider.firstCharUpper(cols[i].trim()), null).getReturnType();
 					} catch (NoSuchMethodException e) {
 						try {
-							types[i] = 	obj.getClass().getMethod("is" + firstCharUpper(cols[i].trim()), null).getReturnType();
+							types[i] = 	obj.getClass().getMethod("is" + converterProvider.firstCharUpper(cols[i].trim()), null).getReturnType();
 						} catch (NoSuchMethodException e1) {
 							throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível localizar a coluna " + cols[i] + " na entidade " +className);
 						}
@@ -112,8 +116,7 @@ public class MigrationService {
 					System.out.println("; ");
 					
 					try {
-						Method methode = obj.getClass().getDeclaredMethod("set"+firstCharUpper(cols[i]), types[i]);
-						converterProvider.invokeForMigration(values[i], types[i], methode, obj);
+						converterProvider.invokeForMigration(values[i], types[i], cols[i], obj);
 					}catch (Exception e) {
 						throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
 					}
@@ -135,10 +138,6 @@ public class MigrationService {
 		}
 		
 		System.out.println( file.getName() +" - "+ file.getContentType() );
-	}
-
-	public String firstCharUpper(String str) {
-		return str.trim().replace(" ", "").substring(0, 1).toUpperCase() + str.substring(1);
 	}
 	
 }

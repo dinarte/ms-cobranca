@@ -12,7 +12,7 @@ import br.com.dfframeworck.repository.MigrationService;
  * @author dinarte
  *
  */
-@DataConverter(types= {Persistable.class}, enableForForm=true, enableForMigration=false)
+@EnableDataConver(types= {Persistable.class}, enableForForm=true, enableForMigration=false)
 public class PersistableFormConverter implements IConverter<Persistable<?>> {
 
 	@Autowired

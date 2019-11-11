@@ -7,7 +7,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataConverter(types= {BigDecimal.class}, enableForForm=true, enableForMigration=true)
+@EnableDataConver(types= {BigDecimal.class}, enableForForm=true, enableForMigration=true)
 public class BigDecimalConverter implements IConverter<BigDecimal> {
 
 	

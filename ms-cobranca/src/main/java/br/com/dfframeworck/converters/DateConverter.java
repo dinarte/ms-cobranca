@@ -8,7 +8,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
-@DataConverter(types= {Date.class})
+@EnableDataConver(types= {Date.class}, enableForForm=true, enableForMigration=true)
 public class DateConverter implements IConverter<Date> {
 
 	@Override
@@ -22,20 +22,46 @@ public class DateConverter implements IConverter<Date> {
 			return null;
 		}		
 		else {
-			
-			try {
-				return new Date( Long.parseLong(value) );
-			} catch (Exception e) {
-				//NADA POR FAZER
-			}
-			
-			
-			SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				return formato.parse(value);
-			} catch (ParseException e) {
-				throw new RuntimeException(e.getMessage());
-			}
+			Date date = tryLong(value);
+			if (Objects.isNull(date))
+				date = tryUsFormat(value);
+			if (Objects.isNull(date))
+				date = tryBrFormat(value);
+			if (Objects.isNull(date))
+				date = tryBrFormatWBar(value);
+			if (Objects.isNull(date))
+				throw new RuntimeException("Não foi possíve converter o valor de "+value+ " pra Date");
+			else
+				return date;
+		}
+	}
+	
+	public Date tryLong(String value) {
+		try {
+			return new Date( Long.parseLong(value) );
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public Date tryUsFormat(String value) {
+		return tryFormat(value, "yyyy-MM-dd");
+	}
+	
+	public Date tryBrFormat(String value) {
+		return tryFormat(value, "dd-MM-yyyy");
+	}
+	
+	public Date tryBrFormatWBar(String value) {
+		return tryFormat(value, "dd/MM/yyyy");
+	}
+	
+	public Date tryFormat(String value, String partner) {
+		SimpleDateFormat formato = new SimpleDateFormat(partner);
+		try {
+			return formato.parse(value);
+		} catch (ParseException e) {
+			return null;
 		}
 	}
 	

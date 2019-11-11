@@ -33,7 +33,7 @@ public class TipoLancamento  implements Persistable<Long>, Migrable<Long>{
 	@GeneratedValue(generator = "tipoLancamentoGenerator")
 	@GenericGenerator(name = "tipoLancamentoGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "empreendimento.situacao_contrato_seq") })
-	@Column(name = "id_situacao_contrato", unique = true, nullable = false, insertable = true, updatable = true)
+	@Column(name = "id_tipo_lancamento", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
 	@EnableAutoCrudField(label="Tipo de Lançamento", enableForFilter=true, enableForList=true, ordinal=1)

@@ -25,7 +25,7 @@ import br.com.dfframeworck.security.Functionality;
  */
 @Entity
 @Table(schema="financeiro", name="situacao_contrato")
-@AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
+@AutoCrud(name="Situação dos Contros", description="Gerenciamento de Situações dos Contratos", 
 funtionality=@Functionality(isPublic=false, name="Situação Contrato", menu="root->Financeiro->Tabelas->situacaoContrato", icon="fa fa-tags"))
 public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 	

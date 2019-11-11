@@ -11,7 +11,8 @@ import br.com.eflux.comum.domain.TipoPessoaEnum;
 import br.com.eflux.financeiro.domain.NaturezaContratoEnum;
 
 @Component
-@DataConverter(types= {EstadoCivilEnum.class, SexoEnum.class, TipoPessoaEnum.class, NaturezaContratoEnum.class, SexoEnum.class, MesEnum.class})
+@EnableDataConver(types= {EstadoCivilEnum.class, SexoEnum.class, TipoPessoaEnum.class, NaturezaContratoEnum.class, SexoEnum.class, MesEnum.class},
+		enableForForm=true, enableForMigration=true)
 public class EnumConverter implements IConverter<Enum>{
 
 	@Override

@@ -41,10 +41,10 @@ public class ConverteresProvider {
 
 
 	private void initConvertersLists() throws ClassNotFoundException {
-		Map<String, Object> convertersBeans = appContext.getBeansWithAnnotation(DataConverter.class);
+		Map<String, Object> convertersBeans = appContext.getBeansWithAnnotation(EnableDataConver.class);
 		
 		convertersBeans.values().forEach(converter -> {
-			DataConverter dataMigrationConverter = converter.getClass().getAnnotation(DataConverter.class);
+			EnableDataConver dataMigrationConverter = converter.getClass().getAnnotation(EnableDataConver.class);
 			Class<?>[] types = dataMigrationConverter.types();
 			if (dataMigrationConverter.enableForMigration())
 				for (Class<?> type : types) {
@@ -83,10 +83,22 @@ public class ConverteresProvider {
 		};
 	}
 
-	public void invokeForMigration(String value, Class<?> type, Method methode, Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void invokeForMigration(String value, Class<?> type, String field, Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if (migrationConverters.get(type) == null)
 			throw new RuntimeException("Não foi possível encontrar um converter para o tipo "+ type.getName());
+		Method methode = obj.getClass().getDeclaredMethod("set"+firstCharUpper(field), type);
 		methode.invoke(obj, migrationConverters.get(type).parse(value, type));
+	}
+	
+	public void invokeForForm(String value, Class<?> type, String field, Object obj) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		if (formConverters.get(type) == null)
+			throw new RuntimeException("Não foi possível encontrar um converter para o tipo "+ type.getName());
+		Method methode = obj.getClass().getDeclaredMethod("set"+firstCharUpper(field), type);
+		methode.invoke(obj, formConverters.get(type).parse(value, type));
+	}
+	
+	public String firstCharUpper(String str) {
+		return str.trim().replace(" ", "").substring(0, 1).toUpperCase() + str.substring(1);
 	}
 
 }

@@ -56,8 +56,19 @@
 											value="Migrar"
 											class="btn btn-primary"
 		                       				data-toggle="tooltip" 
-		                       				data-placement="top">
-		                       			</input>
+		                       				data-placement="top" />
+		                       				
+		                       				
+		                       			<a
+											th:href="${'/migracao/' + clazz.simpleName + '/apagar'}" 
+											class="btn btn-danger"
+		                       				data-toggle="tooltip" 
+		                       				data-placement="top" 
+		                       				title="Apagar todos os dados dessa entdade, atenção só use em caso de necessidade"
+		                       				onclick="return confirm('tem certeza que deseja apagar os dados desta entidade?')">
+		                       				
+		                       			Apagar
+		                       			</a>	
 		             				</div>
 		             			</td>
 		             		</tr>

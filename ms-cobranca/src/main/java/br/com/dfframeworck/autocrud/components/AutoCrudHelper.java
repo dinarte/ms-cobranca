@@ -1,5 +1,6 @@
 package br.com.dfframeworck.autocrud.components;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,6 @@ public class AutoCrudHelper {
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Object processEntityObject(AutoCrudEntity crudEntity, HttpServletRequest request) throws SerializationException {
 		
 		Map<String, Object> data = new HashMap<>();
@@ -83,14 +83,8 @@ public class AutoCrudHelper {
 						value = getConverter(field.getType()).parse(request.getParameter(k),field.getType());
 						if (field.isLookUp()) { 
 							value = SerializationUtils.toMap(value);
-						//	((Map) value).remove("new");
 						}	
-						/*
-						 * if (field.isLookUp()) { value = new HashMap<String, Object>();
-						 * ((HashMap<String,Object>)value).put("id",
-						 * getConverter(field.getType()).parse(
-						 * request.getParameter(k),field.getType())); }
-						 */
+						
 					data.put(field.getFieldName(), value);
 				}
 				
@@ -98,6 +92,35 @@ public class AutoCrudHelper {
 		
 		return SerializationUtils.toObject(data, crudEntity.getType());
 	}
+	
+	
+	public Object processEntityObjectNew(AutoCrudEntity crudEntity, HttpServletRequest request, Object obj) throws SerializationException {
+		
+		Map<String, Object> data = new HashMap<>();
+		
+		request.getParameterMap()
+			.keySet()
+			.stream()
+			.filter(k -> k.contains(crudEntity.getEntityName()+"."))
+			.forEach(k -> {
+				System.out.println(k);
+				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
+					
+					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
+					
+					try {
+						converterProvider.invokeForForm(request.getParameter(k), field.getType(), field.getFieldName(), obj);
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+							| NoSuchMethodException | SecurityException e) {
+						throw new SerializationException("Erro na conversão de valores", e);
+					}
+				}
+				
+			});
+		
+		return obj;
+	}
+	
 
 	
 	public AutoCrudEntity getAutoCrudEntity(String entity, EntityType<?> meta) throws InstantiationException, IllegalAccessException {

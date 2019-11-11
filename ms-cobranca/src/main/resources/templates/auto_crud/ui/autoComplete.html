@@ -1,4 +1,3 @@
-			
 <div th:fragment="ui(field)">			
 	
 	<input	type="hidden"
@@ -11,7 +10,7 @@
 			th:id="${'_'+field.entity.entityName + field.fieldName}" 
 			type="text" 
 			th:placeholder="${field.meta.label()}"
-			th:value="${field.value.get(field.meta.lookUpFieldName())}" 
+			th:value="${field.value != null ? field.value.get(field.meta.lookUpFieldName()) : ''}" 
 			th:readonly="${field.readOnly}"
 			th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  />
 

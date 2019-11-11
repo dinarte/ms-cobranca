@@ -50,7 +50,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@GeneratedValue(generator = "lancamentoGenerator")
 	@GenericGenerator(name = "lancamentoGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "empreendimento.lancamento_seq") })
-	@Column(name = "id_lancamento", unique = true, nullable = false, insertable = true, updatable = true)
+	@Column(name = "id_debito", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
 	@EnableAutoCrudField(label="Número", enableForList=true, ordinal=1, readOnlyForUpdate=true)

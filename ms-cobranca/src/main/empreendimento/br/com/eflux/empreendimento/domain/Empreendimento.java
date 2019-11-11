@@ -27,7 +27,7 @@ import br.com.dfframeworck.security.Functionality;
  *
  */
 @Entity
-@Table(schema="empreendimento", name="emprendimento")
+@Table(schema="empreendimento", name="empreendimento")
 @AutoCrud(name="Emmpreendimento", description="Empreendimentos disponíveis", 
 		funtionality=@Functionality(isPublic=false, name="Gerenciar Empreendimentos", menu="root->Empreendimentos->empreendimento", icon="fa fa-building-o"))
 public class Empreendimento implements Persistable<Long>, Migrable<Long> {

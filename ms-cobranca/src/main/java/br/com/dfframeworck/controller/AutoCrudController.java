@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -187,7 +188,13 @@ public class AutoCrudController {
 		IOException, InstantiationException, IllegalAccessException, SerializationException {
 		
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
-		Object obj =  helper.processEntityObject(crudEntity, request);
+		
+		Object obj = crudEntity.getType().newInstance();
+		String id = request.getParameter(entity+".id");
+		if ( Strings.isNotEmpty( id ) )
+			obj = crudService.findOne(entity, Long.parseLong(id));
+		
+		obj =  helper.processEntityObjectNew(crudEntity, request, obj);
 		crudService.save((Persistable<?>)obj);
 		processListingNoFilter(entity, model, request, crudEntity);
 		return getCustomizer(crudEntity.getType()).getIndexView();

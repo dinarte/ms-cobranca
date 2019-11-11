@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface DataConverter  {
+public @interface EnableDataConver  {
 
 	public Class<?>[] types();
-	public boolean enableForMigration() default true;
-	public boolean enableForForm() default false;
+	public boolean enableForMigration();
+	public boolean enableForForm();
 	
 }

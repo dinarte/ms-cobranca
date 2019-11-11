@@ -13,11 +13,81 @@
         <div id="page-wrapper">
             
 	    	<div class="row">
-	            <div class="col-lg-12">
-	                <h1 class="page-header">Dashboard</h1>
+	            <div class="col-lg-9">
+	                <h1 class="page-header">
+	                <i class="fa fa-dashboard"></i>
+	                Dashboard
+	                </h1>
+	                
+	                
 	            </div>
-	            <!-- /.col-lg-12 -->
+	            <div class="pull-right col-lg-3">
+		            <br />
+		            <br />
+		            
+		            <div class="input-group custom-search-form">
+		            
+		            	<form th:action="@{/home}" th:object="${periodo}" id="form-daterange">
+		            	<input type="hidden" name="periodo" th:field="*{periodo}" id="daterange" th:value="${periodo.periodo}" class="form-control" readonly="readonly" aria-describedby="btnGroupAddon"/>
+		            	<div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+						    <i class="fa fa-calendar"></i>&nbsp;
+						    <span></span> <i class="fa fa-caret-down"></i>
+						</div>
+						</form>
+                        
+                    </div>
+		            
+		            
+	            </div>
 	        </div>
+	     
+	     
+	     	                
+	                <script>
+$(function() {
+
+	var ini = new Date('[[${periodo.getInicioStr("yyyy-MM-dd")}]]');
+	var fim = new Date('[[${periodo.getFimStr("yyyy-MM-dd")}]]');
+
+    var start = moment(ini).add(1, 'days');  //moment().subtract(29, 'days');
+    var end =   moment(fim).add(1, 'days'); //moment();
+   
+
+	function writeData(){
+    	$('#daterange').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'))
+        $('#reportrange span').html(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'));
+	
+	}
+
+    function cb(start, end, label) {
+        writeData();
+        console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        window.location.href= "/home?periodo="+start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY');
+       // $('#form-daterange').submit();
+    }
+    
+    var configure = {
+     
+        startDate: start,
+        endDate: end,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }
+
+    $('#reportrange').daterangepicker(configure, cb);
+
+    writeData();
+
+});
+</script>
+
+	     
 	        
            	<div th:replace="fragments/main :: messages"></div>
            
@@ -30,7 +100,7 @@
                                     <i class="fa fa-users fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge" th:text="${qtdParticipantes}">38</div>
+                                    <div class="huge" th:text="${indicadores.contratosAtivos}">38</div>
                                     <div>Clientes Ativos</div>
                                 </div>
                             </div>
@@ -52,7 +122,7 @@
                                     <i class="fa fa-usd fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge" th:text="${premioEstimado}">R$ 10.500,00</div>
+                                    <div class="huge"><span style="font-size: 28px;" th:text="${#numbers.formatCurrency(indicadores.receitaPrevista)}">10.500,00</span></div>
                                     <div>Receita Prevista</div>
                                 </div>
                             </div>
@@ -74,8 +144,8 @@
                                     <i class="fa fa-trophy fa-5x"></i>
                                 </div>
                                 <div class="col-xs-9 text-right">
-                                    <div class="huge">R$ <span >1340,00</span></div>
-                                    <div><span>1</span>ª  Receita Realizada</div>
+                                    <div class="huge"><span style="font-size: 28px;" th:text="${#numbers.formatCurrency(indicadores.receitaRealizada)}">1340,00</span></div>
+                                    <div>Receita Realizada</div>
                                 </div>
                             </div>
                         </div>
@@ -97,6 +167,7 @@
                                 </div>
                                 <div class="col-xs-9 text-right">
                                     <div class="huge"></div>
+                                    <div class="huge"><span style="font-size: 28px;" th:text="${#numbers.formatCurrency(indicadores.valorVencido)}">1340,00</span></div>
                                     <div>Inadiplencia</div>
                                 </div>
                             </div>
@@ -119,9 +190,42 @@
                    <i class="fa fa-bar-chart-o fa-fw"></i> Receita Realizada
                </div>
                <div class="panel-body">
-                   <div id="morris-area-chart"></div>
+                   <div id="receita-chart"></div>
                </div>
             </div>
+            
+            <script>
+            
+	            /*
+				 * Play with this code and it'll update in the panel opposite.
+				 *
+				 * Why not try some of the options above?
+				 */
+				
+				
+				$(function() {
+					  $.ajax({
+					    type:"GET", 
+					    url: "/home/indicadores-por-empreendimento?periodo="+$('#daterange').val(), 
+					    success: function(m_data) {
+					    		Morris.Bar({
+									  element: 'receita-chart',
+									  data: m_data,
+									  xkey: 'empreendimento',
+									  ykeys: ['contratosAtivos','receitaPrevista', 'receitaRealizada', 'valorVencido'],
+									  labels: ['Ativos', 'Previsto', 'Realizado', 'Vencido'],
+									  barColors: ["blue", "#1AB244", "#B29215", "red"]
+									});
+					    		
+					        }, 
+					    error: function(jqXHR, textStatus, errorThrown) {
+					            alert(jqXHR.status);
+					        },
+					   dataType: "json"
+					});
+				});	
+            
+            </script>
              
             
             <div class="row">
@@ -130,6 +234,8 @@
                         <div class="panel-heading">
                             <i class="fa fa-bar-chart-o fa-fw"></i> Cobranças Vencidas 
                             <div class="pull-right">
+                               
+                               <!-- 
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                         Mais Cobranças
@@ -140,13 +246,44 @@
                                         <li><a href="#">Cobranças a Pagas</a></li>
                                     </ul>
                                 </div>
+                                 -->
                             </div>
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body" style="padding: 10px">
-                            
-                            
-                            <a href="/palpite/consultar" class="btn btn-default btn-block">Ver todas as cobranças</a>
+                        
+	                        	<table class="table">
+	                        	<thead>
+	                        		<tr>
+	                        			<th>Contrato</th>
+	                        			<th>Tipo</th>
+	                        			<th>Número</th>
+	                        			<th>Vencimento</th>
+	                        			<th>Valor Atualizado</th>
+	                        		</tr>
+	                        	</thead>
+	                        	<tbody>
+	                        		<th:block th:each="vencimento : ${vencimentos}">
+		                        		<tr>
+		                        			<td th:text="${vencimento.contrato}" ></td>
+		                        			<td class="text-center" th:text="${vencimento.tipoDebito}"></td>
+		                        			<td class="text-center" th:text="${vencimento.numero}"></td>
+		                        			<td class="text-center"th:text="${#dates.format(vencimento.dataVencimento, 'dd-MM-yyyy')}">dd-MMM-yyyy</td>
+		                        			<td class="text-right" th:text="${#numbers.formatCurrency(vencimento.valorAtualizado)}"></td>
+		                        			
+		                        		</tr>
+	                        		</th:block>
+	                        	</tbody>
+	                        
+	                        	<tfoot>
+	                        		<tr>
+	                        			<td colspan="5">
+	                        				<a href="/consulta/vencimentos" class="btn btn-default btn-block">Ver Tudo</a>
+	                        			</td>
+	                        		</tr>
+	                        	</tfoot>
+	                        
+	                        </table>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -157,7 +294,7 @@
                 <div class="col-lg-4">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-tachometer fa-fw"></i> Top 10 Inadiplentes
+                            <i class="fa fa-tachometer fa-fw"></i> Maiores Inadiplentes
                         </div>
                         <!-- /.panel-heading -->
                         <style>
@@ -166,32 +303,33 @@
 			        	}
 			        	</style>
                         <table class="table">
-                        	<thead>
-                        		<tr>
-                        			<th></th>
-                        			<th>Cliente</th>
-                        			<th>Parcelas</th>
-                        			<th>Total</th>
-                        		</tr>
-                        	</thead>
-                        	<tbody>
-                        		<th:block th:each="participante : ${top10}">
-	                        		<tr th:class="">
-	                        			<td><bage th:if="true" th:text="${'ª'}">1</bage></td>
-	                        			<td th:id="22" ><a th:href="${'/palpite/consultar'}" th:text="${teste'}">Dinarte</a></td>
-	                        			<td th:text="${'5'}">5</td>
-	                        			<td>R$ <span th:text="${'e'}">2.600,00</span></td>
+	                        	<thead>
+	                        		<tr>
+	                        			<th>Contrato</th>
+	                        			<th>Débitos</th>
+	                        			<th>Valor Total</th>
 	                        		</tr>
-                        		</th:block>
-                        	</tbody>
-                        
-                        	<tfoot>
-                        		<tr>
-                        			<td colspan="4">
-                        				<a href="/copaAmerica2019/ranking" class="btn btn-default btn-block">Ver inadiplencia completa</a>
-                        			</td>
-                        		</tr>
-                        	</tfoot>
+	                        	</thead>
+	                        	<tbody>
+	                        		<th:block th:each="inadiplente : ${inadiplentes}">
+		                        		<tr>
+		                        			<td th:text="${inadiplente.contrato}" ></td>
+		                        			<td class="text-center" th:text="${inadiplente.debitos}"></td>
+		                        			<td class="text-right" th:text="${#numbers.formatCurrency(inadiplente.valorAtualizado)}"></td>
+		                        			
+		                        		</tr>
+	                        		</th:block>
+	                        	</tbody>
+	                        
+	                        	<tfoot>
+	                        		<tr>
+	                        			<td colspan="5">
+	                        				<a href="/consulta/vencimentos" class="btn btn-default btn-block">Ver Tudo</a>
+	                        			</td>
+	                        		</tr>
+	                        	</tfoot>
+	                        
+	                        </table>
                         
                         </table>
                         <!-- /.panel-body -->
