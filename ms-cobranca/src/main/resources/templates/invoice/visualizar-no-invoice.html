@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+
+	        	<div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+
+                <div class="col-lg-12">
+                    <h1 class="page-header">Invoice</h1>
+                </div>
+            </div>
+        	
+        	<div class="alert alert-warning" >
+	           <strong> Ainda não foi gerado nenhum invoice para este débito!</strong>
+	        </div>
+   
+   			<table class="table">
+   			
+   				<tr>
+   					<th rowspan="9" class="text-center">[[${debito.tipoLancamento}]] <br /> [[${debito.numero}]] <br /> <br /> [[${debito.situacao}]] </th>
+   					<td colspan="2">
+   						[[${debito.contrato.numeroContrato}]] - [[${debito.contrato.unidade.zona.empreendimento.incorporadora.nome}]] <br />
+   						[[${debito.contrato.pessoa.nome}]] <br />
+   						[[${debito.contrato.unidade.zona.empreendimento.nome}]] - [[${debito.contrato.unidade.zona.nome}]] - [[${debito.contrato.unidade.nome}]]
+   					</td>
+   				<tr>	
+   					<tr>
+	   					<th>Vencimento:</th> 
+	   					<td th:text="${#dates.format(debito.dataVencimento,'dd/MM/yyyy')}" class="text-right">[[${debito.dataVencimento}]]</td>
+	   				</tr>	
+	   				<tr>	
+	   					<th>Original:</th> <td  class="text-right"th:text="${ #numbers.formatCurrency(debito.valorOriginal) }"></td> 
+	   				</tr>	
+	   				<tr>	
+	   					<th>Juros atrazo:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.jurosAtrazo) }"></td>
+	   				</tr>	
+	   				<tr>	
+	   					<th>Multa:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.multaAtrazo) }"></td>
+	   				</tr>
+	   				<tr>	
+	   					<th>Juros Remuneratório:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.jurosRemuneratorio) }">
+	   				</tr>
+	   				<tr>	
+	   					<th>Correção:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.correcao) }"></td> 
+   					</tr>
+   					<tr>	
+	   					<th>Valor Atualizado:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.valorAtualizado) }" style="font-weight: bolder;"></td> 
+   					</tr>
+   			
+   			
+   			</table>
+   
+	        
+	        <div class="alert alert-info" >
+	           
+	           		<strong> Solicite agora a criação deste invoice! </strong>
+	           		<p>
+	           		A criação de invoices é feita através de integração com uma plataforma de cobranças externa que está configurara para criar os invoices automaticamente 
+	           		sempre que estiverem a um certo período próximo do vencimento. Provavelmente, o invoice para este débito ainda não foi criado porque ainda não chegou nesse período. 
+	           		Você pode estar querendo criar este invoice antecipadamente pot algúm motivo, como por exemplo, por solicitação do cliente para pagamento antecipado, se for esse o caso, você pode 
+	           		solicitar a criação deste invoice agora mesmo apenas clicando no botão abaixo!
+	           		<br />
+	           		<br />		
+	           			<div class="row text-center">
+	           				<div class="col-lg-4">
+	           					<a th:href="${'/invoice/'+debito.id+'/criar'}" class="btn btn-info btn-block"> <i class="fa fa-cloud-upload"></i></i> Criar Invoice Agora </a>
+	           				</div>
+	           			</div>
+	           		  
+	           		</p>
+	           
+	        </div>
+        
+        	<h3>Ou</h3>
+        
+        	<div class="alert alert-warning" >
+        	
+        		<strong> Associe este débito a um invoice criado manualmente: </strong>
+        		<p>
+        		É raro, mas pode ser que você tenha invoices que foram criados diretamente na plataforma de cobranças e queira associá-la aos débitos referentes no sistema.  
+        		Você poderá usar  o formulário abaixo para fazer isso, mas lembre-se, esta operação é suceptível a erro humano e é muito aconcelhável que você saiba exatamente o que está fazendo. 
+       
+        		</p>
+        	
+		       	<form th:action="@{/invoice/associar}" method="post">
+		       			
+		       		 <input type="hidden" th:field="${debito.id}">
+		       		 <input type="hidden" name="referer" th:value="${referer}">
+		       	
+		
+		        	  <div class="form-group">
+					    <label for="nome">Token identificador do Invoice:</label>
+					    <input type="text" class="form-control" id="nome" th:field="${debito.invoice.tokenId}">
+					  </div>
+					  <div class="form-group">
+					    <label for="nome">Nosso Número:</label>
+					    <input type="text" class="form-control" id="nome" th:field="${debito.invoice.nossoNumero}">
+					  </div>
+					  <div class="form-group">
+					    <label for="nome">Localização:</label>
+					    <input type="text" class="form-control" id="nome" th:field="${debito.invoice.location}">
+					  </div>				  
+					  
+					  <button type="submit" class="btn btn-info btn-block"> Associar um Invoice </button>
+		       	
+		       	</form>
+		     </div>  	
+            
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

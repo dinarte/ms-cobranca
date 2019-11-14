@@ -32,9 +32,7 @@ import br.com.dfframeworck.messages.SucessMsg;
 import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
 import br.com.dfframeworck.util.SerializationException;
-import br.com.dfframeworck.util.SerializationUtils;
 import br.com.dfframeworckservice.AutoCrudService;
-import br.com.eflux.comum.domain.Pessoa;
 /**
  * Controller responsável por gerenciar as operações de crud de qualquer entidade.. heheheh
  * @author dinarte
@@ -105,15 +103,17 @@ public class AutoCrudController {
 		
 		List<String> filters = new ArrayList<String>();
 		
-		if (!noFilter)		
+		if (!noFilter) {		
 			filters = helper.processFilters(crudEntity, request);
-		
+			getCustomizer(crudEntity.getType()).addfilters(filters);;
+		}
+			
 		String page = request.getParameter("page");
 		String size = request.getParameter("size");
 		AutoCrudPagination pagination = new AutoCrudPagination(page, size );
 		Long count = crudService.count(entity, filters);
 		pagination.setTotalResults(count.intValue());
-		List<?> entityList = crudService.findAll(entity,pagination.getFirstRow(), pagination.getSize(), filters);
+		List<?> entityList = crudService.findAll(entity, crudEntity.getMeta().orderBy(),pagination.getFirstRow(), pagination.getSize(), filters);
 		
 		AutoCrudData autoCrudData = new AutoCrudData();
 		autoCrudData.setEntity(crudEntity);

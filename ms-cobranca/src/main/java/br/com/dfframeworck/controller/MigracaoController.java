@@ -62,7 +62,7 @@ public class MigracaoController {
 	@SucessMsg
 	@RequestMapping("/migracao/{entity}/apagar")
 	@Functionality(name="Apagar", menu="none", isPublic=false)
-    public String delete(@RequestParam("entity") String entity, Model m) throws ClassNotFoundException {
+    public String delete(@PathVariable("entity") String entity, Model m) throws ClassNotFoundException {
     	migrationService.deleteEntity(entity);
     	return index(m);
     	

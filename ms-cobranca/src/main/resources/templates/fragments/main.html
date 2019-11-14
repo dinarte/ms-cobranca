@@ -85,11 +85,11 @@
 	        </div>
 	    </div>
 	        
-	     <div th:each="msg : ${appMessages.errorList}">  
-	        <div class="alert alert-danger">
-	            <span th:utext="${msg}"> menssagem do sistema</span>
-	        </div>
-	  	 </div>
+        <div class="alert alert-danger" th:if="${appMessages.errorList.size() > 0}">
+	        <ul>
+	            <li th:each="msg : ${appMessages.errorList}" th:utext="${msg}"> menssagem do sistema</li>
+	        </ul>
+        </div>
 	 </div> 
 </div>
 

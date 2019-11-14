@@ -65,7 +65,7 @@ public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 	 */
 	@EnableAutoCrudField(label="Contrato Ativo", enableForList=true, ordinal=4)
 	@Column(name = "contrato_ativo", nullable = false, insertable = true, updatable = true)
-	private boolean contrato_ativo;
+	private boolean contratoAtivo;
 	
 	@Column(name="original_id")
 	private String originalId;
@@ -102,12 +102,12 @@ public class SituacaoContrato implements Persistable<Long>, Migrable<Long> {
 		this.disponibilizarUnidade = disponibilizarUnidade;
 	}
 
-	public boolean isContrato_ativo() {
-		return contrato_ativo;
+	public boolean isContratoAtivo() {
+		return contratoAtivo;
 	}
 
-	public void setContrato_ativo(boolean contrato_ativo) {
-		this.contrato_ativo = contrato_ativo;
+	public void setContratoAtivo(boolean contrato_ativo) {
+		this.contratoAtivo = contrato_ativo;
 	}
 	
 	@JsonIgnore

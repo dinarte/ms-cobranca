@@ -170,7 +170,7 @@ public class ApiConsumerBoletoCLoud implements PaymentApiConsumer {
 		ret.put("boleto.documento",d.getContrato().getNumeroContrato().toString().concat(".").concat(d.getNumero().toString()));
 		//ret.put("boleto.sequencial", d.getContrato().getId().toString().concat(d.getId().toString()));
 		ret.put("boleto.titulo","DM");
-		ret.put("boleto.valor",d.getValorOriginal().toString());
+		ret.put("boleto.valor",d.getValorAtualizado().toString());
 		ret.put("boleto.pagador.nome",d.getContrato().getPessoa().getNome());
 		ret.put("boleto.pagador.cprf",d.getContrato().getPessoa().getCpf());
 		ret.put("boleto.pagador.endereco.cep",d.getContrato().getPessoa().getCep());

@@ -52,10 +52,23 @@ public class AutoCrudHelper {
 			
 				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
+					
+					IConverter<?> converter = getConverter(field.getType());					
+					field.setValue(converter.parse(request.getParameter(k), field.getType()));
+					
 					Map<String, String> operatorDetails = AutoCrudService.getOperatorsDetails(field.getType());
-					System.out.println(field.getFieldName());
-					String filter = field.getFieldName() +" "+ operatorDetails.get("operator") + " " + operatorDetails.get("quot").replace("{value}", request.getParameter(k));
-					//System.out.println(filter);
+									
+					String value = field.getValue().toString(); 
+					try {
+						if (field.getType().asSubclass(Persistable.class) != null) {
+							value = ((Persistable<?>)field.getValue()).getId().toString();
+							field.setValue(SerializationUtils.toMap(field.getValue()));
+						}
+					}catch (ClassCastException e) {
+						// NADA PARA FAZER
+					}	
+					
+					String filter = field.getFieldName() +" "+ operatorDetails.get("operator") + " " + operatorDetails.get("quot").replace("{value}", value);
 					filtros.add(filter);
 				}
 				
@@ -65,6 +78,7 @@ public class AutoCrudHelper {
 		
 	}
 	
+	@Deprecated
 	public Object processEntityObject(AutoCrudEntity crudEntity, HttpServletRequest request) throws SerializationException {
 		
 		Map<String, Object> data = new HashMap<>();
@@ -95,9 +109,6 @@ public class AutoCrudHelper {
 	
 	
 	public Object processEntityObjectNew(AutoCrudEntity crudEntity, HttpServletRequest request, Object obj) throws SerializationException {
-		
-		Map<String, Object> data = new HashMap<>();
-		
 		request.getParameterMap()
 			.keySet()
 			.stream()

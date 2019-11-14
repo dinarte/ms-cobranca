@@ -32,81 +32,77 @@
                 </div>
             </div>
             
-            <div class="row">
-            
-            	<form action="#" th:action="@{${'/crud/'+autoCrudData.entity.entityName}}" th:object="${obj}" method="post">
-            
-	            	<div class="row">
-		            	<div th:each="field : ${autoCrudData.entity.fieldsOnFilter}" class="col-lg-4">
-		            		
-		            		<div class="form-group">
-		            			<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
-		            		</div>
-		            		
+            <form action="#" th:action="@{${'/crud/'+autoCrudData.entity.entityName}}" th:object="${obj}" method="post" id="formAc">
+	            <div class="row">
+		            	<div class="row">
+			            	<div th:each="field : ${autoCrudData.entity.fieldsOnFilter}" class="col-lg-4">
+			            		
+			            		<div class="form-group">
+			            			<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
+			            		</div>
+			            		
+			            	</div>
 		            	</div>
-	            	</div>
-	            	
-	            	<div class="row">
-		            	<div class="col-lg-2">
-		            	<div class="form-group">
-		            		<button type="submit" class="btn btn-info btn-block">Buscar</button>
-		            	</div>	
+		            	<div class="row">
+			            	<div class="col-lg-2">
+			            	<div class="form-group">
+			            		<button type="submit" class="btn btn-info btn-block">Buscar</button>
+			            	</div>	
+			            	</div>
 		            	</div>
-	            	</div>
-            	
-            	</form>
-            </div>
-            
-            <br />
-            <br />
-            
-            <div class="row">
-            
-            	<div class="row text-center"> 
-		         	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination})" ></ui>
-		         </div> 
-       
-	            <table class="table" id="grid">
-	            	<caption>Encontrados [[${autoCrudData.pagination.totalResults}]] registros, exibindo do: [[${autoCrudData.pagination.initPosition}]] ao [[${autoCrudData.pagination.finalPosition}]]</caption>
-	            	<thead>
-	            		<tr>
-	            			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
-		            			<th>[[${field.meta.label()}]]</th>
-	            			</th:block>		            			
-	            			<th></th>
-	            		</tr>
-	            	</thead>
-	            	<tbody>
-	            		<th:block th:each="item : ${autoCrudData.data}">
-	             		<tr>
-	             			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
-	             			
-	             			
-	             			<td th:if="${!field.lookUp}"  th:text="${{item.getFormated(field)}}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${{item.get(field.fieldName).get(field.meta.lookUpFieldName())}}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${{item.getFormated(field)}}">Campo</td>
-	             			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
-	             			
-	             			</th:block>
-	             			<td class="text-right">
-                      			<a  th:each="action : ${item.actions}"
-                      				th:class="${action.cssClass}"
-                      				style="margin:2px;" 
-                      				th:href="${action.path}"
-                      				data-toggle="tooltip" 
-                      				data-placement="top" 
-                      				th:title="${action.description}">
-                      				<span th:class="${action.icon}"></span>
-                      			</a>
-                     		</td>
-	             		</tr>	
-	            		</th:block>
-	            	</tbody>
-	            </table>
-	         </div>
-	       	 <div class="row text-center"> 
-	       	 	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination})" ></ui>
-	         </div>   
+	            </div>
+	            
+	            <br />
+	            <br />
+	            
+	            <div class="row">
+	            
+	            	<div class="row text-center"> 
+			         	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination},'#formAc', 'pagination1')" ></ui>
+			         </div> 
+	       
+		            <table class="table" id="grid">
+		            	<caption>Encontrados [[${autoCrudData.pagination.totalResults}]] registros, exibindo do: [[${autoCrudData.pagination.initPosition}]] ao [[${autoCrudData.pagination.finalPosition}]]</caption>
+		            	<thead>
+		            		<tr>
+		            			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
+			            			<th>[[${field.meta.label()}]]</th>
+		            			</th:block>		            			
+		            			<th></th>
+		            		</tr>
+		            	</thead>
+		            	<tbody>
+		            		<th:block th:each="item : ${autoCrudData.data}">
+		             		<tr>
+		             			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
+		             			
+		             			
+		             			<td th:if="${!field.lookUp}"  th:text="${{item.getFormated(field)}}">Campo</td>
+		             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${{item.get(field.fieldName).get(field.meta.lookUpFieldName())}}">Campo</td>
+		             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${{item.getFormated(field)}}">Campo</td>
+		             			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
+		             			
+		             			</th:block>
+		             			<td class="text-right">
+	                      			<a  th:each="action : ${item.actions}"
+	                      				th:class="${action.cssClass}"
+	                      				style="margin:2px;" 
+	                      				th:href="${action.path}"
+	                      				data-toggle="tooltip" 
+	                      				data-placement="top" 
+	                      				th:title="${action.description}">
+	                      				<span th:class="${action.icon}"></span>
+	                      			</a>
+	                     		</td>
+		             		</tr>	
+		            		</th:block>
+		            	</tbody>
+		            </table>
+		         </div>
+		       	 <div class="row text-center"> 
+		       	 	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination},'#formAc', 'pagination2')" ></ui>
+		         </div>  
+		     </form>     
         </div>
         <!-- /#page-wrapper -->
 

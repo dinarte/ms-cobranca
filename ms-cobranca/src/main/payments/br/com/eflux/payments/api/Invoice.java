@@ -2,7 +2,8 @@ package br.com.eflux.payments.api;
 
 public interface Invoice {
 
-	String STATUS_NOVO = "NOVO";
+	String STATUS_NOVO = "CRIADO";
+	String STATUS_REMETIDO = "REMETIDO";
 	String STATUS_REGISTRADO = "REGISTRADO";
 	String STATUS_LIQUIDADO = "LIQUIDADO";
 	String STATUS_CANCELADO = "CANCELADO";

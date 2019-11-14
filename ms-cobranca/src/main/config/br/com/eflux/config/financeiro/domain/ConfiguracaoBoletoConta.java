@@ -46,9 +46,9 @@ public class ConfiguracaoBoletoConta implements Persistable<Long>, Migrable<Long
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn(name="id_conta_bancaria")
+	@JoinColumn(name="id_conta_recebimento")
 	@EnableAutoCrudField(label="Conta Bancária", enableForFilter=true, enableForList=true, ordinal=1)
-	private ContaRecebimento contaBancaria;
+	private ContaRecebimento contaRecebimento;
 
 	@ManyToOne
 	@JoinColumn(name="id_configuracao_boleto")
@@ -86,12 +86,16 @@ public class ConfiguracaoBoletoConta implements Persistable<Long>, Migrable<Long
 		this.configuracaoBoleto = configuracaoBoleto;
 	}
 
-	public ContaRecebimento getContaBancaria() {
-		return contaBancaria;
+	public ContaRecebimento getContaRecebimento() {
+		return contaRecebimento;
 	}
 
-	public void setContaBancaria(ContaRecebimento contaBancaria) {
-		this.contaBancaria = contaBancaria;
+	public void setContaRecebimento(ContaRecebimento contaRecebimento) {
+		this.contaRecebimento = contaRecebimento;
+	}
+
+	public ConfiguracaoBoleto getConfiguracaoBoleto() {
+		return configuracaoBoleto;
 	}
 
 	public String getOriginalId() {

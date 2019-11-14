@@ -9,9 +9,12 @@ import br.com.eflux.comum.domain.MesEnum;
 import br.com.eflux.comum.domain.SexoEnum;
 import br.com.eflux.comum.domain.TipoPessoaEnum;
 import br.com.eflux.financeiro.domain.NaturezaContratoEnum;
+import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
+import br.com.eflux.financeiro.domain.StatusGeracaoInvoiceEnum;
 
 @Component
-@EnableDataConver(types= {EstadoCivilEnum.class, SexoEnum.class, TipoPessoaEnum.class, NaturezaContratoEnum.class, SexoEnum.class, MesEnum.class},
+@EnableDataConver(types= {EstadoCivilEnum.class, SexoEnum.class, TipoPessoaEnum.class, 
+		NaturezaContratoEnum.class, SexoEnum.class, MesEnum.class, SituacaoDebitoEnum.class, StatusGeracaoInvoiceEnum.class},
 		enableForForm=true, enableForMigration=true)
 public class EnumConverter implements IConverter<Enum>{
 

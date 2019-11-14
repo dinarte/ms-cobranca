@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +79,23 @@ public class AutoCrudService{
 				.getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Persistable<?>> findAll(String entity, int firstResult, int maxResults, List<String> filters){
+		return findAll(entity, null, firstResult, maxResults, filters);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Persistable<?>> findAll(String entity, String orderBy, int firstResult, int maxResults, List<String> filters){
+		if (orderBy == null)
+			orderBy ="";
+		if (Strings.isNotBlank(orderBy))
+			orderBy = " order by "+orderBy;
+		
 		String hql = "from ".concat(entity);
 		
 		hql = addFilters(filters, hql);	
+		
+		hql = hql.concat(orderBy);
+		
 		return (List<Persistable<?>>) em.createQuery(hql)
 				.setFirstResult(firstResult)
 				.setMaxResults(maxResults)

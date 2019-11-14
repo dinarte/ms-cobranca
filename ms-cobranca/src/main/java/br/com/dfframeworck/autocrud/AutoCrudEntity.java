@@ -2,11 +2,13 @@ package br.com.dfframeworck.autocrud;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Persistable;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 
 public class AutoCrudEntity {
 
@@ -40,9 +42,17 @@ public class AutoCrudEntity {
 	}
 	
 	public AutoCrudField getField(String name){
+		try {
 		return fields.stream().filter(f->f.getFieldName().equals(name)).findFirst().get();
+		}catch (NoSuchElementException e) {
+			throw new RuntimeException("Não foi possível acessar o AutoCrudField: "+name);
+		}
 	}
 	
+	
+	public AutoCrud getMeta() {
+		return getType().getAnnotation(AutoCrud.class);		
+	}
 
 	public Class<?> getType() {
 		return type;

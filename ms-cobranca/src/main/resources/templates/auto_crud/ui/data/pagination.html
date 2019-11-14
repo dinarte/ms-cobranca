@@ -1,7 +1,18 @@
-<th:block th:fragment="ui(pagination)">
+<th:block th:fragment="ui(pagination, form, id)">
 	<a 	th:each="item : ${pagination.smallPageList}" 
 		th:text="${item.index}" 
-		th:href="${item.path}"  
 		th:class="${pagination.resolveBtnCssClass('btn btn-default btn-circle','btn btn-primary btn-circle', item.index)}" 
+		th:onclick="${id+'_submeterForm('''+form+''', '''+item.path+''')'}"
 		class="btn btn-default btn-circle"> 1 </a>
+		
+		<script>
+			function [[${id}]]_submeterForm(form, path){
+			
+				$(form).attr('action',path);
+				//alert( $(form).attr('action') );
+				$(form).submit();
+			
+			}
+		</script>
+		
 </th:block>

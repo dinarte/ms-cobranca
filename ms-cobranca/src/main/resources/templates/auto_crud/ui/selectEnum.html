@@ -1,20 +1,17 @@
-			
-			
-			<select th:fragment="ui(field)"
-					th:with="valueId = ${field.value}" 
+
+			<select th:fragment="ui(field)" 
+					th:with="valueId = ${field.value != null ? field.value.toString() : ''}" 
 					th:placeholder="${field.meta.label()}" 
 					th:name="${field.entity.entityName +'.'+ field.fieldName}"
 					th:id="${field.entity.entityName +'.'+ field.fieldName}"
 					th:value="${valueId}" 
 					th:readonly="${field.readOnly}" 
-					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}">
+					th:class="${'selectEnum form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}">
 				<option value="" th:label="${field.meta.label()}" th:selected="${valueId == null || valueId == 0}">
 				<option th:each="item : ${lookUpFinder.getAll(field)}" 
 						th:label="${item.label}" 
 						th:value="${item.id}" 
 						th:selected="${valueId == item.id}" />
-			</select>
-			
-			
+			</select>			
 
        

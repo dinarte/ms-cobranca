@@ -1,5 +1,6 @@
 package br.com.eflux.financeiro.domain;
 
+import java.beans.Transient;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -9,6 +10,8 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -36,15 +39,9 @@ import br.com.dfframeworck.security.Functionality;
  */
 @Entity
 @Table(schema="financeiro", name="debito")
-@AutoCrud(name="Débitos", description="Débitos do Contrato", 
-funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito", icon="fa fa-money"))
+@AutoCrud(name="Débitos", description="Débitos do Contrato", orderBy="dataVencimento asc",
+	funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito", icon="fa fa-money"))
 public class Debito implements Persistable<Long>, Migrable<Long> {
-	
-	public static final String INVOICE_CRIADO_SUCESSO = "SUCESSO";
-	
-	public static final String INVOICE_AGUARDANDO_CRIACAO = "AGUARDANDO";
-	
-	public static final String INVOICE_IGNORADO = "IGNORADO";
 	
 	@Id
 	@GeneratedValue(generator = "lancamentoGenerator")
@@ -53,10 +50,11 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@Column(name = "id_debito", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
-	@EnableAutoCrudField(label="Número", enableForList=true, ordinal=1, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1, readOnlyForUpdate=true)
 	private Integer numero;
 	
-	@EnableAutoCrudField(label="Contrato", enableForFilter=true, enableForList=true, ordinal=2, lookUpFieldName="numeroContrato", readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Contrato", enableForFilter=true, enableForList=true, ordinal=2, 
+			lookUpFieldName="numeroContrato", readOnlyForUpdate=true, ui="autoComplete")
 	@ManyToOne
 	@JoinColumn(name="id_contrato")
 	private Contrato contrato;
@@ -66,7 +64,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@JoinColumn(name="id_tipo_lancamento")
 	private TipoLancamento tipoLancamento;
 	
-	@EnableAutoCrudField(label="Valor Original", enableForFilter=true, enableForList=true, ordinal=4, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Valor Original", enableForList=true, ordinal=4, readOnlyForUpdate=true)
 	private BigDecimal valorOriginal;
 	
 	@EnableAutoCrudField(label="Júros por Atrazo", enableForList=true, ordinal=5, readOnlyForUpdate=true)
@@ -93,8 +91,10 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Valor Pago", ordinal=12, readOnlyForUpdate=true)
 	private  BigDecimal valorPago;
 	
-	@EnableAutoCrudField(label="Quitada", ordinal=13, readOnlyForUpdate=true)
-	private boolean quitada;
+	@EnableAutoCrudField(label="Situação", enableForFilter=true, enableForList=true, ordinal=13, readOnlyForUpdate=true)
+	@Enumerated(EnumType.STRING)
+	@Column(name="situacao", nullable=true)
+	private SituacaoDebitoEnum situacao;
 	
 	@EnableAutoCrudField(label="Observações", ordinal=14, readOnlyForUpdate=true)
 	private String descricao;
@@ -102,9 +102,15 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@Column(name="data_criacao_invoice")
 	private Date dataCriacaoInvoice;
 	
+	@EnableAutoCrudField(label="Situaçao Invoice", ordinal=15, enableForFilter=true, readOnlyForUpdate=true, enableForCreate=false)
 	@Column(name="status_criacao_invoice")
+	@Enumerated(EnumType.STRING)
+	private StatusGeracaoInvoiceEnum statusCriacaoInvoice = StatusGeracaoInvoiceEnum.AGUARDANDO;
+	
+	@Column(name="erroCriacaoInvoice")
 	@Type(type="text")
-	private String statusCriacaoInvoice = INVOICE_AGUARDANDO_CRIACAO;
+	private String erroCriacaoInvoice;
+	
 	
 	@EnableAutoCrudField(label="Boleto / Invoice", enableForCreate=false, enableForUpdate=false, enableForList=true, ordinal=15, lookUpFieldName="status")
 	@ManyToOne
@@ -120,6 +126,13 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	
 	@Column(name="originalId")
 	private String originalId;
+	
+	@Transient
+	public BigDecimal getValorAtualizado(){
+		return valorOriginal.add(jurosAtrazo).add(multaAtrazo).add(jurosRemuneratorio).add(correcao);
+	}
+	
+	
 
 	public Long getId() {
 		return id;
@@ -235,12 +248,12 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 		this.valorPago = valorPago;
 	}
 
-	public boolean isQuitada() {
-		return quitada;
+	public SituacaoDebitoEnum getSituacao() {
+		return situacao;
 	}
 
-	public void setQuitada(boolean quitada) {
-		this.quitada = quitada;
+	public void setSituacao(SituacaoDebitoEnum situacao) {
+		this.situacao = situacao;
 	}
 
 	public Contrato getContrato() {
@@ -283,15 +296,13 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 		this.dataCriacaoInvoice = dataCriacaoInvoice;
 	}
 
-	public String getStatusCriacaoInvoice() {
-		return statusCriacaoInvoice;
-	}
-	
+
+	@JsonIgnore
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getStatusCriacaoInvoiceMap() {
+	public Map<String, Object> getErroCriacaoInvoiceMap() {
 		
 		ObjectMapper mapper = new ObjectMapper();
-        String json = statusCriacaoInvoice;
+        String json = erroCriacaoInvoice;
 
             Map<String, Object> map;
 			try {
@@ -301,8 +312,24 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 				return null;
 			}
 	}
+	
+	
 
-	public void setStatusCriacaoInvoice(String statusCriacaoInvoice) {
+	
+
+	public String getErroCriacaoInvoice() {
+		return erroCriacaoInvoice;
+	}
+
+	public void setErroCriacaoInvoice(String erroCriacaoInvoice) {
+		this.erroCriacaoInvoice = erroCriacaoInvoice;
+	}
+
+	public StatusGeracaoInvoiceEnum getStatusCriacaoInvoice() {
+		return statusCriacaoInvoice;
+	}
+
+	public void setStatusCriacaoInvoice(StatusGeracaoInvoiceEnum statusCriacaoInvoice) {
 		this.statusCriacaoInvoice = statusCriacaoInvoice;
 	}
 

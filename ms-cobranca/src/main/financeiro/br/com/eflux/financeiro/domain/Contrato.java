@@ -13,13 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
@@ -53,7 +50,7 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Unidade negociada no contrato
 	 */
-	@EnableAutoCrudField(label="Unidade", enableForFilter=true, enableForList=true, ordinal=2, readOnlyForUpdate=true, lookUpFieldName="nome")
+	@EnableAutoCrudField(label="Unidade", enableForFilter=false, enableForList=true, ordinal=2, readOnlyForUpdate=true, lookUpFieldName="nome")
 	@ManyToOne
 	@JoinColumn(name="id_unidade", nullable=false)
 	private Unidade unidade;
@@ -77,7 +74,7 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Data base para correção financeira do contrato
 	 */
-	@EnableAutoCrudField(label="Data Base", enableForList=true, ordinal=5, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Data Base", enableForList=false, ordinal=5, readOnlyForUpdate=true)
 	@Column(name="data_base")
 	private Date dataBase = new Date();
 	
@@ -99,14 +96,14 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	 * Caso true, impede que seja gerado boletos ou pagamentos via 
 	 * cartão de crédito para o contrato em questão.
 	 */
-	@EnableAutoCrudField(label="Bloquear Cobrança", enableForList=true, ordinal=8)
+	@EnableAutoCrudField(label="Bloquear Cobrança", enableForList=false, enableForFilter=true, ordinal=8)
 	@Column(name="bloquear_cobranca", nullable=false)
 	private boolean bloquearCobranca;
 	
 	/**
 	 * Determina em que situação o contrato em questão se encontra
 	 */
-	@EnableAutoCrudField(label="Situação", enableForList=true, ordinal=9, lookUpFieldName="nome")
+	@EnableAutoCrudField(label="Situação", enableForList=true, enableForFilter=true, ordinal=9, lookUpFieldName="nome")
 	@ManyToOne
 	@JoinColumn(name="id_situacao_contrato", nullable=false)
 	private SituacaoContrato situacaoContrato;

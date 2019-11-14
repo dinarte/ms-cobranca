@@ -13,6 +13,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import br.com.dfframeworck.exception.ErroException;
 import br.com.dfframeworck.repository.UserRepository;
 
 
@@ -38,6 +39,11 @@ public class SecurityInterception implements HandlerInterceptor {
 		if (handler instanceof HandlerMethod) {
 			HandlerMethod hMMethod = (HandlerMethod) handler;
 			Functionality functionality = hMMethod.getMethodAnnotation(Functionality.class);
+			
+			//if (Objects.isNull(functionality)){
+			//	throw new ErroException("Não é possível determinar se o método acessado é uma funcinalidade.");
+			//}
+			
 			if (Objects.nonNull(functionality) && !functionality.isPublic()) {
 				
 				

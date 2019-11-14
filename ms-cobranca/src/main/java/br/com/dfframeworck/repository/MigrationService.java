@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.dfframeworck.converters.ConverteresProvider;
 import br.com.dfframeworck.exception.ValidacaoException;
+import br.com.dfframeworck.messages.AppFlashMessages;
 import br.com.dfframeworck.util.PackageUtils;
 
 @Component
@@ -32,6 +31,9 @@ public class MigrationService {
 	
 	@Autowired
 	ConverteresProvider converterProvider;
+	
+	@Autowired
+	AppFlashMessages appMsgs;
 
 	public Long countEntity(Class<?> entity) {
 		return (long) em.createQuery( "select count(*) from "+entity.getSimpleName() ).getSingleResult();
@@ -83,7 +85,10 @@ public class MigrationService {
 		String[] cols = null;
 		Class<?>[] types = null;
 		
+		List<String> erros = new ArrayList<>();
+		
 		while(linha != null) {
+			boolean erroNalinha = false;
 			Object obj = Class.forName(packageName+'.'+className).newInstance();
 	
 			if (rowCont == 0) {
@@ -96,15 +101,21 @@ public class MigrationService {
 						try {
 							types[i] = 	obj.getClass().getMethod("is" + converterProvider.firstCharUpper(cols[i].trim()), null).getReturnType();
 						} catch (NoSuchMethodException e1) {
-							throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível localizar a coluna " + cols[i] + " na entidade " +className);
+							erros.add("Erro na Linha "+ rowCont + ": Não foi possível localizar a coluna " + cols[i] + " na entidade " +className);
+							//throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível localizar a coluna " + cols[i] + " na entidade " +className);
 						}
 					}
 				}
+				if (erros.size() > 0) {
+					appMsgs.getMessages().getInfoList().add("Erros no cabeçalho impedem que o processamento continue:");
+					throw  new ValidacaoException(erros);
+				}	
 			}else {
 			
 				System.out.println("------------------");
 				System.out.println("LINHA: "+ rowCont);
 				System.out.println("------------------");
+				
 				
 				String[] values = linha.split(";");
 				for (int i=0; i<values.length; i++) {
@@ -118,16 +129,19 @@ public class MigrationService {
 					try {
 						converterProvider.invokeForMigration(values[i], types[i], cols[i], obj);
 					}catch (Exception e) {
-						throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
+						erros.add("Erro na <strong>Linha "+ rowCont + "</strong> [CONVERSAO]: Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i].getSimpleName()+") para entidade " +className+ ". Causa: "+ e.getMessage());
+						erroNalinha = true;
+						//throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
 					}
 					
 				}
-				
-				Persistable<Long> persistable = (Persistable<Long>) obj;
-				try {
-					persistir(persistable);
-				}catch (Exception e) {
-					throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi persistir o objeto com o id = "+ ((Migrable<Long>)persistable).getOriginalId() +" para entidade " +className+ ". Causa: "+ e.getCause().getCause().getMessage());
+				if (!erroNalinha) {
+					Persistable<Long> persistable = (Persistable<Long>) obj;
+					try {
+						persistir(persistable);
+					}catch (Exception e) {
+						erros.add("Erro na Linha "+ rowCont + "[PERSISTENCIA]: Não foi possível persistir o objeto com o id = "+ ((Migrable<Long>)persistable).getOriginalId() +" para entidade " +className+ ". Causa: "+ e.getCause().getCause().getMessage());
+					}
 				}
 				System.out.println("------------------");
 	
@@ -138,6 +152,11 @@ public class MigrationService {
 		}
 		
 		System.out.println( file.getName() +" - "+ file.getContentType() );
+		
+		if (erros.size() > 0) {
+			appMsgs.getMessages().getInfoList().add("Erros impediram a migração da entiddade:");
+			throw  new ValidacaoException(erros);
+		}
 	}
 	
 }

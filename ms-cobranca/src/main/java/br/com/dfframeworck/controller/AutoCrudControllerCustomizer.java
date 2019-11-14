@@ -11,6 +11,13 @@ public class AutoCrudControllerCustomizer {
 		
 	}
 	
+	public void addfilters(List<String> filters) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
 	public String getIndexView(){
 		return "/auto_crud/listar";
 	}
@@ -22,4 +29,6 @@ public class AutoCrudControllerCustomizer {
 	public String getFormView(){
 		return "/auto_crud/form";
 	}
+
+	
 }

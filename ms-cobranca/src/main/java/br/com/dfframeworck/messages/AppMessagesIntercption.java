@@ -1,5 +1,7 @@
 package br.com.dfframeworck.messages;
 
+import java.util.Objects;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +40,10 @@ public class AppMessagesIntercption extends HandlerInterceptorAdapter {
 			appFlashMesg.getMessages().getInfoList().clear();
 			appFlashMesg.getMessages().getWarningList().clear();
 			
-			request.setAttribute("appMessages", appMessages);
+			if (Objects.nonNull(modelAndView))
+				modelAndView.addObject("appMessages", appMessages);
+			else
+				request.setAttribute("appMessages", appMessages);
 		}
 	}
 

@@ -2,6 +2,8 @@ package br.com.dfframeworck.converters;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.persistence.NoResultException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,10 @@ public class PersistableMigrationConverter implements IConverter<Persistable<Lon
 			Long newValue = mService.getIdByOriginal(type, value);
 			type.getMethod("setId", Long.class).invoke(obj, newValue); 
 			
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (NoResultException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			if (e instanceof NoResultException)	
+				throw new RuntimeException(type.getSimpleName() +".originalId = "+value+" não existe.");
+			
 			throw new RuntimeException("Erros ao converter Entidade: " + e.getMessage());
 		}
 		

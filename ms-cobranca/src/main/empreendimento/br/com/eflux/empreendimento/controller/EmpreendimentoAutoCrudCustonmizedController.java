@@ -13,7 +13,6 @@ import br.com.eflux.empreendimento.domain.Empreendimento;
 @Customizer(Empreendimento.class)
 public class EmpreendimentoAutoCrudCustonmizedController extends AutoCrudControllerCustomizer {
 
-
 	@Override
 	public void addActions(List<AutoCrudAction> actions) {
 		actions.add(new AutoCrudAction("Gerenciar Unidades do Empreendimento", "/empreendimento/{id}/unidades", "fa fa-th","btn btn-info btn-circle", true, 1));

@@ -26,5 +26,7 @@ public @interface AutoCrud {
 	 */
 	public String description();
 	
+	public String orderBy() default "";
+	
 	public Functionality funtionality();
 }
