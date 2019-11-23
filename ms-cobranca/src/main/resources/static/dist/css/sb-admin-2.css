@@ -10,7 +10,7 @@ body {
   width: 100%;
 }
 #page-wrapper {
-  padding: 0 15px;
+  padding: 0 25px;
   min-height: 568px;
   background-color: white;
 }
@@ -432,3 +432,8 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+
+		            	
+
+

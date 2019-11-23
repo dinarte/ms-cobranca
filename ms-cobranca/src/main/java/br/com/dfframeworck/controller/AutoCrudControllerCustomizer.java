@@ -3,6 +3,7 @@ package br.com.dfframeworck.controller;
 import java.util.List;
 
 import br.com.dfframeworck.autocrud.AutoCrudAction;
+import br.com.dfframeworck.autocrud.AutoCrudField;
 
 public class AutoCrudControllerCustomizer {
 	
@@ -28,6 +29,11 @@ public class AutoCrudControllerCustomizer {
 	 */
 	public String getFormView(){
 		return "/auto_crud/form";
+	}
+
+	public void addFieterField(List<AutoCrudField> filters) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

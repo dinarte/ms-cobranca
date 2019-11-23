@@ -12,10 +12,4 @@ public enum SituacaoDebitoEnum {
 	
 	NEGOCIADA;
 	
-	
-	private SituacaoDebitoEnum() {
-	
-	}
-	
-	
 }

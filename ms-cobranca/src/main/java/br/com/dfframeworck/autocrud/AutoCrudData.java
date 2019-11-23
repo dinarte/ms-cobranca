@@ -25,7 +25,7 @@ public class AutoCrudData {
 
 	public AutoCrudData() {
 		AutoCrudAction editar = new AutoCrudAction("Editar registro", "/crud/{entityName}/{id}","glyphicon glyphicon-pencil","btn btn-success btn-circle", true, 99);
-		AutoCrudAction remover = new AutoCrudAction("Remover registro", "/crud/{entityName}/{id}/del", "glyphicon glyphicon-trash","btn btn-danger btn-circle",true, 100) ;
+		AutoCrudAction remover = new AutoCrudAction("Remover registro", "/crud/{entityName}/{id}/del", "glyphicon glyphicon-trash","btn btn-danger btn-circle delete",true, 100) ;
 		actions.add(editar);
 		actions.add(remover);
 	}
@@ -43,7 +43,7 @@ public class AutoCrudData {
 		data = new ArrayList<Map<String,Object>>();
 		list.forEach(obj->{ 
 			AutoCrudDataMap objMap = new AutoCrudDataMap();
-			objMap.putAll( SerializationUtils.toMap(obj) );
+			objMap.putAll( SerializationUtils.toAutoCrudMap(obj) );
 			objMap.put("actions", parseActions(objMap.get("id").toString()));
 			data.add(objMap);
 		});

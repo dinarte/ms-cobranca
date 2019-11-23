@@ -1,0 +1,15 @@
+			
+			
+			<input	
+					data-date-format="mm/dd/yyyy"
+					th:fragment="ui(field)" 
+					th:name="${field.entity.entityName +'.'+ field.fieldName}" 
+					type="email" 
+					th:placeholder="${field.meta.label()}"
+					th:value="${field.value}" 
+					th:readonly="${field.readOnly}" 
+					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}" />
+					
+					
+
+       

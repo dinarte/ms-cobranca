@@ -1,0 +1,20 @@
+			
+			
+			<select th:fragment="ui(field)"
+					th:with="valueId = ${field.value}" 
+					th:placeholder="${field.meta.label()}" 
+					th:name="${field.entity.entityName +'.'+ field.fieldName}"
+					th:id="${field.entity.entityName +'.'+ field.fieldName}"
+					th:value="${valueId}"
+					th:readonly="${field.readOnly}" 
+					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  />
+				<option value="" th:label="${field.meta.label()}" th:selected="${valueId == null || valueId == ''}">
+				<option th:each="item : ${lookUpFinder.allApiConsumers}" 
+						th:label="${item.label}" 
+						th:value="${item.id}" 
+						th:selected="${valueId == item.id}" />
+			</select>
+			
+			
+
+       

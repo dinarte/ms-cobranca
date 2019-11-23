@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+                
+                <div class="col-lg-10">
+                    <h1 class="page-header">Proposta de Acordo
+                    <small>[[${acordoDTO.contrato}]]</small>
+                    </h1>
+                </div>
+                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	<!--  
+                	<a th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}" class="btn btn-primary btn-circle btn-lg"> 
+                	
+                	<i class="fa fa-plus-circle" style="font-size: 2.0em" 
+                			data-toggle="tooltip" 
+                      		data-placement="top"
+                      		title="Novo Registro" ></i>
+                	
+                	</a>
+                	-->
+                </div>
+            </div>
+            
+	            <style>
+	            .VENCIDA{
+	            	color:red;
+	            }
+	            </style>
+	            
+	            <div class="row">
+	            
+	            
+	            	<div class="row">
+	       				
+	       				<div class="col-lg-3" >
+	       					<div class="panel panel-default">
+		                        <div class="panel-heading">
+		                            <strong>Dívida Negociada</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.totalDevedor)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       				
+	       				<div class="col-lg-3" >
+	       					<div class="panel panel-info">
+		                        <div class="panel-heading">
+		                            <strong>Valor com Desconto</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.totalAcordo)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       				
+	       				<div class="col-lg-3" >
+	       					<div class="panel panel-warning">
+		                        <div class="panel-heading">
+		                            <strong>Entrada</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.valorEntrada)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       				
+	       				<div class="col-lg-3" >
+	       					<div class="panel panel-warning">
+		                        <div class="panel-heading">
+		                            <strong>Parcelas</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${acordoDTO.quantidadeParcelas}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       			
+	       			</div>
+	       			
+	       			<div class="row">
+	       				<div class="panel panel-default">
+	       					<div class="panel-heading">
+	       						<strong>Dados da Negociação:</strong>
+	       					</div>
+	       					<div class="panel-body">
+	       					
+	       						<table class="table responsive-card-table unstriped">
+				       				<caption>Débitos negociados neste acordo:</caption>
+					       			<thead>
+					       			<tr>
+					       				<th class="text-center" >Débito</th>
+					       				<th class="text-center" >Valor Original</th>
+					       				<th class="text-center" >Juros Remuneratórios</th>
+					       				<th class="text-center" >Correção</th>
+					       				<th class="text-center" >Juros Atrazo</th>
+					       				<th class="text-center" >Multa Atrazo</th>
+					       				<th class="text-center" >Valor Atualizado</th>
+					       			</tr>
+					       			</thead>
+					       			<tbody>
+					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.debitosDoAcordo}" th:class="${debitoAcordo.situacao}">
+					       				<td data-label="Débito">
+					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd.')}]]
+					       					[[${debitoAcordo.situacao}]] 
+					       				</td>
+					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>
+					       				<td  data-label="Juros Remuneratórios">[[${#numbers.formatCurrency(debitoAcordo.jurosRemuneratorio)}]]</td>
+					       				<td  data-label="Correção">[[${#numbers.formatCurrency(debitoAcordo.correcao)}]]</td>
+					       				<td  data-label="Juros Atrazo">[[${#numbers.formatCurrency(debitoAcordo.jurosAtrazo)}]]</td>
+					       				<td  data-label="Multa Atrazo">[[${#numbers.formatCurrency(debitoAcordo.multaAtrazo)}]]</td>
+					       				<td  data-label="Valor Atualizado"><strong> [[${#numbers.formatCurrency(debitoAcordo.valorAtualizado)}]] </strong></td>
+					       			</tr>
+					       			</tbody>
+				       			</table>
+		       				       					
+	       					<table class="table responsive-card-table unstriped">
+				       				<caption>Parcelas Geradas para pagamento da dívida:</caption>
+					       			<thead>
+					       			<tr>
+					       				<th class="text-center" >Débito</th>
+					       				<th class="text-center" >Valor Original</th>
+					       				<th class="text-center" >Juros Remuneratórios</th>
+					       				<th class="text-center" >Correção</th>
+					       				<th class="text-center" >Juros Atrazo</th>
+					       				<th class="text-center" >Multa Atrazo</th>
+					       				<th class="text-center" >Valor Atualizado</th>
+					       			</tr>
+					       			</thead>
+					       			<tbody>
+					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.parcelasDoAcordo}">
+					       				<td data-label="Débito">
+					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd/MM/yyyy')}]]
+					       					[[${debitoAcordo.situacao}]] 
+					       				</td>
+					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>
+					       				<td  data-label="Juros Remuneratórios">[[${#numbers.formatCurrency(debitoAcordo.jurosRemuneratorio)}]]</td>
+					       				<td  data-label="Correção">[[${#numbers.formatCurrency(debitoAcordo.correcao)}]]</td>
+					       				<td  data-label="Juros Atrazo">[[${#numbers.formatCurrency(debitoAcordo.jurosAtrazo)}]]</td>
+					       				<td  data-label="Multa Atrazo">[[${#numbers.formatCurrency(debitoAcordo.multaAtrazo)}]]</td>
+					       				<td  data-label="Valor Atualizado"><strong> [[${#numbers.formatCurrency(debitoAcordo.valorAtualizado)}]] </strong></td>
+					       			</tr>
+					       			</tbody>
+				       			</table>
+	       					
+	       					<div class="panel-footer text-right">
+	       						
+	       						<form th:action="@{/acordo/efetivar}" th:object="${acordoDTO}"  method="get">
+		       						
+		       						<input type="hidden"  th:field="*{contrato}">
+		       						<input type="hidden"  th:field="*{totalAcordo}">
+		       						<input type="hidden"  th:field="*{valorEntrada}">
+		       						<input type="hidden"  th:field="*{quantidadeParcelas}">
+		       						<input type="hidden"  th:field="*{diaVencimento}">
+		       						<input type="hidden"  th:field="*{debitosDoAcordo}">
+		       						
+		       						<a  class="btn btn-default btn-lg" href="javascript:window.history.go(-1)"> <i class="fas fa-arrow-circle-left"></i> Início </a>
+
+		       						<button type="submit" class="btn btn-warning btn-lg" data-loading="loader" > <i class="fas fa-handshake"></i> Finalizar o Acordo </button>
+						        </form>     
+	       					</div>
+	       					
+	       				</div>
+	       			</div>
+	       			
+		       	   
+		            
+		         </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+  
+
+</body>
+
+
+</html>

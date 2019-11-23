@@ -8,13 +8,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import br.com.dfframeworck.controller.AutoCrudLookUpFinder;
+import br.com.dfframeworck.view.AutoCrudFormater;
+import br.com.dfframeworck.view.AutoCrudLookUpFinder;
 
 @Component
 public class AutoCrudInterceptions implements HandlerInterceptor {
 	
 	@Autowired
 	AutoCrudLookUpFinder lookUpFinder;
+	
+	@Autowired
+	AutoCrudFormater formater;
 	
 	
 	@Override
@@ -33,6 +37,7 @@ public class AutoCrudInterceptions implements HandlerInterceptor {
 	  Object handler, 
 	  ModelAndView modelAndView) throws Exception {
 		request.setAttribute("lookUpFinder", lookUpFinder);
+		request.setAttribute("formater", formater);
 	}
 
 }

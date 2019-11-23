@@ -62,6 +62,17 @@ public class DynamicMenuInterception implements HandlerInterceptor {
 					Functionality funcionality = method.getAnnotation(Functionality.class);
 					if (Objects.nonNull(funcionality) && !funcionality.menu().equals("none")) {
 						RequestMapping rquestMapping = method.getAnnotation(RequestMapping.class);
+						
+						if (Objects.isNull(rquestMapping))
+							throw new Exception("A anotação @Funtionality deve ser sempre usada em conjunto com o "
+									+ "@RequestMapping, considere adicionar @RequestMapping método "+method.getDeclaringClass().getName() +"."+ method.getName());
+						if (Objects.isNull(rquestMapping.value()) && Objects.isNull(rquestMapping.path()))
+							throw new Exception("O atributo path ou value da anotação @RequestMapping deve ser informado para o método "+method.getDeclaringClass().getName() +"."+ method.getName());
+						
+						if (rquestMapping.value().length == 0)
+							throw new Exception("O atributo path ou value da anotação @RequestMapping deve ser informado para o método "+method.getDeclaringClass().getName() +"."+method.getName());
+						
+						
 						if (Objects.nonNull(RequestMapping.class)) {
 							MenuItem mi = new MenuItem();
 							mi.setController(context.getBean(controllerName).getClass());
@@ -70,7 +81,11 @@ public class DynamicMenuInterception implements HandlerInterceptor {
 							mi.setName(funcionality.name());
 							mi.setPath(rquestMapping.value()[0]);
 							mi.setIcon(funcionality.icon());
+							
+							if (Objects.isNull(mi.getPath())) mi.setPath("#");
+							
 							menuService.getMenuItens().add(mi);
+							
 						}
 					}
 				}

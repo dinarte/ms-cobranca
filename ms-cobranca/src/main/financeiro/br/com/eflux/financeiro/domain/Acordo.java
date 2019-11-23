@@ -20,26 +20,26 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SelectBeforeUpdate;
 import org.springframework.data.domain.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.dfframeworck.repository.Migrable;
+import br.com.eflux.config.financeiro.domain.ConfiguracaoAcordo;
 
 /**
  * Quando uma o mais parcelas de um contrato deixam de ser pagas, um acordo pode ser feito entre o contratante e o contratado, 
- * um acordo consiste em agrupar parcelas em aberto ou venvidas, acordar um novo valor e dividir novamente em novas parcelas. 
+ * um acordo consiste em agrupar débitos em aberto ou venvidas, acordar um novo valor e dividir novamente em novas parcelas. 
  * As parcelas originais que entram em um acordo, devem mudar seu status para NEGOCIADA, e as novas parcelas entraram no contrato 
- * e no acordo e terão o status EM_ABERTO e segiram o fluxo normal de pagamento.
+ * e no acordo e terão o status EM_ABERTO e segiram o fluxo normal de pagamento, podendo assumir normalmente os status de 
+ * VENCIDA ou QUITADA.
  * @author dinarte
  *
  */
 @Entity
 @Table(name = "acordo", schema = "financeiro")
-@DynamicUpdate
-@SelectBeforeUpdate(false)
 public class Acordo implements Persistable<Long>, Migrable<Long> {
 
 	@Id
@@ -49,24 +49,40 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 	@Column(name = "id_acordo", unique = true, nullable = false)
 	private Long id;
 
+	/**
+	 * Situação do acordo.
+	 */
 	@Enumerated(EnumType.STRING)
 	@JoinColumn(name = "id_status_acordo", nullable = false)
 	private StatusAcordoEnum statusAcordo = StatusAcordoEnum.ATIVO;
 
 
+	/**
+	 * Contrato ao qual o acordo se refere.
+	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_contrato", nullable = false)
 	private Contrato contrato;
 
 
+	/**
+	 * Débitos agrupados em um acordo
+	 */
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "acordo")
-	private Set<AcordoCobranca> acordoCobrancas;
+	private Set<AcordoDebito> debitos;
 
 	/**
-	 * somatório dos juros cobrados
+	 * Novo valor a ser cobrado através do acordo.
 	 */
 	@Column(name = "valor_acordado")
 	private BigDecimal valorAcordado;
+	
+	/**
+	 * Configuração utilizada para gerar o acordo
+	 */
+	@ManyToOne
+	@JoinColumn(name = "id_configuracao_acordo")
+	private ConfiguracaoAcordo configuracao;
 
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -104,13 +120,14 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 		this.contrato = contrato;
 	}
 
-	public Set<AcordoCobranca> getAcordoCobrancas() {
-		return acordoCobrancas;
+	public Set<AcordoDebito> getDebitos() {
+		return debitos;
 	}
 
-	public void setAcordoCobrancas(Set<AcordoCobranca> acordoCobrancas) {
-		this.acordoCobrancas = acordoCobrancas;
+	public void setDebitos(Set<AcordoDebito> debitos) {
+		this.debitos = debitos;
 	}
+
 
 	public BigDecimal getValorAcordado() {
 		return valorAcordado;
@@ -136,6 +153,14 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 		this.justificativaCancelamento = justificativaCancelamento;
 	}
 
+	public ConfiguracaoAcordo getConfiguracao() {
+		return configuracao;
+	}
+
+	public void setConfiguracao(ConfiguracaoAcordo configuracao) {
+		this.configuracao = configuracao;
+	}
+
 	public String getOriginalId() {
 		return originalId;
 	}
@@ -145,6 +170,7 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}

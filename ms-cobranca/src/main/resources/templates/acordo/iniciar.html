@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+                <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+                
+                <div class="col-lg-10">
+                    <h1 class="page-header">Iniciar um Acordo
+                    <small>[[${acordoDTO.contrato}]]</small>
+                    </h1>
+                </div>
+                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	<!--  
+                	<a th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}" class="btn btn-primary btn-circle btn-lg"> 
+                	
+                	<i class="fa fa-plus-circle" style="font-size: 2.0em" 
+                			data-toggle="tooltip" 
+                      		data-placement="top"
+                      		title="Novo Registro" ></i>
+                	
+                	</a>
+                	-->
+                </div>
+            </div>
+            
+            <form th:action="@{/acordo/proposta}" th:object="${acordoDTO}"  method="post">
+	            <style>
+	            .VENCIDA{
+	            	color:red;
+	            }
+	            </style>
+	            
+	            <div class="row">
+	            
+	            
+	            	<div class="row">
+	       				
+	       				<div class="col-lg-4" >
+	       					<div class="panel panel-default">
+		                        <div class="panel-heading">
+		                            <strong>Total em  Juros</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.totalJurosAtrazo)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       				
+	       				<div class="col-lg-4" >
+	       					<div class="panel panel-default">
+		                        <div class="panel-heading">
+		                            <strong>Total em  Multa</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.totalMultaAtrazo)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       				
+	       				<div class="col-lg-4" >
+	       					<div class="panel panel-danger">
+		                        <div class="panel-heading">
+		                            <strong>Total Devido</strong>
+		                        </div>
+		                        <div class="panel-body text-center">
+		                            <h3>[[${#numbers.formatCurrency(acordoDTO.totalDevedor)}]]</h3>
+		                        </div>
+		                    </div>
+	       				</div>
+	       			
+	       			</div>
+	       			
+	       			<div class="row">
+	       				<div class="panel panel-default">
+	       					<div class="panel-heading">
+	       						<strong>Dados do acordo:</strong>
+	       					</div>
+	       					<div class="panel-body">
+	       					
+	       						<table class="table responsive-card-table unstriped">
+				       				<caption>Selecione os débitos que irão entrar na negociação:</caption>
+					       			<thead>
+					       			<tr>
+					       				<th width="3%"><!--   <input type="checkbox" id='check-all' checked="checked" class="form-control check-item"> --> </th>
+					       				<th class="text-center" >Débito</th>
+					       				<th class="text-center" >Valor Original</th>
+					       				<th class="text-center" >Juros Remuneratórios</th>
+					       				<th class="text-center" >Correção</th>
+					       				<th class="text-center" >Juros Atrazo</th>
+					       				<th class="text-center" >Multa Atrazo</th>
+					       				<th class="text-center" >Valor Atualizado</th>
+					       			</tr>
+					       			</thead>
+					       			<tbody>
+					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.debitosDoAcordo}" th:class="${debitoAcordo.situacao}">
+					       				<td data-label="Selecionar">
+					       					<input 
+					       							th:field="*{debitosDoAcordo}"
+					       							th:value="${debitoAcordo.id}"
+					       							type="checkbox" 
+					       							th:id="${'check-'+debitoAcordo.id}"
+					       							class="check-debito"
+					       							th:data-valor-atualizado="${debitoAcordo.valorAtualizado}"
+					       							th:data-valor-encargos="${debitoAcordo.multaAtrazo + debitoAcordo.jurosAtrazo}"  
+					       							>
+					       				</td>
+					       				<td data-label="Débito">
+					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd/MM/yyyy')}]]
+					       					[[${debitoAcordo.situacao}]] 
+					       				</td>
+					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>
+					       				<td  data-label="Juros Remuneratórios">[[${#numbers.formatCurrency(debitoAcordo.jurosRemuneratorio)}]]</td>
+					       				<td  data-label="Correção">[[${#numbers.formatCurrency(debitoAcordo.correcao)}]]</td>
+					       				<td  data-label="Juros Atrazo">[[${#numbers.formatCurrency(debitoAcordo.jurosAtrazo)}]]</td>
+					       				<td  data-label="Multa Atrazo">[[${#numbers.formatCurrency(debitoAcordo.multaAtrazo)}]]</td>
+					       				<td  data-label="Valor Atualizado"><strong> [[${#numbers.formatCurrency(debitoAcordo.valorAtualizado)}]] </strong></td>
+					       			</tr>
+					       			</tbody>
+				       			</table>
+		       			
+	       					
+	       						<div class="form-group">
+	       						
+	       							<input type="hidden" th:field="*{contrato}"  id="contrato" />
+	       						
+	       							<div class="col-lg-2">
+	       								<label>Valor Atualizado</label>
+	       								<input type="number" readonly value="" class="form-control BigDecimal" id="valorAtualizadoTotal" />
+	       							</div>
+	       							
+	       							<div class="col-lg-2">
+	       								<label>Encargos totais</label>
+	       								<input type="number" readonly value="" class="form-control BigDecimal"  id="encarogosTotais"/>
+	       							</div>
+	       							
+	       							<div class="col-lg-2">
+	       								<label>Desconto</label>
+	       								<input type="number" value="0" class="form-control BigDecimal" id="concederDesconto" />
+	       							</div>
+	       							
+	       							<div class="col-lg-2">
+	       								<label>Total desse Acordo</label>
+	       								<input th:field="*{totalAcordo}" type="number" readonly value="" class="form-control BigDecimal" id="totalAcordo" />
+	       							</div>
+	       							
+	       							<div class="col-lg-2">
+	       								<label>Entrada</label>
+	       								<input th:field="*{valorEntrada}" type="number" value="" class="form-control BigDecimal" />
+	       							</div>
+	       							
+	       							<div class="col-lg-1">
+	       								<label>Parcelas</label>
+	       								<input th:field="*{quantidadeParcelas}" type="number" value="" class="form-control" />
+	       							</div>
+	       							
+	       							<div class="col-lg-1">
+	       								<label>Vencimento</label>
+	       								<input th:field="*{diaVencimento}" type="number" value="" class="form-control" />
+	       							</div>
+	       						</div>
+	       					
+	       					</div>
+	       					
+	       					<div class="panel-footer text-right">
+	       						<button type="submit" class="btn btn-default btn-lg" data-loading="loader"> <i class="fas fa-arrow-circle-right"></i> Criar Proposta </button>
+	       					</div>
+	       					
+	       				</div>
+	       			</div>
+	       			
+		            
+		         </div>
+		       	   
+		     </form>     
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+	<script>
+	
+		function totalizar(){
+		
+			console.log("chamou a função totalizar");
+		
+			var valorAtualizado = 0.0;
+			var encarogosTotais = 0.0;
+			
+			$(".check-debito").each(function(i, obj) {
+			
+				console.log($(obj).attr("id") +" - "+ $(obj).attr("checked"));
+			
+				if ($(obj).attr("checked")=="checked"){
+					valorAtualizado = valorAtualizado + parseFloat($(obj).attr("data-valor-atualizado"));
+					encarogosTotais = encarogosTotais + parseFloat($(obj).attr("data-valor-encargos"));
+				}	
+			})
+			
+			$("#valorAtualizadoTotal").val(valorAtualizado.toFixed(2));
+			$("#encarogosTotais").val(encarogosTotais.toFixed(2));
+			
+			calculaTotalAcordo();
+		}
+		
+		
+		function calculaTotalAcordo(){
+			var totalAtualizado = parseFloat($("#valorAtualizadoTotal").val());
+			var desconto =  parseFloat($("#concederDesconto").val());
+			var totalAcordo = totalAtualizado - desconto;
+			$("#totalAcordo").val(totalAcordo.toFixed(2));
+		
+		}
+		
+		$("#concederDesconto").change(function(){
+			calculaTotalAcordo();
+		});
+				
+		
+		$("#check-all").change(function(){
+			  if ($("#check-all").val() == 'off') {
+			      $('.check-debito').attr('checked','checked');
+			      $('.check-debito').val('on')
+			      $('#check-all').val('on');
+			  } else {
+			      $('.check-debito').removeAttr('checked');
+			      $('.check-debito').val('off');
+			      $('#check-all').val('off');
+			  } 
+			  totalizar();      
+			});
+	
+		
+		$(".check-debito").change(event, function(obj){
+			
+			if( $(this).attr("checked")=='checked')
+				$(this).removeAttr("checked");
+			else	
+				$(this).attr("checked","checked");
+			
+			totalizar();
+		});
+		
+		
+		
+		totalizar();	
+	
+	</script>
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+  
+
+</body>
+
+
+</html>

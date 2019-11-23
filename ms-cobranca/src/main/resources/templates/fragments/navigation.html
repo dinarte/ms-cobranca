@@ -1,5 +1,8 @@
 
         <nav th:fragment="navbar" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        
+        	<div id="loader" class="loader"></div>
+        
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -10,22 +13,49 @@
                 <a class="navbar-brand" href="/">E-Flux Cob</a>
             </div>
             <!-- /.navbar-header -->
-
             <ul class="nav navbar-top-links navbar-right">
+            
+            	<li class="dropdown">
+            		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-file-contract"></i></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-contract">
+                    	<li>
+                    		<a data-loading="loader" href="/crud/Contrato/add"><i class="fa fa-plus fa-fw"></i> Novo Contrato</a>
+                        </li>
+                        <li>
+                    		<a data-loading="loader" href="/crud/Contrato"><i class="fa fa-edit fa-fw"></i> Gerenciar</a>
+                        </li>
+                    </ul>
+            	
+            	</li>
+            	
+            	<li class="dropdown">
+            		<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-hand-holding-usd"></i></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-debit">
+                        <li>
+                    		<a data-loading="loader" href="/crud/Debito"><i class="fa fa-edit fa-fw"></i> Gerenciar</a>
+                        </li>
+                    </ul>
+            	
+            	</li>
+            
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-user">
+                    <ul class="dropdown-menu dropdown">
                        <!--  
                         
                         <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        -->
                         <li><a href="#"><i class="fa fa-user fa-fw"></i> Perfil</a>
                         </li>
-                        <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
+                        -->
+                        <li><a data-loading="loader" href="/logout"><i class="fa fa-sign-out fa-fw"></i> Sair</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->

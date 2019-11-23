@@ -28,7 +28,7 @@ repositories {
 task createWar(type : War){
     destinationDir = file("$buildDir")
     baseName = "ms-cobranca"
-    version = "1.0.15"
+    version = "1.0.23"
     caseSensitive = true
     from "src"
 }

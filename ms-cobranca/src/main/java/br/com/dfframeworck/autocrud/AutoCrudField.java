@@ -1,5 +1,8 @@
 package br.com.dfframeworck.autocrud;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.converters.DateConverter;
 
 public class AutoCrudField {
 	
@@ -24,12 +28,15 @@ public class AutoCrudField {
 	
 	private Object value;
 	
+	private EnableAutoCrudField meta;
+	
 	public AutoCrudField() {
 		uiDefaultByType = new HashMap<>();
 		uiDefaultByType.put(boolean.class, "simpleCheckBox");
 		uiDefaultByType.put(Boolean.class, "simpleCheckBox");
 		uiDefaultByType.put(Date.class, "inputCalendar");
 		uiDefaultByType.put(String.class, "inputText");
+		uiDefaultByType.put(Periodo.class, "inputPeriod");
 		
 		uiDefaultByfieldName = new HashMap<>();
 		uiDefaultByfieldName.put("email", "inputEmail");
@@ -55,21 +62,73 @@ public class AutoCrudField {
 		}
 		return getMeta().ui();
 	}
+	
+	public String getUiFieldName() {
+		return  entity.getType().getSimpleName() + "." + fieldName;
+	}
+	
+	public String getUiFieldId() {
+		return entity.getType().getSimpleName() + "-" + fieldName;
+	}
+	
+	
+	public Object getFormatedValue() {
+		return getFormatedValue(this, value, type);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Object getFormatedValue(AutoCrudField field, Object value, Class<?> type) {
+	
+		if (Objects.isNull(value))
+			return "";
+		
+		if (isType(type, "BigDecimal","Float", "float", "Double", "double"))
+			//return new DecimalFormat("0.00,##").format(Double.valueOf(value.toString()));
+			return NumberFormat.getInstance().format(Double.parseDouble(value.toString()));
+		
+		if (isType(type, "Boolean","boolean"))
+			return (Boolean) value ? "SIM" : "NÃO";
+		
+		if (isType(type,"Date")) {
+			Date date = (Date) new DateConverter().parse(value.toString(), Date.class);
+			SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
+			return formater.format(date);
+		}
+		
+		if (type.isEnum())
+			return value;
+		
+		if (field.isLookUp()) {
+			System.out.println(field.getFieldName() + " - " + field.getMeta().lookUpFieldName());
+			return  AutoCrudDataMap.getH((Map)value, field.getMeta().lookUpFieldName()); 
+		}
+		
+		return value;
+	}
+	
+	
+	
+	private static boolean isType(Class<?> type, String... tName) {
+		for (String item : tName) {
+			if (type.getSimpleName().equals(item))
+				return true;
+		}
+		return false;
+	}
 
 	public EnableAutoCrudField getMeta() {
 		
 		try {
-			
-			entity.getType().getFields();
-			
-			entity.getType().getDeclaredFields();
-			
 			return entity.getType().getDeclaredField(fieldName).getAnnotation(EnableAutoCrudField.class);
 		} catch (NoSuchFieldException | SecurityException e) {
 			//nada a ser feito
 		}
 		
-		return null;
+		return meta;
+	}
+	
+	public void setMeta(EnableAutoCrudField meta) {
+		this.meta = meta;
 	}
 	
 	public boolean isReadOnly() {
@@ -136,7 +195,5 @@ public class AutoCrudField {
 	public void setEntity(AutoCrudEntity entity) {
 		this.entity = entity;
 	}
-	
-	
 	
 }

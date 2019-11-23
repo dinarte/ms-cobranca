@@ -13,43 +13,72 @@
         <div id="page-wrapper">
         
         	<div class="row">
-                <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
                 
                 <div class="col-lg-10">
                     <h1 class="page-header">[[${autoCrudData.entity.name}]]
                     <small>[[${autoCrudData.entity.description}]]</small>
                     </h1>
                 </div>
-                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
-                	<a th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}" class="btn btn-primary btn-circle btn-lg"> 
+                  	
+                
+                <div class="col-lg-1 btn-add-contaniner" style="vertical-align: middle; text-align: center; padding: 8px;">
                 	
-                	<i class="fa fa-plus-circle" style="font-size: 2.0em" 
+                	<a 	data-loading="loader"
+                		th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}"> 
+                	
+                	<i class="fas fa-plus-circle"  
                 			data-toggle="tooltip" 
                       		data-placement="top"
-                      		title="Novo Registro" ></i>
+                      		title="Novo Registro" 
+                      		></i>
                 	
                 	</a>
                 </div>
+                
+                <div class="col-lg-1 btn-filter-contaniner" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	
+                	<a data-toggle="filtros"  data-show-modal="filtros"> 
+                	<i class="fas fa-filter"  
+                			data-toggle="tooltip" 
+                      		data-placement="top"
+                      		title="Filtrar Listagem" 
+                      		></i>
+                	</a>
+                </div>
+                
             </div>
             
-            <form action="#" th:action="@{${'/crud/'+autoCrudData.entity.entityName}}" th:object="${obj}" method="post" id="formAc">
-	            <div class="row">
-		            	<div class="row">
-			            	<div th:each="field : ${autoCrudData.entity.fieldsOnFilter}" class="col-lg-4">
-			            		
-			            		<div class="form-group">
-			            			<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
-			            		</div>
-			            		
+            <div class="row">
+               	<div th:replace="fragments/main :: messages"  class="col-lg-12"></div> 
+		       </div>  
+            
+            <form id="formAc" action="#" th:action="@{${'/crud/'+autoCrudData.entity.entityName}}" th:object="${obj}" method="post">
+	 
+	 
+	 			<div id="filtros" class="df-modal">
+		            <div class="panel panel-default" >
+			            	
+			            	<div class="panel-heading">
+			            		<strong> <i class="fas fa-filter" ></i>  Filtrar [[${autoCrudData.entity.name}]]:</strong>
 			            	</div>
-		            	</div>
-		            	<div class="row">
-			            	<div class="col-lg-2">
-			            	<div class="form-group">
-			            		<button type="submit" class="btn btn-info btn-block">Buscar</button>
-			            	</div>	
+			            	
+			            	<div class="panel-body">
+				            	<div th:each="field : ${autoCrudData.entity.fieldsOnFilter}" class="col-lg-4">
+				            		
+				            		<div class="panel-group">
+				            			<label th:text="${field.meta.label()}"></label>
+				            			<ui th:replace="${'auto_crud/ui/'+field.defaultUi} :: ui(${field})" ></ui>
+				            		</div>
+				            		
+				            	</div>
 			            	</div>
-		            	</div>
+			            	
+			            	
+			            	<div class="panel-footer text-center">
+				            	<button type="submit" class="btn btn-warning btn-xl" data-loading="loader" data-close-modal="filtros">Aplicar Filtros</button>
+				            	<button type="button" class="btn btn-default btn-xl" data-close-modal="filtros">Fechar</button>
+			            	</div>
+		            </div>
 	            </div>
 	            
 	            <br />
@@ -61,7 +90,7 @@
 			         	<ui th:replace="auto_crud/ui/data/pagination :: ui(${autoCrudData.pagination},'#formAc', 'pagination1')" ></ui>
 			         </div> 
 	       
-		            <table class="table" id="grid">
+		            <table class="table responsive-card-table unstriped" id="grid" >
 		            	<caption>Encontrados [[${autoCrudData.pagination.totalResults}]] registros, exibindo do: [[${autoCrudData.pagination.initPosition}]] ao [[${autoCrudData.pagination.finalPosition}]]</caption>
 		            	<thead>
 		            		<tr>
@@ -76,15 +105,15 @@
 		             		<tr>
 		             			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
 		             			
-		             			
-		             			<td th:if="${!field.lookUp}"  th:text="${{item.getFormated(field)}}">Campo</td>
-		             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${{item.get(field.fieldName).get(field.meta.lookUpFieldName())}}">Campo</td>
-		             			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${{item.getFormated(field)}}">Campo</td>
-		             			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
-		             			
+		 
+		             			<td th:data-label="${field.meta.label()}" >
+		             				<ui th:replace="${'auto_crud/ui/'+field.meta.formater()} :: formater(${field},${item.get(field.fieldName)})" ></ui>
+		             			</td>
+		             			 
 		             			</th:block>
-		             			<td class="text-right">
+		             			<td data-label="Opçoes" class="text-right">
 	                      			<a  th:each="action : ${item.actions}"
+	                      				data-loading="loader"
 	                      				th:class="${action.cssClass}"
 	                      				style="margin:2px;" 
 	                      				th:href="${action.path}"
@@ -110,7 +139,12 @@
     <!-- /#wrapper -->
 
     <srcript th:replace="fragments/main :: scrptsblock" />
-    
+
+
+<script>
+
+
+</script>    
 
 </body>
 

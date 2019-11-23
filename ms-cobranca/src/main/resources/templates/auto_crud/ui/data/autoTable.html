@@ -1,0 +1,37 @@
+<table class="table" id="grid">
+ 	<caption>Débitos passíveis de acordo:</caption>
+ 	<thead>
+ 		<tr>
+ 			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
+  			<th>[[${field.meta.label()}]]</th>
+ 			</th:block>		            			
+ 			<th></th>
+ 		</tr>
+ 	</thead>
+ 	<tbody>
+ 		<th:block th:each="item : ${autoCrudData.data}">
+  		<tr>
+  			<th:block th:each="field : ${autoCrudData.entity.fieldsOnList}">
+  			
+  			
+  			<td th:if="${!field.lookUp}"  th:text="${{item.getFormated(field)}}">Campo</td>
+  			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && !field.type.enum}"  th:text="${{item.get(field.fieldName).get(field.meta.lookUpFieldName())}}">Campo</td>
+  			<td th:if="${field.lookUp && item.get(field.fieldName)!=null && field.type.enum}"  th:text="${{item.getFormated(field)}}">Campo</td>
+  			<td th:if="${field.lookUp && item.get(field.fieldName)==null}"></td>
+  			
+  			</th:block>
+  			<td class="text-right">
+          			<a  th:each="action : ${item.actions}"
+          				th:class="${action.cssClass}"
+          				style="margin:2px;" 
+          				th:href="${action.path}"
+          				data-toggle="tooltip" 
+          				data-placement="top" 
+          				th:title="${action.description}">
+          				<span th:class="${action.icon}"></span>
+          			</a>
+         		</td>
+  		</tr>	
+ 		</th:block>
+ 	</tbody>
+ </table>

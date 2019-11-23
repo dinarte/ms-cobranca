@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Service;
 
+import br.com.dfframeworck.autocrud.Periodo;
+
 /**
  * Servico capaz de gerenciar qualquer entidade persistível
  * @author Dinarte
@@ -45,6 +47,11 @@ public class AutoCrudService{
 		 details.put("operator", "=");
 		 details.put("quot", "'{value}'");
 		 defaultOperators.put(Date.class, details);
+
+		 details = new HashMap<String, String>();
+		 details.put("operator", "between");
+		 details.put("quot", "{value}");
+		 defaultOperators.put(Periodo.class, details);
 
 		 details = new HashMap<String, String>();
 		 details.put("operator", "=");

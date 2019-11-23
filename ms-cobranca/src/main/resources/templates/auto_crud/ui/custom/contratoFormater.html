@@ -1,0 +1,52 @@
+			
+<th:block th:fragment="formater(field, value)">		
+
+
+	<a th:data-toggle="${'contratoModal_'+value.id}" th:data-show-modal="${'contratoModal_'+value.id}" >
+                                [[${value.numeroContrato}]]
+                            </a>  <br />
+                            [[${value.pessoa.nome}]] 
+                            <br />
+                            [[${value.unidade.zona.empreendimento.nome}]] - [[${value.unidade.zona.nome}]] - [[${value.unidade.nome}]]
+                            
+    
+                            
+   <div th:id="${'contratoModal_'+value.id}" class="df-modal">
+	   <div class="panel panel-default">
+		   	<div class="panel-heading"><strong>Contrato <smal>[[${value.numeroContrato}]]</smal></strong></div>
+		   	<div class="panel-body">
+		   		<table class="table responsive-card-table unstriped">
+		            	<caption>Contrato:</caption>
+		            	<thead>
+		            	<tr>
+		            		<th class="text-center">Número</th>
+		            		<th class="text-center">Natureza</th>
+		            		<th class="text-center">Situação</th>
+		            		<th class="text-center">Contratada</th>
+		            		<th class="text-center">Contratante</th>
+		            		<th class="text-center">Unidade</th>
+		            	</tr>
+		            	</thead>
+		            	<tbody>
+		            	<tr>
+		            		<td data-label="Número" class="text-center">[[${value.numeroContrato}]]</td>
+		            		<td data-label="Naturaza" class="text-center">[[${value.natureza}]]</td>
+		            		<td data-label="Naturaza" class="text-center">[[${value.situacaoContrato.nome}]]</td>
+		            		<td data-label="Contratada" class="text-center">[[${value.unidade.zona.empreendimento.incorporadora.pessoa.nome}]] <br /> CNPJ: [[${value.unidade.zona.empreendimento.incorporadora.pessoa.cpf}]] </td>
+		            		<td data-label="Contratante" class="text-center">[[${value.pessoa.nome}]] <br /> CPF: [[${value.pessoa.cpf}]]</td>
+		            		<td data-label="Unidade" class="text-center">[[${value.unidade.zona.empreendimento.nome}]] / [[${value.unidade.zona.nome}]] /[[${value.unidade.nome}]]   </td>
+		            	</tr>
+		            	</tbody>
+		            </table>
+		   	</div>
+		   	<div class="panel-footer text-right">
+		   		<button type="button" class="btn btn-default" th:data-close-modal="${'contratoModal_'+value.id}">Fechar</button>
+			    <button type="button" class="btn btn-primary">Ir para o Contrato</button>
+		   	</div>
+	   </div>                         
+   </div>  
+   
+   		
+
+</th:block>
+

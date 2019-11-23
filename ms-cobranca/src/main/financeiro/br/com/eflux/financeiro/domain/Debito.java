@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,7 +41,7 @@ import br.com.dfframeworck.security.Functionality;
 @Entity
 @Table(schema="financeiro", name="debito")
 @AutoCrud(name="Débitos", description="Débitos do Contrato", orderBy="dataVencimento asc",
-	funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito", icon="fa fa-money"))
+	funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito", icon="fa fa-hand-holding-usd"))
 public class Debito implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -50,33 +51,33 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@Column(name = "id_debito", unique = true, nullable = false, insertable = true, updatable = true)
 	private Long id;
 	
-	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1, readOnlyForUpdate=true, formater="custom/numeroParcelaFormater")
 	private Integer numero;
 	
 	@EnableAutoCrudField(label="Contrato", enableForFilter=true, enableForList=true, ordinal=2, 
-			lookUpFieldName="numeroContrato", readOnlyForUpdate=true, ui="autoComplete")
+			lookUpFieldName="numeroContrato", readOnlyForUpdate=true, ui="autoComplete", formater="custom/contratoFormater")
 	@ManyToOne
 	@JoinColumn(name="id_contrato")
 	private Contrato contrato;
 
-	@EnableAutoCrudField(label="Tipo", enableForFilter=true, enableForList=true, ordinal=3, lookUpFieldName="nome", readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Tipo", enableForFilter=false, enableForList=false, ordinal=3, lookUpFieldName="nome", readOnlyForUpdate=true)
 	@ManyToOne
 	@JoinColumn(name="id_tipo_lancamento")
 	private TipoLancamento tipoLancamento;
 	
-	@EnableAutoCrudField(label="Valor Original", enableForList=true, ordinal=4, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Valor Original", enableForList=true, ordinal=4, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal valorOriginal;
 	
-	@EnableAutoCrudField(label="Júros por Atrazo", enableForList=true, ordinal=5, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Júros", enableForList=true, ordinal=5, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal jurosAtrazo;
 
-	@EnableAutoCrudField(label="Multa por Atrazo", enableForList=true, ordinal=6, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Multa", enableForList=true, ordinal=6, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal multaAtrazo;
 	
-	@EnableAutoCrudField(label="Júros Remuneratório", enableForList=true, ordinal=7, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Júros Contrato", enableForList=true, ordinal=7, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal jurosRemuneratorio;
 	
-	@EnableAutoCrudField(label="Correção", enableForList=true, ordinal=8, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Correção", enableForList=true, ordinal=8, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal correcao;
 	
 	@EnableAutoCrudField(label="Data", enableForList=true, ordinal=9, readOnlyForUpdate=true)
@@ -91,7 +92,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Valor Pago", ordinal=12, readOnlyForUpdate=true)
 	private  BigDecimal valorPago;
 	
-	@EnableAutoCrudField(label="Situação", enableForFilter=true, enableForList=true, ordinal=13, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Situação", enableForFilter=true, enableForList=true, ordinal=13, readOnlyForUpdate=true, formater="custom/situacaoDebitoFormater")
 	@Enumerated(EnumType.STRING)
 	@Column(name="situacao", nullable=true)
 	private SituacaoDebitoEnum situacao;
@@ -105,7 +106,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Situaçao Invoice", ordinal=15, enableForFilter=true, readOnlyForUpdate=true, enableForCreate=false)
 	@Column(name="status_criacao_invoice")
 	@Enumerated(EnumType.STRING)
-	private StatusGeracaoInvoiceEnum statusCriacaoInvoice = StatusGeracaoInvoiceEnum.AGUARDANDO;
+	private StatusGeracaoInvoiceEnum statusCriacaoInvoice;
 	
 	@Column(name="erroCriacaoInvoice")
 	@Type(type="text")
@@ -121,15 +122,37 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	 */
 	@ManyToOne
 	@JoinColumn(name="id_conta_recebimento")
-	@EnableAutoCrudField(label="Conta Padrão", ordinal=15, lookUpFieldName="descricao")
+	@EnableAutoCrudField(label="Conta Padrão", enableForFilter=true, ordinal=15, lookUpFieldName="descricao")
 	private ContaRecebimento contaRecebimento;
 	
 	@Column(name="originalId")
 	private String originalId;
 	
+	
+	public Debito() {
+		super();
+	}
+	
+	public Debito(Contrato contrato, Integer numero,  BigDecimal valorOriginal, Date dataVencimento, TipoLancamento tipoLancamento) {
+		this.contrato = contrato;
+		this.numero = numero;
+		this.valorOriginal = valorOriginal;
+		this.dataVencimento = dataVencimento;
+		this.tipoLancamento = tipoLancamento;
+		this.situacao = SituacaoDebitoEnum.EM_ABERTO;
+		this.dataLancamento = new Date();
+	}
+	
+	
+	
 	@Transient
 	public BigDecimal getValorAtualizado(){
-		return valorOriginal.add(jurosAtrazo).add(multaAtrazo).add(jurosRemuneratorio).add(correcao);
+		return Optional.ofNullable( getValorOriginal()
+										.add(getJurosAtrazo())
+										.add(getMultaAtrazo())
+										.add(getJurosRemuneratorio())
+										.add(getCorrecao()) )
+				.orElseGet(()->new BigDecimal(0));
 	}
 	
 	
@@ -153,7 +176,10 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 
 
 	public BigDecimal getValorOriginal() {
-		return valorOriginal;
+		BigDecimal ret =  Optional
+				.ofNullable(valorOriginal)
+				.orElseGet(()->new BigDecimal(0));
+		return ret;
 	}
 
 	public void setValorOriginal(BigDecimal valorOriginal) {
@@ -161,7 +187,10 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getJurosAtrazo() {
-		return jurosAtrazo;
+		BigDecimal ret =  Optional
+							.ofNullable(jurosAtrazo)
+							.orElseGet(()->new BigDecimal(0));
+		return ret;
 	}
 
 	public void setJurosAtrazo(BigDecimal jurosAtrazo) {
@@ -169,7 +198,11 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getMultaAtrazo() {
-		return multaAtrazo;
+		
+		BigDecimal ret =  Optional
+							.ofNullable(multaAtrazo)
+							.orElseGet(() -> new BigDecimal(0));
+		return ret;
 	}
 
 	public void setMultaAtrazo(BigDecimal multaAtrazo) {
@@ -233,7 +266,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getCorrecao() {
-		return correcao;
+		return Optional.ofNullable(correcao).orElseGet(()->new BigDecimal(0));
 	}
 
 	public void setCorrecao(BigDecimal correcao) {
@@ -265,7 +298,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getJurosRemuneratorio() {
-		return jurosRemuneratorio;
+		return Optional.ofNullable( jurosRemuneratorio ).orElseGet(() -> new BigDecimal(0));
 	}
 
 	public void setJurosRemuneratorio(BigDecimal jurosRemuneratorio) {

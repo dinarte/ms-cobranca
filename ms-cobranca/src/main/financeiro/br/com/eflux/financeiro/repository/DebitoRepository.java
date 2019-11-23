@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.eflux.financeiro.domain.Boleto;
 import br.com.eflux.financeiro.domain.ContaRecebimento;
+import br.com.eflux.financeiro.domain.Contrato;
 import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
 
@@ -26,5 +27,13 @@ public interface DebitoRepository extends CrudRepository<Debito, Long>{
 	public Boolean existsByInvoice(Boleto invoice);
 
 	public Debito findTop1ByInvoice(Boleto invoice);
+	
+	@Query("from Debito where contrato = :contrato and situacao in :situacoes")
+	public List<Debito> findAllByContratoAndSituacao(@Param("contrato") Contrato contrato, 
+			@Param("situacoes") List<SituacaoDebitoEnum> situacaoes);
+
+	@Query("from Debito where contrato = :contrato and situacao in :situacoes order by dataVencimento")
+	public List<Debito> findAllByContratoAndSituacaoOrderByDataVencimento(@Param("contrato") Contrato contrato,
+			@Param("situacoes") List<SituacaoDebitoEnum> passiveisAcordo);
 
 }

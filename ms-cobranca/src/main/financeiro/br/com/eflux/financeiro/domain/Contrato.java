@@ -33,7 +33,7 @@ import br.com.eflux.empreendimento.domain.Unidade;
 @Entity
 @Table(schema="financeiro", name="contrato")
 @AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato", icon="fa fa-file-text-o"))
+funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato", icon="fas fa-file-contract"))
 public class Contrato implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -50,7 +50,8 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Unidade negociada no contrato
 	 */
-	@EnableAutoCrudField(label="Unidade", enableForFilter=false, enableForList=true, ordinal=2, readOnlyForUpdate=true, lookUpFieldName="nome")
+	@EnableAutoCrudField(label="Unidade", enableForFilter=false, enableForList=true, ordinal=2, 
+			readOnlyForUpdate=true, lookUpFieldName="nome", formater="custom/unidadeFormater")
 	@ManyToOne
 	@JoinColumn(name="id_unidade", nullable=false)
 	private Unidade unidade;
@@ -81,14 +82,14 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	/**
 	 * Valor da unidade em questão previsto na tabela de preços
 	 */
-	@EnableAutoCrudField(label="Valor de Tabela", ordinal=6, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Valor de Tabela", ordinal=6, readOnlyForUpdate=true, formater="currencyFormater")
 	@Column(name="valor_tabela", nullable=false)
 	private BigDecimal valorTabela;
 	
 	/**
 	 * Valor no qual o contrato foi firmado
 	 */
-	@EnableAutoCrudField(label="Valor do Contrato", enableForList=true, ordinal=7, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Valor do Contrato", enableForList=true, ordinal=7, readOnlyForUpdate=true, formater="currencyFormater")
 	@Column(name="valor", nullable=false)
 	private BigDecimal valor;
 	

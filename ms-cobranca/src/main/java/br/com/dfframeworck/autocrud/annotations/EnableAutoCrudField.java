@@ -66,13 +66,19 @@ public @interface EnableAutoCrudField {
 	 */
 	public String ui() default "default";
 	
-	public String mask() default "";
+	/**
+	 * Tipo de formatador que será usado para formatar o valor docampo para exibição.
+	 * @return
+	 */
+	public String formater() default "defaultFormater";
 	
 	/**
 	 * Tipo de componente UI que será usado para renderizar o campo no formulário
 	 * @return
 	 */
 	public int ordinal() default 9999;
+	
+	public String path() default "";
 	
 	
 	

@@ -1,0 +1,18 @@
+<th:block th:fragment="formater(field, value)">		
+
+<style>
+
+</style>
+
+
+
+<span class="badge badge-waring" th:if="${value=='EM_ABERTO'}" >[[${value}]]</span>
+<span class="badge badge-danger" th:if="${value=='VENCIDA'}" >[[${value}]]</span>
+<span class="badge badge-primary" th:if="${value=='QUITADA'}" >[[${value}]]</span>
+<span class="badge badge-secondary" th:if="${value=='CANCELADA'}" >[[${value}]]</span>
+<span class="badge badge-waring" th:if="${value=='NEGOCIADA'}" >[[${value}]]</span>
+
+
+</th:block>
+
+

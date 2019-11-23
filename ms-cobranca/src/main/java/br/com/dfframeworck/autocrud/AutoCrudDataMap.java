@@ -1,13 +1,11 @@
 package br.com.dfframeworck.autocrud;
 
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-
-import br.com.dfframeworck.converters.DateConverter;
 
 public class AutoCrudDataMap extends HashMap<String,Object>{
 
@@ -15,26 +13,28 @@ public class AutoCrudDataMap extends HashMap<String,Object>{
 	
 	
 	public Object getFormated(AutoCrudField field){
-		
-		Object value = getOrDefault(field.getFieldName(), "");
+		Object value = get(field.getFieldName());
 		if (Objects.equals("", value))
 			return value;
-		
-		if (field.getType().equals(Date.class)) {
-			Date date = (Date) new DateConverter().parse(value.toString(), Date.class);
-			
-			SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
-			
-			return formater.format(date);
-		
-		} 
-		
-		if(field.getType().equals(BigDecimal.class)){
-			if (Objects.nonNull(value))
-				value = value.toString().replace(".", "").replace(",", ".");
+		return AutoCrudField.getFormatedValue(field, value, field.getType());
+	}
+	
+	@Override
+	public Object get(Object key) {
+		getH( (HashMap) this, key);	
+		 return super.get(key);
+	}
+
+	public static Object  getH(Map<Object,Object> map, Object key) {
+		if (key.toString().contains(".")) {
+			Object value=null;
+			List<String> keys = Arrays.asList( key.toString().split(".") );
+			for (String k : keys) {
+				value = map.getOrDefault(k, new HashMap<>());
+			}
+			return value;
 		}
-		
-		return get(field.getFieldName());
+		return map.getOrDefault(key, "");
 	}
 
 }

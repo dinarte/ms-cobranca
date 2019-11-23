@@ -8,8 +8,6 @@
     <div id="wrapper">
         <nav th:replace="fragments/navigation :: navbar"></nav>
     
-
-
         <div id="page-wrapper">
             
 	    	<div class="row">
@@ -252,7 +250,7 @@ $(function() {
                         <!-- /.panel-heading -->
                         <div class="panel-body" style="padding: 10px">
                         
-	                        	<table class="table">
+	                        	<table class="table responsive-card-table unstriped">
 	                        	<thead>
 	                        		<tr>
 	                        			<th>Contrato</th>
@@ -265,11 +263,11 @@ $(function() {
 	                        	<tbody>
 	                        		<th:block th:each="vencimento : ${vencimentos}">
 		                        		<tr>
-		                        			<td th:text="${vencimento.contrato}" ></td>
-		                        			<td class="text-center" th:text="${vencimento.tipoDebito}"></td>
-		                        			<td class="text-center" th:text="${vencimento.numero}"></td>
-		                        			<td class="text-center"th:text="${#dates.format(vencimento.dataVencimento, 'dd-MM-yyyy')}">dd-MMM-yyyy</td>
-		                        			<td class="text-right" th:text="${#numbers.formatCurrency(vencimento.valorAtualizado)}"></td>
+		                        			<td data-label="Contrato" th:text="${vencimento.contrato}" ></td>
+		                        			<td data-label="Tipo" class="text-center" th:text="${vencimento.tipoDebito}"></td>
+		                        			<td data-label="Número" class="text-center" th:text="${vencimento.numero}"></td>
+		                        			<td data-label="Vencimento" class="text-center"th:text="${#dates.format(vencimento.dataVencimento, 'dd-MM-yyyy')}">dd-MMM-yyyy</td>
+		                        			<td data-label="Valor Atualizado" class="text-right" th:text="${#numbers.formatCurrency(vencimento.valorAtualizado)}"></td>
 		                        			
 		                        		</tr>
 	                        		</th:block>
@@ -302,7 +300,7 @@ $(function() {
 			        		background-color: #eee;
 			        	}
 			        	</style>
-                        <table class="table">
+                        <table class="table responsive-card-table unstriped" >
 	                        	<thead>
 	                        		<tr>
 	                        			<th>Contrato</th>
@@ -313,9 +311,9 @@ $(function() {
 	                        	<tbody>
 	                        		<th:block th:each="inadiplente : ${inadiplentes}">
 		                        		<tr>
-		                        			<td th:text="${inadiplente.contrato}" ></td>
-		                        			<td class="text-center" th:text="${inadiplente.debitos}"></td>
-		                        			<td class="text-right" th:text="${#numbers.formatCurrency(inadiplente.valorAtualizado)}"></td>
+		                        			<td data-label="Contrato" th:text="${inadiplente.contrato}" ></td>
+		                        			<td data-label="Débitos"  class="text-center" th:text="${inadiplente.debitos}"></td>
+		                        			<td data-label="Valor Total" class="text-right" th:text="${#numbers.formatCurrency(inadiplente.valorAtualizado)}"></td>
 		                        			
 		                        		</tr>
 	                        		</th:block>

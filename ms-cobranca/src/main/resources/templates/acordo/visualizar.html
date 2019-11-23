@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+        
+        	<div class="row text-center" th:object="${acordoDTO.contrato.unidade.zona.empreendimento.incorporadora.pessoa}">
+        		<h4>[[*{nome}]]</h4>
+        		<span>[[*{cpf}]]</span><br />
+        		<span>[[*{logradouro}]], [[*{numero}]] - [[*{municipio.nome}]] / [[*{municipio.uf.sigla}]] - CEP: [[*{cep}]]</span><br />
+        		<span>[[*{complemento}]]</span>
+        	</div>
+        	
+        	<div class="row">
+                <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+                
+                <div class="col-lg-16">
+                    <h3 class="page-header">[[${acordoDTO.configuracao.tituloDocumento}]]
+                    </h3>
+                </div>
+                <div class="col-lg-2" style="vertical-align: middle; text-align: center; padding: 8px;">
+                	<!--  
+                	<a th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}" class="btn btn-primary btn-circle btn-lg"> 
+                	
+                	<i class="fa fa-plus-circle" style="font-size: 2.0em" 
+                			data-toggle="tooltip" 
+                      		data-placement="top"
+                      		title="Novo Registro" ></i>
+                	
+                	</a>
+                	-->
+                </div>
+            </div>
+   
+            
+            <table class="table responsive-card-table unstriped">
+            	<caption>Contrato:</caption>
+            	<thead>
+            	<tr>
+            		<th class="text-center">Número</th>
+            		<th class="text-center">Natureza</th>
+            		<th class="text-center">Contratada</th>
+            		<th class="text-center">Contratante</th>
+            		<th class="text-center">Unidade</th>
+            	</tr>
+            	</thead>
+            	<tbody>
+            	<tr>
+            		<td data-label="Número" class="text-center">[[${acordoDTO.contrato.numeroContrato}]]</td>
+            		<td data-label="Naturaza" class="text-center">[[${acordoDTO.contrato.natureza}]]</td>
+            		<td data-label="Contratada" class="text-center">[[${acordoDTO.contrato.unidade.zona.empreendimento.incorporadora.pessoa.nome}]] <br /> CNPJ: [[${acordoDTO.contrato.unidade.zona.empreendimento.incorporadora.pessoa.cpf}]] </td>
+            		<td data-label="Contratante" class="text-center">[[${acordoDTO.contrato.pessoa.nome}]] <br /> CPF: [[${acordoDTO.contrato.pessoa.cpf}]]</td>
+            		<td data-label="Unidade" class="text-center">[[${acordoDTO.contrato.unidade.zona.empreendimento.nome}]] / [[${acordoDTO.contrato.unidade.zona.nome}]] /[[${acordoDTO.contrato.unidade.nome}]]   </td>
+            	</tr>
+            	</tbody>
+            
+            
+            </table>
+            
+            <div class="panel">
+            	<div class="panel-body" th:utext="${acordoDTO.configuracao.textoDocumento}">
+					Texto do documento
+	        	</div>
+            </div>
+            
+	            <style>
+	            .VENCIDA{
+	            	color:red;
+	            }
+	            
+	            .NEGOCIADA{
+	            	color: grey;
+	            }
+	            </style>
+	            
+	            <div class="row">
+	            	            
+	       			<div class="row">
+	       				<div class="panel panel-default">
+	       					<div class="panel-heading">
+	       						<strong>Dados da Negociação:</strong>
+	       					</div>
+	       					<div class="panel-body">
+	       					
+	       						<table class="table responsive-card-table unstriped">
+	       							<thead>
+		       							<tr>
+			       							<th class="text-center">Dívida Negociada</th>
+			       							<th class="text-center">Valor Cobrado</th>
+			       							<th class="text-center">Eentrada</th>
+			       							<th class="text-center">Quant. Parcelas</th>
+		       							</tr>
+	       							</thead>
+	       							<tbody>
+	       								<tr>
+	       									<td data-label="Dívida Negociada" class="text-center">[[${#numbers.formatCurrency(acordoDTO.totalDevedor)}]]</td>
+	       									<td data-label="Valor Cobrado" class="text-center font-bolder">[[${#numbers.formatCurrency(acordoDTO.totalAcordo)}]]</td>
+	       									<td data-label="Entrada" class="text-center">[[${#numbers.formatCurrency(acordoDTO.valorEntrada)}]]</td>
+	       									<td data-label="Quant. Parcelas" class="text-center">[[${acordoDTO.quantidadeParcelas}]]</td>
+	       								</tr>
+	       							</tbody>
+	       						</table>
+	       					
+	       					
+	       						<table class="table responsive-card-table unstriped">
+				       				<caption>Débitos negociados neste acordo:</caption>
+					       			<thead>
+					       			<tr>
+					       				<th class="text-center" >Débito</th>
+					       				<th class="text-center" >Valor Original</th>
+					       				<th class="text-center" >Juros Remuneratórios</th>
+					       				<th class="text-center" >Correção</th>
+					       				<th class="text-center" >Juros Atrazo</th>
+					       				<th class="text-center" >Multa Atrazo</th>
+					       				<th class="text-center" >Valor Atualizado</th>
+					       			</tr>
+					       			</thead>
+					       			<tbody>
+					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.debitosDoAcordo}" th:class="${debitoAcordo.situacao}">
+					       				<td data-label="Débito">
+					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd.')}]]
+					       					[[${debitoAcordo.situacao}]] 
+					       				</td>
+					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>
+					       				<td  data-label="Juros Remuneratórios">[[${#numbers.formatCurrency(debitoAcordo.jurosRemuneratorio)}]]</td>
+					       				<td  data-label="Correção">[[${#numbers.formatCurrency(debitoAcordo.correcao)}]]</td>
+					       				<td  data-label="Juros Atrazo">[[${#numbers.formatCurrency(debitoAcordo.jurosAtrazo)}]]</td>
+					       				<td  data-label="Multa Atrazo">[[${#numbers.formatCurrency(debitoAcordo.multaAtrazo)}]]</td>
+					       				<td  data-label="Valor Atualizado"><strong> [[${#numbers.formatCurrency(debitoAcordo.valorAtualizado)}]] </strong></td>
+					       			</tr>
+					       			</tbody>
+				       			</table>
+		       				       					
+	       					<table class="table responsive-card-table unstriped">
+				       				<caption>Parcelas Geradas para pagamento da dívida:</caption>
+					       			<thead>
+					       			<tr>
+					       				<th class="text-center" >Débito</th>
+					       				<th class="text-center" >Valor Original</th>
+					       				<th class="text-center" >Juros Remuneratórios</th>
+					       				<th class="text-center" >Correção</th>
+					       				<th class="text-center" >Juros Atrazo</th>
+					       				<th class="text-center" >Multa Atrazo</th>
+					       				<th class="text-center" >Valor Atualizado</th>
+					       			</tr>
+					       			</thead>
+					       			<tbody>
+					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.parcelasDoAcordo}">
+					       				<td data-label="Débito">
+					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd/MM/yyyy')}]]
+					       					[[${debitoAcordo.situacao}]] 
+					       				</td>
+					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>
+					       				<td  data-label="Juros Remuneratórios">[[${#numbers.formatCurrency(debitoAcordo.jurosRemuneratorio)}]]</td>
+					       				<td  data-label="Correção">[[${#numbers.formatCurrency(debitoAcordo.correcao)}]]</td>
+					       				<td  data-label="Juros Atrazo">[[${#numbers.formatCurrency(debitoAcordo.jurosAtrazo)}]]</td>
+					       				<td  data-label="Multa Atrazo">[[${#numbers.formatCurrency(debitoAcordo.multaAtrazo)}]]</td>
+					       				<td  data-label="Valor Atualizado"><strong> [[${#numbers.formatCurrency(debitoAcordo.valorAtualizado)}]] </strong></td>
+					       			</tr>
+					       			</tbody>
+				       			</table>
+	       					
+	       					<div class="panel-footer text-right">
+	       						     
+	       					</div>
+	       					
+	       				</div>
+	       			</div>
+	       			
+		       	   
+		            
+		         </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+  
+
+</body>
+
+
+</html>

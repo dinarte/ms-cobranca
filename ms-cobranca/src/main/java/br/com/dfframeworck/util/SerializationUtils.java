@@ -5,6 +5,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.dfframeworck.autocrud.AutoCrudDataMap;
+import br.com.eflux.financeiro.dto.AcordoDTO;
+
 
 public class SerializationUtils {
 
@@ -13,6 +16,16 @@ public class SerializationUtils {
 	    try {	
 			ObjectMapper oMapper = new ObjectMapper();
 			Map<String, Object> map = oMapper.convertValue(obj, Map.class);
+			return map;
+		}catch (Exception e) {
+			throw new SerializationException("Erro ao serializar em Map"+e.getMessage(), e.getCause());
+		}
+    }
+	
+    public static AutoCrudDataMap  toAutoCrudMap(Object obj) throws SerializationException {
+	    try {	
+			ObjectMapper oMapper = new ObjectMapper();
+			AutoCrudDataMap map = oMapper.convertValue(obj, AutoCrudDataMap.class);
 			return map;
 		}catch (Exception e) {
 			throw new SerializationException("Erro ao serializar em Map"+e.getMessage(), e.getCause());
@@ -51,6 +64,17 @@ public class SerializationUtils {
 		
     	Map<String, Object> mapa = SerializationUtils.jsonToMap("{\"boleto\":{\"baixa\":{\"motivo\":\"Cancelamento do plano\"}}}");
     	System.out.println(mapa);
+	}
+
+
+	public static String toJson(Object obj) {
+		try {	
+			ObjectMapper oMapper = new ObjectMapper();
+			String json = oMapper.writeValueAsString(obj);
+			return json;
+		}catch (Exception e) {
+			throw new SerializationException("Erro ao serializar em Json: "+e.getMessage(), e.getCause());
+		}
 	}
 	
 }

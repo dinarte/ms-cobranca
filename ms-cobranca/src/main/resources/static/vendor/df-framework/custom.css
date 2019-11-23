@@ -1,0 +1,74 @@
+/**
+CUSTOMIZACAO - DF-Framework
+**/
+
+
+.btn-add-contaniner{
+	position: fixed;
+	top: 70px;
+	right: 110px;
+	z-index: 8888888;
+}
+
+.btn-add-contaniner a{
+	font-size:60px;
+	color:#FF6600;	
+}
+
+.btn-filter-contaniner{
+	position: fixed;
+	top: 75px;
+	right: 15px;
+	z-index: 8888888;
+	
+}
+
+.btn-filter-contaniner a{
+	font-size:60px;
+	color:#f2d602;
+}
+
+
+.navbar-static-top{
+	position: fixed;
+	top: 0;
+	left:0;
+	right: 0px;
+	z-index: 9999999;
+	padding-right: 10px;
+	padding-top: 10px;
+}
+.page-wrapper{
+	padding: 20px;
+
+}
+
+.page-header{
+	margin-top: 100px;
+}
+
+
+@media screen and (max-width: 860px) {
+	.btn-add-contaniner{
+		top: auto;
+		bottom: 15px;
+		right: 15px;
+	}
+	
+	.btn-filter-contaniner{
+		top: auto;
+		bottom: 110px;
+		right: 15px;
+	}
+	
+	.df-modal .panel-footer {
+	    position: fixed;
+	    bottom: 0px;
+	    width: 100%;
+	    z-index: 99;
+	} 
+	
+}
+
+	
+	

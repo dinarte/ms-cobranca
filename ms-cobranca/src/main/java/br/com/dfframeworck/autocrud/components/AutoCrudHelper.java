@@ -1,7 +1,9 @@
 package br.com.dfframeworck.autocrud.components;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.metamodel.EntityType;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.util.Strings;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Persistable;
@@ -19,7 +22,11 @@ import org.springframework.stereotype.Component;
 
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudField;
+import br.com.dfframeworck.autocrud.Periodo;
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
+import br.com.dfframeworck.controller.AutoCrudControllerCustomizer;
+import br.com.dfframeworck.controller.AutoCrudCusomizerProvider;
 import br.com.dfframeworck.converters.ConverteresProvider;
 import br.com.dfframeworck.converters.IConverter;
 import br.com.dfframeworck.exception.ErroException;
@@ -35,6 +42,9 @@ public class AutoCrudHelper {
 	
 	@Autowired
 	ConverteresProvider converterProvider;
+	
+	@Autowired
+	AutoCrudCusomizerProvider customizerProviger;
 	
 	private IConverter<?> getConverter(Class<?> type){
 		return converterProvider.getForForm(type);
@@ -68,7 +78,13 @@ public class AutoCrudHelper {
 						// NADA PARA FAZER
 					}	
 					
-					String filter = field.getFieldName() +" "+ operatorDetails.get("operator") + " " + operatorDetails.get("quot").replace("{value}", value);
+					String path = field.getFieldName();
+					if (Strings.isNotBlank(field.getMeta().path()))
+						path = field.getMeta().path();
+					
+					String filter = path +" "+ operatorDetails.get("operator") + " " + operatorDetails.get("quot").replace("{value}", value);
+					
+					
 					filtros.add(filter);
 				}
 				
@@ -151,7 +167,11 @@ public class AutoCrudHelper {
 			field.setType(atribute.getJavaType());
 			field.setFieldName(atribute.getName());
 			field.setEntity(crudEntity);
-			
+			try {
+				field.setMeta(crudEntity.getType().getDeclaredField(field.getFieldName()).getAnnotation(EnableAutoCrudField.class));
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			} 
 			if (Objects.nonNull(obj)) {
 				Map<String, Object> data = new HashMap<String, Object>();
 				try {
@@ -164,6 +184,30 @@ public class AutoCrudHelper {
 			
 			crudEntity.getFields().add(field);
 		});
+		
+		AutoCrudControllerCustomizer customizer = customizerProviger.getCustomizer(crudEntity.getType());  
+		List<Field> fields = Arrays.asList( customizer.getClass().getDeclaredFields() );
+		fields.forEach( javaField -> {
+			if (javaField.isAnnotationPresent(EnableAutoCrudField.class)) {
+				AutoCrudField field = new AutoCrudField();
+				field.setType(javaField.getType());
+				field.setFieldName(javaField.getName());
+				field.setEntity(crudEntity);
+				field.setMeta(javaField.getDeclaredAnnotation(EnableAutoCrudField.class));
+				try {
+					field.setValue(javaField.get(customizer));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				crudEntity.getFields().add(field);
+			}
+			
+			
+		});
+		
+		
+		
 		return crudEntity;
 	}
 

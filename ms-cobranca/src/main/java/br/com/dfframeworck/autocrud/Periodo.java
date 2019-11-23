@@ -8,12 +8,17 @@ import java.util.GregorianCalendar;
 import br.com.dfframeworck.converters.DateConverter;
 
 public class Periodo{
+	
 	public Date inicio;
 	public Date fim;
 	
 	
 	public Periodo() {
-		anoAtual();
+		//anoAtual();
+	}
+	
+	public Periodo(String periodo) {
+		this.setPeriodo(periodo);;
 	}
 	
 	
@@ -24,8 +29,17 @@ public class Periodo{
 	}
 	
 	public String getPeriodo() {
+		if (inicio == null || fim == null)
+			return "";
 		SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
 		return formater.format(inicio) + " - " + formater.format(fim);
+	}
+	
+	public String getSqlStyle() {
+		if (inicio == null || fim == null)
+			return "";
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+		return  " '"+formater.format(inicio) + "' AND '" + formater.format(fim)+"'";
 	}
 	
 	
@@ -42,6 +56,12 @@ public class Periodo{
 		this.fim = fim.getTime();
 		
 		return this;
+	}
+	
+	public Periodo blank() {
+		this.inicio = null;
+		this.fim = null;
+		return null;
 	}
 	
 	public Periodo anoAtual() {
@@ -61,11 +81,15 @@ public class Periodo{
 	}
 
 	public String getInicioStr(String partner) {
+		if (inicio == null)
+			return "";
 		SimpleDateFormat formater = new SimpleDateFormat(partner);
 		return formater.format(inicio); 
 	}
 
 	public String getFimStr(String partner) {
+		if (fim == null)
+			return "";
 		SimpleDateFormat formater = new SimpleDateFormat(partner);
 		return formater.format(fim);
 	}
@@ -87,6 +111,11 @@ public class Periodo{
 
 	public void setFim(Date fim) {
 		this.fim = fim;
+	}
+	
+	@Override
+	public String toString() {
+		return getSqlStyle();
 	}
 	
 	

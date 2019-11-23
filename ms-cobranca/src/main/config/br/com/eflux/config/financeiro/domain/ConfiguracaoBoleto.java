@@ -73,7 +73,7 @@ public class ConfiguracaoBoleto implements Persistable<Long>, Migrable<Long>, Pa
 	@Column(name = "api_implementation")
 	private String apiImplementation;
 	
-	@Column(name="original_oi")
+	@Column(name="original_id")
 	private String originalId;
 	
 	

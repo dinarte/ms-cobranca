@@ -1,0 +1,8 @@
+			
+<div th:fragment="ui(field)">			
+	<textarea rows="20"	
+			th:name="${field.entity.entityName +'.'+ field.fieldName}" 
+			th:placeholder="${field.meta.label()}"
+			th:readonly="${field.readOnly}"
+			th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}" >[[${field.value}]]</textarea>		
+</div>

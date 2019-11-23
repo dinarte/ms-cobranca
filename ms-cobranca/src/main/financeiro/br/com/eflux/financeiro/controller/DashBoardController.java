@@ -33,6 +33,7 @@ public class DashBoardController {
 	@Functionality(isPublic=false, name="DashBord", menu="root->home", icon="fa fa-dashboard")
 	@RequestMapping({"/home"})
 	public String home(Model m, Periodo periodo) throws AppException {		
+		periodo.anoAtual();
 		m.addAttribute("periodo", periodo);
 		processarIndicadores(m, periodo);
 		processarVencimentos(m, periodo);

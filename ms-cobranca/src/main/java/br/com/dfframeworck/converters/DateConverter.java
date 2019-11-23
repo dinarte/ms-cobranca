@@ -15,7 +15,7 @@ public class DateConverter implements IConverter<Date> {
 	public Date parse(String value, Class<?> type) {
 		if (Objects.isNull(value))
 			return null;
-		else if(value.equals("NULL")){
+		else if(value.equalsIgnoreCase("NULL")){
 			return null;
 				
 		}else if (value.trim().equals("")){

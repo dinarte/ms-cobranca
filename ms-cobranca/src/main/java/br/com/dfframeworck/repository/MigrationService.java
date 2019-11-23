@@ -118,22 +118,32 @@ public class MigrationService {
 				
 				
 				String[] values = linha.split(";");
-				for (int i=0; i<values.length; i++) {
-					
-					System.out.print("("+types[i]+") ");
-					System.out.print(cols[i]);
-					System.out.print("=");
-					System.out.print(values[i]);
-					System.out.println("; ");
-					
-					try {
-						converterProvider.invokeForMigration(values[i], types[i], cols[i], obj);
-					}catch (Exception e) {
-						erros.add("Erro na <strong>Linha "+ rowCont + "</strong> [CONVERSAO]: Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i].getSimpleName()+") para entidade " +className+ ". Causa: "+ e.getMessage());
-						erroNalinha = true;
-						//throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
+				
+				if (values.length != types.length) {
+					erroNalinha = true;
+					erros.add("Erro na <strong>Linha Erro na linha " + rowCont +"</strong> o número de colulas encontradas na linha ("+values.length+") d"
+							+ "ifere do número de colunas do cabeçalho ("+ types.length +") ");
+				}
+				
+				if (!erroNalinha) {
+					for (int i=0; i<values.length; i++) {
+						
+						System.out.print("("+types[i]+") ");
+						System.out.print(cols[i]);
+						System.out.print("=");
+						System.out.print(values[i]);
+						System.out.println("; ");
+						
+						try {
+							converterProvider.invokeForMigration(values[i], types[i], cols[i], obj);
+						}catch (Exception e) {
+							e.printStackTrace();
+							erros.add("Erro na <strong>Linha "+ rowCont + "</strong> [CONVERSAO]: Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i].getSimpleName()+") para entidade " +className+ ". Causa: "+ e.getMessage());
+							erroNalinha = true;
+							//throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
+						}
+						
 					}
-					
 				}
 				if (!erroNalinha) {
 					Persistable<Long> persistable = (Persistable<Long>) obj;
