@@ -1,4 +1,6 @@
 			
 <span th:fragment="formater(field, value)">			
-	[[${#numbers.formatCurrency(value)}]]
+	
+	[[${#dates.format(value,'dd/MM/yyy HH:mm:ss')}]]
+	
 </span>

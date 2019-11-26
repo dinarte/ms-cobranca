@@ -138,6 +138,14 @@ public class ConfiguracaoAcordo implements Persistable<Long>, Migrable<Long> {
 	@Type(type="text")
 	private String textoDocumento;
 	
+	
+	@EnableAutoCrudField(label="Quantidade de Parcelas Vencidas Sugestão", 
+			description="Ao atingir a quantidade de parcelas vencidas indicada "
+					+ "neste campo o sistema irá habilitar a função Acordo para o contrato em questão", ordinal=11)
+	private Integer quantidadeParcelasVencidasSugestao;
+	
+	
+	
 	@Column(name="original_id")
 	private String originalId;
 
@@ -222,7 +230,14 @@ public class ConfiguracaoAcordo implements Persistable<Long>, Migrable<Long> {
 		this.tipoLancamentoEntrada = tipoLancamentoEntrada;
 	}
 	
-	
+
+	public Integer getQuantidadeParcelasVencidasSugestao() {
+		return quantidadeParcelasVencidasSugestao;
+	}
+
+	public void setQuantidadeParcelasVencidasSugestao(Integer quantidadeParcelasVencidasSugestao) {
+		this.quantidadeParcelasVencidasSugestao = quantidadeParcelasVencidasSugestao;
+	}
 
 	public String getTituloDocumento() {
 		return tituloDocumento;

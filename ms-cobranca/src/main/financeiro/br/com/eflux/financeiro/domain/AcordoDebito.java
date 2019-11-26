@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 /**
  * Débitos envolvidos em um acordo, aqui são relacionados todos os débitos envlvidos em um acordo.
@@ -33,6 +35,7 @@ public class AcordoDebito {
 	@Column(name = "id_acordo_debito", unique = true, nullable = false)
 	private Long id;
 	
+	@JsonBackReference
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="id_acordo")
 	private Acordo acordo;

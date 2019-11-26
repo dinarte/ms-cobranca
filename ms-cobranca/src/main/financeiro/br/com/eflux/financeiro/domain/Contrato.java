@@ -3,6 +3,7 @@ package br.com.eflux.financeiro.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +33,7 @@ import br.com.eflux.empreendimento.domain.Unidade;
  */
 @Entity
 @Table(schema="financeiro", name="contrato")
-@AutoCrud(name="Contratos", description="Gerenciamento de Contratos", 
+@AutoCrud(name="Contratos", description="Gerenciamento de Contratos", orderBy="data desc",
 funtionality=@Functionality(isPublic=false, name="Gerenciar Contratos", menu="root->Financeiro->contrato", icon="fas fa-file-contract"))
 public class Contrato implements Persistable<Long>, Migrable<Long> {
 	
@@ -116,6 +117,23 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 	@Enumerated(EnumType.STRING)
 	@Column(name="natureza", nullable=false)
 	private NaturezaContratoEnum natureza;
+	
+	/**
+	 * Porcentagem da multa a ser cobrada por atrazo
+	 */
+	@EnableAutoCrudField(label="Multa por Atrazo (%)", enableForFilter=false, ordinal=11, readOnlyForUpdate=true)
+	@Column(name="porcentagem_multa")
+	private Double porcentagemMulta;
+
+	/**
+	 * Porcentagem dos juros por dia a serem cobrados por atrazo
+	 */
+	@EnableAutoCrudField(label="Juros diário por atrazo (%)", enableForFilter=false, ordinal=12, readOnlyForUpdate=true)
+	@Column(name="porcentagem_juros")
+	private Double porcentagemJuros;
+	
+	@EnableAutoCrudField(label="Parcelas vencidas", enableForFilter=false, enableForList=true, enableForCreate=false, enableForUpdate=false,  ordinal=13, readOnlyForUpdate=false)
+	private Long quantidadeParcelasVencidas;
 
 	@Column(name="original_id")
 	private String originalId;
@@ -158,6 +176,14 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 
 	public void setDataVenda(Date dataVenda) {
 		this.data = dataVenda;
+	}
+
+	public Long getQuantidadeParcelasVencidas() {
+		return quantidadeParcelasVencidas;
+	}
+
+	public void setQuantidadeParcelasVencidas(Long quantidadeParcelasVencidas) {
+		this.quantidadeParcelasVencidas = quantidadeParcelasVencidas;
 	}
 
 	public Date getDataBase() {
@@ -218,6 +244,34 @@ public class Contrato implements Persistable<Long>, Migrable<Long> {
 		this.natureza = natureza;
 	}
 	
+	
+	
+	public Double getPorcentagemMulta() {
+		
+		Double ret =  Optional
+				.ofNullable(porcentagemMulta)
+				.orElseGet(() -> new Double(0));
+		
+		return ret;
+	}
+
+	public void setPorcentagemMulta(Double porcentagemMulta) {
+		this.porcentagemMulta = porcentagemMulta;
+	}
+
+	public Double getPorcentagemJuros() {
+		
+		Double ret =  Optional
+				.ofNullable(porcentagemJuros)
+				.orElseGet(() -> new Double(0));
+		
+		return ret;
+	}
+
+	public void setPorcentagemJuros(Double porcentagemJuros) {
+		this.porcentagemJuros = porcentagemJuros;
+	}
+
 	public boolean isNew() {
 		return Objects.isNull(id) || id.equals(0L);
 	}

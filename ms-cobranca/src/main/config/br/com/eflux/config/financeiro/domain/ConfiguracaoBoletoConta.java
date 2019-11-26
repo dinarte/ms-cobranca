@@ -47,12 +47,12 @@ public class ConfiguracaoBoletoConta implements Persistable<Long>, Migrable<Long
 	
 	@ManyToOne
 	@JoinColumn(name="id_conta_recebimento")
-	@EnableAutoCrudField(label="Conta Bancária", enableForFilter=true, enableForList=true, ordinal=1)
+	@EnableAutoCrudField(label="Conta Bancária", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="descricao")
 	private ContaRecebimento contaRecebimento;
 
 	@ManyToOne
 	@JoinColumn(name="id_configuracao_boleto")
-	@EnableAutoCrudField(label="Configuração", enableForFilter=true, enableForList=true, ordinal=2)
+	@EnableAutoCrudField(label="Configuração", enableForFilter=true, enableForList=true, ordinal=2, lookUpFieldName="nome")
 	private ConfiguracaoBoleto configuracaoBoleto;
 	
 	@EnableAutoCrudField(label="Token de identificação da conta na api de boletos", enableForList=true, ordinal=3)

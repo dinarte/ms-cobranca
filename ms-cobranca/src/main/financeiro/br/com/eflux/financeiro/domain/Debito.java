@@ -1,10 +1,15 @@
 package br.com.eflux.financeiro.domain;
 
-import java.beans.Transient;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,11 +23,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.util.Optionals;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +38,7 @@ import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
+import br.com.eflux.financeiro.helper.SituacaoDebitoHelper;
 
 /**
  * Débitos gerados a partir de um contrato que foi firmado, 
@@ -40,8 +48,15 @@ import br.com.dfframeworck.security.Functionality;
  */
 @Entity
 @Table(schema="financeiro", name="debito")
-@AutoCrud(name="Débitos", description="Débitos do Contrato", orderBy="dataVencimento asc",
-	funtionality=@Functionality(isPublic=false, name="Débitos do Contrato", menu="root->Financeiro->debito", icon="fa fa-hand-holding-usd"))
+@AutoCrud(	name="Débitos", 
+			description="Débitos do Contrato", 
+			orderBy="dataVencimento asc", 
+			operations= {"list", "update"},
+			funtionality=@Functionality(	isPublic=false, 
+											name="Débitos do Contrato", 
+											menu="root->Financeiro->debito", 
+											icon="fa fa-hand-holding-usd"))
+
 public class Debito implements Persistable<Long>, Migrable<Long> {
 	
 	@Id
@@ -49,6 +64,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@GenericGenerator(name = "lancamentoGenerator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
 			@Parameter(name = "sequence_name", value = "empreendimento.lancamento_seq") })
 	@Column(name = "id_debito", unique = true, nullable = false, insertable = true, updatable = true)
+	//@EnableAutoCrudField(label="id", enableForFilter=true, enableForList=true, ordinal=0, readOnlyForUpdate=true)
 	private Long id;
 	
 	@EnableAutoCrudField(label="Número", enableForFilter=true, enableForList=true, ordinal=1, readOnlyForUpdate=true, formater="custom/numeroParcelaFormater")
@@ -68,25 +84,26 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Valor Original", enableForList=true, ordinal=4, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal valorOriginal;
 	
-	@EnableAutoCrudField(label="Júros", enableForList=true, ordinal=5, readOnlyForUpdate=true, formater="currencyFormater")
-	private BigDecimal jurosAtrazo;
+	@EnableAutoCrudField(label="Correção", enableForList=true, ordinal=5, readOnlyForUpdate=true, formater="currencyFormater")
+	private BigDecimal correcao;
 
-	@EnableAutoCrudField(label="Multa", enableForList=true, ordinal=6, readOnlyForUpdate=true, formater="currencyFormater")
-	private BigDecimal multaAtrazo;
-	
-	@EnableAutoCrudField(label="Júros Contrato", enableForList=true, ordinal=7, readOnlyForUpdate=true, formater="currencyFormater")
+	@EnableAutoCrudField(label="Remuneração", enableForList=true, ordinal=6, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal jurosRemuneratorio;
 	
-	@EnableAutoCrudField(label="Correção", enableForList=true, ordinal=8, readOnlyForUpdate=true, formater="currencyFormater")
-	private BigDecimal correcao;
+	@EnableAutoCrudField(label="Multa", enableForList=true, ordinal=7, readOnlyForUpdate=true, formater="currencyFormater")
+	private BigDecimal multaAtrazo;
+
+	@EnableAutoCrudField(label="Mora", enableForList=true, ordinal=8, readOnlyForUpdate=true, formater="currencyFormater")
+	private BigDecimal jurosAtrazo;
+
 	
-	@EnableAutoCrudField(label="Data", enableForList=true, ordinal=9, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Data", enableForList=false, ordinal=9, readOnlyForUpdate=true)
 	private Date dataLancamento;
 	
 	@EnableAutoCrudField(label="Vencimento", enableForList=true, ordinal=10, readOnlyForUpdate=true)
 	private Date dataVencimento;
 	
-	@EnableAutoCrudField(label="Data Ultimo Pagamento", ordinal=11, readOnlyForUpdate=true)
+	@EnableAutoCrudField(label="Data Ultimo Pagamento", enableForList=true, ordinal=11, readOnlyForUpdate=true)
 	private Date dataUltimoPagamento;
 	
 	@EnableAutoCrudField(label="Valor Pago", ordinal=12, readOnlyForUpdate=true)
@@ -127,7 +144,6 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	
 	@Column(name="originalId")
 	private String originalId;
-	
 	
 	public Debito() {
 		super();
@@ -187,10 +203,37 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getJurosAtrazo() {
-		BigDecimal ret =  Optional
-							.ofNullable(jurosAtrazo)
-							.orElseGet(()->new BigDecimal(0));
-		return ret;
+		
+		if (SituacaoDebitoHelper.getPassiveisDeJurosEMulta().contains(situacao)) {
+			if (Objects.nonNull(dataVencimento)) {
+				
+				long diasVencimento = getDiasVencida();
+				
+				if (diasVencimento < 0) {
+					
+					jurosAtrazo = (getValorOriginal()
+							.subtract(getValorPago())
+							.add(getJurosRemuneratorio())
+							.add(getCorrecao())
+							.multiply(new BigDecimal(contrato.getPorcentagemJuros()))
+							.divide(new BigDecimal(100)))
+								.multiply(new BigDecimal(-diasVencimento));
+				} else {
+					jurosAtrazo = new BigDecimal(0);
+				}
+				
+				return jurosAtrazo;
+			}
+		}
+		return  Objects.nonNull( jurosAtrazo ) ? jurosAtrazo : new BigDecimal(0);
+	}
+
+	private long getDiasVencida() {
+		LocalDate vencimento = dataVencimento.toInstant()
+		  .atZone(ZoneId.systemDefault())
+		  .toLocalDate();
+		long diasVencimento = ChronoUnit.DAYS.between(LocalDate.now(), vencimento);
+		return diasVencimento;
 	}
 
 	public void setJurosAtrazo(BigDecimal jurosAtrazo) {
@@ -198,12 +241,45 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getMultaAtrazo() {
-		
-		BigDecimal ret =  Optional
-							.ofNullable(multaAtrazo)
-							.orElseGet(() -> new BigDecimal(0));
-		return ret;
+		if (Objects.nonNull(dataVencimento)) {
+			if (SituacaoDebitoHelper.getPassiveisDeJurosEMulta().contains(situacao)) {
+				
+				if (getDiasVencida()<0)
+				
+					multaAtrazo =  (getValorOriginal()
+										.subtract(getValorPago())
+										.add(getJurosRemuneratorio())
+										.add(getCorrecao())
+										.multiply(new BigDecimal(contrato.getPorcentagemMulta()))
+										.divide(new BigDecimal(100)));
+				else
+					multaAtrazo = new BigDecimal(0);
+			}	
+		}
+		return Objects.nonNull( multaAtrazo ) ? multaAtrazo : new BigDecimal(0);
 	}
+	
+	public static void main(String[] args) {
+		
+		Contrato c = new Contrato();
+		c.setPorcentagemJuros(1.0);
+		Debito d = new Debito();
+		d.setContrato(c);
+		d.setValorOriginal(new BigDecimal(100.0));
+		
+	//	d.setCorrecao(new BigDecimal(30));
+	//	d.setJurosRemuneratorio(new BigDecimal(70));
+		
+		Calendar hoje = new GregorianCalendar();
+		hoje.set(2019, 10, 22);
+		
+		d.setDataVencimento(hoje.getTime());
+		
+		System.out.println(d.getDataVencimentoFormatada("dd-MM-yyyy") + ": " + d.getJurosAtrazo());
+		
+		
+	}
+	
 
 	public void setMultaAtrazo(BigDecimal multaAtrazo) {
 		this.multaAtrazo = multaAtrazo;
@@ -274,7 +350,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	public BigDecimal getValorPago() {
-		return valorPago;
+		return Optional.ofNullable( valorPago ).orElseGet(()->new BigDecimal(0));
 	}
 
 	public void setValorPago(BigDecimal valorPago) {

@@ -20,5 +20,7 @@ public interface PaymentApiConsumer {
 	public void writeOff(String tokenId, String msg) throws PaymentApiException;
 
 	public byte[] duplicate(String tokenId, Date date) throws PaymentApiException;
+	
+	public BatchFile createBatch(String accountTokenId, BatchFile file) throws PaymentApiException;
 
 }

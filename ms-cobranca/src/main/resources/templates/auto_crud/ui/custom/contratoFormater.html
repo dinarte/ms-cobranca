@@ -13,7 +13,8 @@
                             
    <div th:id="${'contratoModal_'+value.id}" class="df-modal">
 	   <div class="panel panel-default">
-		   	<div class="panel-heading"><strong>Contrato <smal>[[${value.numeroContrato}]]</smal></strong></div>
+		   	<div class="panel-heading "><strong>Contrato<smal>[[${value.numeroContrato}]]</smal></strong>
+		   	</div>
 		   	<div class="panel-body">
 		   		<table class="table responsive-card-table unstriped">
 		            	<caption>Contrato:</caption>
@@ -38,10 +39,13 @@
 		            	</tr>
 		            	</tbody>
 		            </table>
+		            <div class="text-center">
+		            <a th:href="${'/contrato/'+value.id}" type="button" class="btn btn-info">Vizualizar o Contrato</a>
+			    	<a th:href="${'/crud/Debito?Debito.contrato='+value.id+'&size=200'}" type="button" class="btn btn-success">Débitos do Contrato</a>
+		            </div>
 		   	</div>
 		   	<div class="panel-footer text-right">
-		   		<button type="button" class="btn btn-default" th:data-close-modal="${'contratoModal_'+value.id}">Fechar</button>
-			    <button type="button" class="btn btn-primary">Ir para o Contrato</button>
+			    <button type="button" class="btn btn-default " th:data-close-modal="${'contratoModal_'+value.id}">Fechar</button>
 		   	</div>
 	   </div>                         
    </div>  

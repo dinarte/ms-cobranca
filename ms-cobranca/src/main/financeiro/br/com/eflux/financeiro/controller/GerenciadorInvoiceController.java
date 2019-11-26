@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import br.com.dfframeworck.controller.AutoCrudController;
 import br.com.dfframeworck.exception.ErroException;
 import br.com.dfframeworck.exception.ValidacaoException;
+import br.com.dfframeworck.messages.AppFlashMessages;
 import br.com.dfframeworck.messages.AppMessages;
 import br.com.dfframeworck.security.Functionality;
 import br.com.eflux.config.financeiro.domain.ConfiguracaoBoletoConta;
 import br.com.eflux.financeiro.domain.Boleto;
+import br.com.eflux.financeiro.domain.Contrato;
 import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
 import br.com.eflux.financeiro.domain.StatusGeracaoInvoiceEnum;
@@ -37,7 +39,7 @@ import br.com.eflux.payments.api.PaymentApiException;
  *
  */
 @Controller
-public class VisualizadorInvoiceController {
+public class GerenciadorInvoiceController {
 
 	@Autowired DebitoRepository debitoRepo;
 	
@@ -50,6 +52,8 @@ public class VisualizadorInvoiceController {
 	@Autowired AutoCrudController crudController;
 	
 	@Autowired AppMessages appMessages;
+
+	@Autowired AppFlashMessages appFlashMessages;
 	
 	/**
 	 * Visuzaliza o invoice gerado para o debito informado.
@@ -62,7 +66,7 @@ public class VisualizadorInvoiceController {
 	 * @throws ErroException
 	 */
 	
-	@Functionality(name="Visualizar um Incoice para um dado débito",isPublic=false,menu="none")
+	@Functionality(name="Visualizar um Invoice para um dado débito",isPublic=false,menu="none")
 	@RequestMapping(path="/invoice/{idDebito}/visualizar", method=RequestMethod.GET)
 	public String visualizar(@PathVariable("idDebito") Long idDebito, Model m, HttpServletRequest request) throws ErroException {
 		
@@ -159,13 +163,20 @@ public class VisualizadorInvoiceController {
 		
 		if (debitoRepo.existsByInvoice(debito.getInvoice())) {
 			Debito debitoInvoice = debitoRepo.findTop1ByInvoice(debito.getInvoice());
-			appMessages.getErrorList().add("Já existe um débito associado a este invoice: <a href='/crud/Debito/"+debitoInvoice.getId()+"'>Clique para saber qual é</a>");
+			appMessages.getErrorList().add("Já existe um débito associado a este invoice: <a href='/crud/Debito?Debito.numero="+debitoInvoice.getNumero()+"&Debito.contrato="+debitoInvoice.getContrato().getId()+"'>Clique para saber qual é</a>");
 			return "/invoice/visualizar-no-invoice";
 		}
 		
 		Debito debitoPersistente = debitoRepo.findById(debito.getId()).get();
 		
 		ConfiguracaoBoletoConta configConta = configContaRepo.findTop1ByContaRecebimento(debitoPersistente.getContaRecebimento());
+		
+		if (configConta == null) {
+			appMessages.getErrorList().add("A conta relacionada ao débito ("+debitoPersistente.getContaRecebimento().getDescricao()+") não está configurada para gerar invoices.");
+			return "/invoice/visualizar-no-invoice";
+		}
+		
+		
 		PaymentApiConsumer consumer =  (PaymentApiConsumer) context.getBean(configConta.getBoletoApiConfiguration().getApiImplementation());
 		consumer.basicAuthentication(configConta);
 		
@@ -180,7 +191,7 @@ public class VisualizadorInvoiceController {
 		debitoPersistente.setInvoice(debito.getInvoice());
 		debitoPersistente.setStatusCriacaoInvoice(StatusGeracaoInvoiceEnum.SUCESSO);
 		debitoRepo.save(debitoPersistente);
-		appMessages.getSuccessList().add("Invoice associado com sucesso.");
+		appFlashMessages.getMessages().getSuccessList().add("Invoice associado com sucesso.");
 		
 		return "redirect:"+referer;
 	}

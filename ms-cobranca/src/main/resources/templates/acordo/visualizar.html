@@ -126,7 +126,7 @@
 					       			<tr th:each="debitoAcordo, stat : ${acordoDTO.debitosDoAcordo}" th:class="${debitoAcordo.situacao}">
 					       				<td data-label="Débito">
 					       					[[${debitoAcordo.tipoLancamento}]] ([[${debitoAcordo.numero}]]) 
-					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd.')}]]
+					       					[[${#dates.format(debitoAcordo.dataVencimento,'dd/MM/yyy')}]]
 					       					[[${debitoAcordo.situacao}]] 
 					       				</td>
 					       				<td  data-label="Valor Original">[[${#numbers.formatCurrency(debitoAcordo.valorOriginal)}]]</td>

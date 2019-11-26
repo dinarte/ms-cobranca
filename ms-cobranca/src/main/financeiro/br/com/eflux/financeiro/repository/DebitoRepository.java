@@ -28,7 +28,7 @@ public interface DebitoRepository extends CrudRepository<Debito, Long>{
 
 	public Debito findTop1ByInvoice(Boleto invoice);
 	
-	@Query("from Debito where contrato = :contrato and situacao in :situacoes")
+	@Query("from Debito where contrato = :contrato and situacao in :situacoes order by dataVencimento")
 	public List<Debito> findAllByContratoAndSituacao(@Param("contrato") Contrato contrato, 
 			@Param("situacoes") List<SituacaoDebitoEnum> situacaoes);
 

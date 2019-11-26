@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Habilita o conversor para ser utilizado na interpretação da migração de dados
+ * Habilita o conversor para ser utilizado na interpretação da migração de dados ou na submição de um form
  * @author Dinarte
  *
  */

@@ -25,8 +25,12 @@ import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Persistable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import br.com.dfframeworck.autocrud.annotations.AutoCrud;
+import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.repository.Migrable;
+import br.com.dfframeworck.security.Functionality;
 import br.com.eflux.config.financeiro.domain.ConfiguracaoAcordo;
 
 /**
@@ -40,6 +44,8 @@ import br.com.eflux.config.financeiro.domain.ConfiguracaoAcordo;
  */
 @Entity
 @Table(name = "acordo", schema = "financeiro")
+@AutoCrud(name="Acordos", description="Acordos Realizados", operations={"list"},
+	funtionality=@Functionality(isPublic=false, name="Acordos", menu="root->Financeiro->Acordo", icon="fa fa-handshake-o"))
 public class Acordo implements Persistable<Long>, Migrable<Long> {
 
 	@Id
@@ -54,6 +60,7 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 	 */
 	@Enumerated(EnumType.STRING)
 	@JoinColumn(name = "id_status_acordo", nullable = false)
+	@EnableAutoCrudField(label="Situação", enableForFilter=true, enableForList=true, ordinal=0)
 	private StatusAcordoEnum statusAcordo = StatusAcordoEnum.ATIVO;
 
 
@@ -62,12 +69,14 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_contrato", nullable = false)
+	@EnableAutoCrudField(label="Contrato", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="numero", formater="custom/contratoFormater", ui="autoComplete")
 	private Contrato contrato;
 
 
 	/**
 	 * Débitos agrupados em um acordo
 	 */
+	@JsonManagedReference
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "acordo")
 	private Set<AcordoDebito> debitos;
 
@@ -75,6 +84,7 @@ public class Acordo implements Persistable<Long>, Migrable<Long> {
 	 * Novo valor a ser cobrado através do acordo.
 	 */
 	@Column(name = "valor_acordado")
+	@EnableAutoCrudField(label="Valor Acordado", enableForFilter=false, enableForList=true, ordinal=2, formater="currencyFormater")
 	private BigDecimal valorAcordado;
 	
 	/**

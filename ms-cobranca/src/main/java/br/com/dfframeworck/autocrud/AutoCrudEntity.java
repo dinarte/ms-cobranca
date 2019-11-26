@@ -1,5 +1,6 @@
 package br.com.dfframeworck.autocrud;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -47,6 +48,10 @@ public class AutoCrudEntity {
 		}catch (NoSuchElementException e) {
 			throw new RuntimeException("Não foi possível acessar o AutoCrudField: "+name);
 		}
+	}
+	
+	public boolean isOperationEnabled(String operation) {
+		return Arrays.asList( getMeta().operations() ).contains(operation);
 	}
 	
 	

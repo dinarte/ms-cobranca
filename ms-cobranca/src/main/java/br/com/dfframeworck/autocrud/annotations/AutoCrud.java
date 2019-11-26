@@ -29,4 +29,6 @@ public @interface AutoCrud {
 	public String orderBy() default "";
 	
 	public Functionality funtionality();
+	
+	public String[] operations() default {"list", "create", "update", "delete"};
 }

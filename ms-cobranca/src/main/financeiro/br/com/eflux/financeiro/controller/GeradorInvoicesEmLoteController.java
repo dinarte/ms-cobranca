@@ -15,12 +15,12 @@ import br.com.dfframeworck.exception.ErroException;
 import br.com.dfframeworck.messages.AppFlashMessages;
 import br.com.dfframeworck.messages.SucessMsg;
 import br.com.dfframeworck.security.Functionality;
-import br.com.eflux.financeiro.controller.task.DebitosVencidosTask;
+import br.com.eflux.financeiro.controller.task.GeradorInvoicesTask;
 import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.financeiro.repository.DebitoRepository;
 
 @Controller
-public class GeradorInvoicesController {
+public class GeradorInvoicesEmLoteController {
 	
 	@Autowired
 	private DebitoRepository debitoRepository;
@@ -33,7 +33,7 @@ public class GeradorInvoicesController {
 	private AutoCrudController crudCrontroller;
 	
 	@Autowired
-	private DebitosVencidosTask task;
+	private GeradorInvoicesTask task;
 	
 	/**
 	 * Executa a task de geração de invoices a partir de uma funcinalidade disparada pelo usuário.
@@ -45,7 +45,6 @@ public class GeradorInvoicesController {
 	public String gerar() {
 		task.executarGeracao();
 		return "redirect:/financeiro/invoices/resultado";
-		
 	}
 
 	

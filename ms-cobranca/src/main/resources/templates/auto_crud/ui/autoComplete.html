@@ -17,8 +17,10 @@
 
 <script>
 $(document).ready(function(){
+	$('autocomplete-suggestions').css('z-index','999999999999999999');
 	$('#_[[${field.entity.entityName + field.fieldName}]]').autocomplete({
 	    serviceUrl: '/lookup/[[${field.type.simpleName}]]/[[${field.meta.lookUpFieldName()}]]',
+	    zIndex:9999999999999999999,
 	    onSelect: function (suggestion) {
 	      //alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
 	      $('#[[${field.entity.entityName + field.fieldName}]]').attr('value',suggestion.data);
@@ -26,15 +28,5 @@ $(document).ready(function(){
 	});
 });
 </script>
-
-<style>
-.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-.autocomplete-suggestion { padding: 5px 5px; white-space: nowrap; overflow: hidden; }
-.autocomplete-selected { background: #F0F0F0; }
-.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-.autocomplete-group { padding: 2px 5px; }
-.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
-</style>
-
 	
 </div>

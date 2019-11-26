@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
 
 /**
@@ -12,6 +13,20 @@ import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
  *
  */
 public class SituacaoDebitoHelper {
+	
+	
+	/**
+	 * Situações ativas
+	 * @return
+	 */
+	public static List<SituacaoDebitoEnum> getAtivas() {
+		return Arrays.asList( new SituacaoDebitoEnum[]{ 
+				SituacaoDebitoEnum.EM_ABERTO,
+				SituacaoDebitoEnum.VENCIDA,
+				SituacaoDebitoEnum.QUITADA} );
+		
+	}
+	
 	
 	/**
 	 * Retorna as situações dos dábitos que os qualificam a entrarem em um acordo.
@@ -30,5 +45,38 @@ public class SituacaoDebitoHelper {
 	public static List<String> getPassiveisAcordoStr(){
 		return getPassiveisAcordo().stream().map(SituacaoDebitoEnum::name).collect(Collectors.toList());
 	}
+	
+	/**
+	 * Retorna as situações que são passíveis de Juros e Multa
+	 * @return
+	 */
+	public static List<SituacaoDebitoEnum> getPassiveisDeJurosEMulta(){
+		return Arrays.asList( new SituacaoDebitoEnum[]{ 
+				SituacaoDebitoEnum.VENCIDA} );
+	}
+
+
+	/**
+	 * Retorna todas as situações possíveis
+	 * @return
+	 */
+	public static List<SituacaoDebitoEnum> getAll() {
+		return Arrays.asList( SituacaoDebitoEnum.values() );
+	}
+
+
+	/**
+	 * Situações nas quais os Débitos ainda estão à serem pagos
+	 * @return
+	 */
+	public static  List<SituacaoDebitoEnum> getAPagar() {
+		return Arrays.asList( new SituacaoDebitoEnum[]{ 
+				SituacaoDebitoEnum.EM_ABERTO,
+				SituacaoDebitoEnum.VENCIDA} );
+	}
+
+
+	
+	
 
 }

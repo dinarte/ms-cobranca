@@ -44,8 +44,11 @@ public class ConverteresProvider {
 		Map<String, Object> convertersBeans = appContext.getBeansWithAnnotation(EnableDataConver.class);
 		
 		convertersBeans.values().forEach(converter -> {
+			
 			EnableDataConver dataMigrationConverter = converter.getClass().getAnnotation(EnableDataConver.class);
+			
 			Class<?>[] types = dataMigrationConverter.types();
+		
 			if (dataMigrationConverter.enableForMigration())
 				for (Class<?> type : types) {
 					migrationConverters.put(type, (IConverter<?>) converter);

@@ -69,6 +69,7 @@ public class MigrationService {
 		classList.addAll( PackageUtils.getClassList("br.com.eflux.comum.domain") );
 		classList.addAll( PackageUtils.getClassList("br.com.eflux.empreendimento.domain") );
 		classList.addAll( PackageUtils.getClassList("br.com.eflux.financeiro.domain") );
+		classList.addAll( PackageUtils.getClassList("br.com.eflux.config.financeiro.domain") );
 		classList = classList.stream().filter( c -> c.isAnnotationPresent(Entity.class) ).collect(Collectors.toList());
 		return classList;
 	}

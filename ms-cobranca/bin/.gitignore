@@ -1,10 +1,10 @@
-/br/
+/application-dev.properties
+/application.properties
+/banner.txt
 /static/
 /templates/
+/br/
+/financeiro/
 /test/
 /Library.class
 /LibraryTest.class
-/SituacaoGeracaoInvoiceEnum/
-/application2.properties
-/application-dev.properties
-/defaultFormater/

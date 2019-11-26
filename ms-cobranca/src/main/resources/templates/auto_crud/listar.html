@@ -21,7 +21,7 @@
                 </div>
                   	
                 
-                <div class="col-lg-1 btn-add-contaniner" style="vertical-align: middle; text-align: center; padding: 8px;">
+                <div th:if="${autoCrudData.entity.isOperationEnabled('create')}" class="col-lg-1 btn-add-contaniner" style="vertical-align: middle; text-align: center; padding: 8px;">
                 	
                 	<a 	data-loading="loader"
                 		th:href="${'/crud/'+autoCrudData.entity.entityName+'/add'}"> 

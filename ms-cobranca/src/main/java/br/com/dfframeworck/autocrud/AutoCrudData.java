@@ -1,6 +1,7 @@
 package br.com.dfframeworck.autocrud;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,14 +22,6 @@ public class AutoCrudData {
 	AutoCrudPagination pagination;
 	
 	List<AutoCrudAction> actions = new ArrayList<>();
-	
-
-	public AutoCrudData() {
-		AutoCrudAction editar = new AutoCrudAction("Editar registro", "/crud/{entityName}/{id}","glyphicon glyphicon-pencil","btn btn-success btn-circle", true, 99);
-		AutoCrudAction remover = new AutoCrudAction("Remover registro", "/crud/{entityName}/{id}/del", "glyphicon glyphicon-trash","btn btn-danger btn-circle delete",true, 100) ;
-		actions.add(editar);
-		actions.add(remover);
-	}
 	
 	@SuppressWarnings("unchecked")
 	private List<AutoCrudAction> parseActions(String id) {
@@ -55,6 +48,17 @@ public class AutoCrudData {
 
 
 	public void setEntity(AutoCrudEntity entity) {
+		
+		if (Arrays.asList( entity.getMeta().operations() ).contains("update")) {
+			AutoCrudAction editar = new AutoCrudAction("Editar registro", "/crud/{entityName}/{id}","glyphicon glyphicon-pencil","btn btn-success btn-circle", true, 99);
+			actions.add(editar);
+		}
+		
+		if (Arrays.asList( entity.getMeta().operations() ).contains("delete")) {
+			AutoCrudAction remover = new AutoCrudAction("Remover registro", "/crud/{entityName}/{id}/del", "glyphicon glyphicon-trash","btn btn-danger btn-circle delete",true, 100) ;
+			actions.add(remover);
+		}
+		
 		this.entity = entity;
 	}
 

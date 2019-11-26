@@ -130,7 +130,7 @@ public class AutoCrudHelper {
 			.stream()
 			.filter(k -> k.contains(crudEntity.getEntityName()+"."))
 			.forEach(k -> {
-				System.out.println(k);
+				//System.out.println(k);
 				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
 					
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));

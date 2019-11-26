@@ -29,6 +29,7 @@ import br.com.eflux.config.financeiro.domain.ConfiguracaoBoleto;
 import br.com.eflux.config.financeiro.domain.ConfiguracaoBoletoConta;
 import br.com.eflux.financeiro.domain.Boleto;
 import br.com.eflux.financeiro.domain.Debito;
+import br.com.eflux.payments.api.BatchFile;
 import br.com.eflux.payments.api.Invoice;
 import br.com.eflux.payments.api.PaymentApiConfiguration;
 import br.com.eflux.payments.api.PaymentApiConfigurationAccount;
@@ -152,6 +153,35 @@ public class ApiConsumerBoletoCLoud implements PaymentApiConsumer {
 			throw new PaymentApiException(response.readEntity(String.class));
 		}			
 		
+	}
+	
+	
+	@Override
+	public BatchFile createBatch(String accountTokenId, BatchFile file) throws PaymentApiException {
+		
+		
+		Form formData = new Form();
+		formData.param("remessa.conta.token", accountTokenId);
+		
+	
+		Response response = client
+				.target(config.getBoletoApiConfiguration().getUri())
+				.path("/arquivos/cnab/remessas")
+				.request(WILDCARD)
+				.post(Entity.form(formData));
+		
+		if(response.getStatus() == CREATED.getStatusCode()){
+			
+			file.setLocation(response.getHeaderString("Location"));
+			file.setTokenId(response.getHeaderString("X-BoletoCloud-Token"));
+			file.setName(response.getHeaderString("Content-Disposition").split(";")[1].trim());
+			file.setFile(extractFile(response));
+			
+		}else{
+			throw new PaymentApiException(response.readEntity(String.class));
+		}
+		
+		return file;
 	}
 
 	
