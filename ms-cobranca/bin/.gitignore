@@ -1,9 +1,10 @@
+/.DS_Store
 /application-dev.properties
 /application.properties
 /banner.txt
+/br/
 /static/
 /templates/
-/br/
 /financeiro/
 /test/
 /Library.class

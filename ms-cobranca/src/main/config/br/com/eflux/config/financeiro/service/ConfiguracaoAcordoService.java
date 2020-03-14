@@ -1,6 +1,7 @@
 package br.com.eflux.config.financeiro.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,12 +40,24 @@ public class ConfiguracaoAcordoService {
 		Empreendimento empreendimento = contrato.getUnidade().getZona().getEmpreendimento();
 		Incorporadora incorporadora = contrato.getUnidade().getZona().getEmpreendimento().getIncorporadora();
 		
-		List<ConfiguracaoAcordo> ret = configAcordoRepo.findAllByUnidade(unidade)
-				.orElse(configAcordoRepo.findAllByEmpreendimento(empreendimento)
-						.orElse(configAcordoRepo.findAllByIncorporadora(incorporadora)
-								.orElse(configAcordoRepo.findAllBySistema()
-										.orElseThrow(()->new RuntimeException("Erro de Configuração do sistema: Não existem configurações de acordo no sistema")))));
-		return ret;
+		Optional<List<ConfiguracaoAcordo>> ret = configAcordoRepo.findAllByUnidade(unidade);
+		if (ret.isPresent())
+			return ret.get();	
+		
+		ret = configAcordoRepo.findAllByEmpreendimento(empreendimento);
+		if (ret.isPresent())
+			return ret.get();
+
+		ret = configAcordoRepo.findAllByIncorporadora(incorporadora);
+		if (ret.isPresent())
+			return ret.get();
+
+		ret = configAcordoRepo.findAllBySistema();
+		if (ret.isPresent())
+			return ret.get();
+		
+		throw new RuntimeException("Erro de Configuração do sistema: Não existem configurações de acordo no sistema");
+		
 	}
 
 }

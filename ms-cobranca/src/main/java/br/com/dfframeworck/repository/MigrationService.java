@@ -141,18 +141,22 @@ public class MigrationService {
 							e.printStackTrace();
 							erros.add("Erro na <strong>Linha "+ rowCont + "</strong> [CONVERSAO]: Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i].getSimpleName()+") para entidade " +className+ ". Causa: "+ e.getMessage());
 							erroNalinha = true;
+							throw  new ValidacaoException(erros);
 							//throw  new ValidacaoException("Erro na Linha "+ rowCont + ": Não foi possível mapear o valor da coluna " + cols[i] + " ( "+values[i]+" : "+types[i]+") para entidade " +className+ ". Causa: "+ e.getMessage());
 						}
 						
 					}
 				}
 				if (!erroNalinha) {
+				
 					Persistable<Long> persistable = (Persistable<Long>) obj;
 					try {
 						persistir(persistable);
 					}catch (Exception e) {
 						erros.add("Erro na Linha "+ rowCont + "[PERSISTENCIA]: Não foi possível persistir o objeto com o id = "+ ((Migrable<Long>)persistable).getOriginalId() +" para entidade " +className+ ". Causa: "+ e.getCause().getCause().getMessage());
+						throw  new ValidacaoException(erros);
 					}
+					
 				}
 				System.out.println("------------------");
 	

@@ -1,18 +1,21 @@
 package br.com.dfframeworck.autocrud;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import org.springframework.data.domain.Persistable;
+
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.converters.DateConverter;
+import br.com.dfframeworck.util.SerializationUtils;
 
 public class AutoCrudField {
 	
@@ -27,6 +30,8 @@ public class AutoCrudField {
 	private String fieldName;
 	
 	private Object value;
+	
+	private boolean readOnly;
 	
 	private EnableAutoCrudField meta;
 	
@@ -136,7 +141,7 @@ public class AutoCrudField {
 		if (Objects.isNull(entity.getObj()))
 			return false;
 		
-		return !entity.getObj().isNew() && getMeta().readOnlyForUpdate();
+		return (!entity.getObj().isNew() && getMeta().readOnlyForUpdate()) || readOnly;
 		
 	}
 	
@@ -185,6 +190,10 @@ public class AutoCrudField {
 	}
 
 	public void setValue(Object value) {
+		
+		if (value instanceof Persistable<?>)
+			value = SerializationUtils.toMap(value);
+		
 		this.value = value;
 	}
 
@@ -194,6 +203,10 @@ public class AutoCrudField {
 
 	public void setEntity(AutoCrudEntity entity) {
 		this.entity = entity;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 	
 }

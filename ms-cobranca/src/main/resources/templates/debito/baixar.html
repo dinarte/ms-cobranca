@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"  />
+
+        <div id="page-wrapper">
+        
+        	<div class="row">
+
+                <div class="col-lg-12">
+                    <h1 class="page-header">Baixa Manual de Débito</h1>
+                </div>
+            </div>
+            
+            <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+        	
+   			<table class="table">
+   			
+   				<tr>
+   					<th rowspan="9" class="text-center">[[${debito.tipoLancamento}]] <br /> [[${debito.numero}]] <br /> <br /> [[${debito.situacao}]] </th>
+   					<td colspan="2">
+   						[[${debito.contrato.numeroContrato}]] - [[${debito.contrato.unidade.zona.empreendimento.incorporadora.nome}]] <br />
+   						[[${debito.contrato.pessoa.nome}]] <br />
+   						[[${debito.contrato.unidade.zona.empreendimento.nome}]] - [[${debito.contrato.unidade.zona.nome}]] - [[${debito.contrato.unidade.nome}]]
+   					</td>
+   				<tr>	
+   					<tr>
+	   					<th>Vencimento:</th> 
+	   					<td th:text="${#dates.format(debito.dataVencimento,'dd/MM/yyyy')}" class="text-right">[[${debito.dataVencimento}]]</td>
+	   				</tr>	
+	   				<tr>	
+	   					<th>Original:</th> <td  class="text-right"th:text="${ #numbers.formatCurrency(debito.valorOriginal) }"></td> 
+	   				</tr>	
+	   				<tr>	
+	   					<th>Juros atrazo:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.jurosAtrazo) }"></td>
+	   				</tr>	
+	   				<tr>	
+	   					<th>Multa:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.multaAtrazo) }"></td>
+	   				</tr>
+	   				<tr>	
+	   					<th>Juros Remuneratório:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.jurosRemuneratorio) }">
+	   				</tr>
+	   				<tr>	
+	   					<th>Correção:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.correcao) }"></td> 
+   					</tr>
+   					<tr>	
+	   					<th>Valor Atualizado:</th> <td class="text-right" th:text="${ #numbers.formatCurrency(debito.valorAtualizado) }" style="font-weight: bolder;"></td> 
+   					</tr>
+   			
+   			
+   			</table>
+   
+	        
+        
+        	<div class="alert alert-warning" >
+        	
+        		<strong> Informe os dados para a baixa manual: </strong>
+        		<p>
+        		Preste bastante atenção ao fornecer as informações solicitadas, esta operação irá alterar a situação do débito para "Quitada", 
+        		só prossiga caso você tenha certeza que o débito foi realmente pago. 
+        		</p>
+        	
+		       	<form th:action="@{/debito/baixar}" method="post">
+		       			
+		       		 <input type="hidden" th:field="${baixa.idDebito}">
+		       		 <input type="hidden" name="referer" th:value="${referer}">
+		       		 
+		       		 
+		
+		        	  <div class="form-group">
+					    <label for="nome">Data do Pagamento:</label>
+					    <input type="date" class="form-control" id="dataPag" th:field="${baixa.dataUltimoPagamento}">
+					  </div>
+					  <div class="form-group">
+					    <label for="nome">Valor Pago:</label>
+					    <input type="text" class="form-control money3" id="valorPago" th:field="${baixa.valorPago}">
+					  </div>
+					  <div class="form-group">
+					    <label for="nome">Motivo da baixa manual:</label>
+					    <input type="text" class="form-control" id="motivo" th:field="${baixa.motivoBaixaManual}">
+					  </div>
+					  			  
+					  
+					  <button type="submit" onclick="return confirm('tem certeza que deseja prosseguir com a operação?');" class="btn btn-info btn-block"> Baixar Débito </button>
+		       	
+		       	</form>
+		     </div>  	
+            
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <srcript th:replace="fragments/main :: scrptsblock" />
+    
+
+</body>
+
+</html>

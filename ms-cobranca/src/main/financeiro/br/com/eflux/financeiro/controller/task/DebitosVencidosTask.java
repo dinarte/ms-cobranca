@@ -101,7 +101,7 @@ public class DebitosVencidosTask {
 					
 				});
 			
-			log.info("Contabiliização de parcelas vencidas executada com sucesso!");
+			log.info("Contabilização de parcelas vencidas executada com sucesso!");
 	}
 
 

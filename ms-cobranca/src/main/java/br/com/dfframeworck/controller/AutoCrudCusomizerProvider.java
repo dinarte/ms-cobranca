@@ -24,6 +24,7 @@ public class AutoCrudCusomizerProvider {
 				.filter(bean->bean.getClass().getDeclaredAnnotation(Customizer.class).value().equals(type))
 				.findFirst()
 				.orElse(new AutoCrudControllerCustomizer());
+	
 		
 		return customizer;
 				

@@ -24,12 +24,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.util.Optionals;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +40,7 @@ import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.repository.Migrable;
 import br.com.dfframeworck.security.Functionality;
+import br.com.eflux.comum.domain.Usuario;
 import br.com.eflux.financeiro.helper.SituacaoDebitoHelper;
 
 /**
@@ -96,13 +99,15 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Mora", enableForList=true, ordinal=8, readOnlyForUpdate=true, formater="currencyFormater")
 	private BigDecimal jurosAtrazo;
 
-	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@EnableAutoCrudField(label="Data", enableForList=false, ordinal=9, readOnlyForUpdate=true)
 	private Date dataLancamento;
 	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@EnableAutoCrudField(label="Vencimento", enableForList=true, ordinal=10, readOnlyForUpdate=true)
 	private Date dataVencimento;
 	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@EnableAutoCrudField(label="Data Ultimo Pagamento", enableForList=true, ordinal=11, readOnlyForUpdate=true)
 	private Date dataUltimoPagamento;
 	
@@ -117,6 +122,7 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@EnableAutoCrudField(label="Observações", ordinal=14, readOnlyForUpdate=true)
 	private String descricao;
 	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Column(name="data_criacao_invoice")
 	private Date dataCriacaoInvoice;
 	
@@ -128,6 +134,15 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	@Column(name="erroCriacaoInvoice")
 	@Type(type="text")
 	private String erroCriacaoInvoice;
+	
+	
+	@ManyToOne
+	@JoinColumn(name="id_usuario_baixa_manual")
+	private Usuario usuarioBaixaManual;
+	
+	@Column
+	private String motivoBaixaManual;
+	
 	
 	
 	@EnableAutoCrudField(label="Boleto / Invoice", enableForCreate=false, enableForUpdate=false, enableForList=true, ordinal=15, lookUpFieldName="status")
@@ -229,10 +244,12 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 	}
 
 	private long getDiasVencida() {
+		Date dataBase = Objects.nonNull(dataUltimoPagamento) ? dataUltimoPagamento : new Date();
+		LocalDate dataBaseLocal = dataBase.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate vencimento = dataVencimento.toInstant()
 		  .atZone(ZoneId.systemDefault())
 		  .toLocalDate();
-		long diasVencimento = ChronoUnit.DAYS.between(LocalDate.now(), vencimento);
+		long diasVencimento = ChronoUnit.DAYS.between(dataBaseLocal, vencimento);
 		return diasVencimento;
 	}
 
@@ -413,22 +430,21 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 		ObjectMapper mapper = new ObjectMapper();
         String json = erroCriacaoInvoice;
 
-            Map<String, Object> map;
-			try {
-				map = mapper.readValue(json, Map.class);
-				return map;
-			} catch (IOException e) {
-				return null;
-			}
+        Map<String, Object> map;
+		try {
+			map = mapper.readValue(json, Map.class);
+			return map;
+		} catch (IOException e) {
+			return null;
+		}
 	}
-	
-	
-
 	
 
 	public String getErroCriacaoInvoice() {
 		return erroCriacaoInvoice;
 	}
+	
+
 
 	public void setErroCriacaoInvoice(String erroCriacaoInvoice) {
 		this.erroCriacaoInvoice = erroCriacaoInvoice;
@@ -448,8 +464,22 @@ public class Debito implements Persistable<Long>, Migrable<Long> {
 
 	public void setInvoice(Boleto invoice) {
 		this.invoice = invoice;
+	}
+
+	public Usuario getUsuarioBaixaManual() {
+		return usuarioBaixaManual;
+	}
+
+	public void setUsuarioBaixaManual(Usuario usuarioBaixaManual) {
+		this.usuarioBaixaManual = usuarioBaixaManual;
+	}
+
+	public String getMotivoBaixaManual() {
+		return motivoBaixaManual;
+	}
+
+	public void setMotivoBaixaManual(String motivoBaixaManual) {
+		this.motivoBaixaManual = motivoBaixaManual;
 	}	
 	
-	
-
 }

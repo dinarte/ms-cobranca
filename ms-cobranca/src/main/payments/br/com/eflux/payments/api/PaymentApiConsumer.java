@@ -22,5 +22,7 @@ public interface PaymentApiConsumer {
 	public byte[] duplicate(String tokenId, Date date) throws PaymentApiException;
 	
 	public BatchFile createBatch(String accountTokenId, BatchFile file) throws PaymentApiException;
+	
+	public String getPath(String tokenId);
 
 }

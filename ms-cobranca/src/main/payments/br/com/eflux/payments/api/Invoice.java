@@ -28,4 +28,8 @@ public interface Invoice {
 	
 	byte[] getPdfFile();
 
+	PaymentApiConfigurationAccount getConfigConta();
+
+	void setConfigConta(PaymentApiConfigurationAccount configConta);
+
 }

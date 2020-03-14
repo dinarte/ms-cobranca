@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="fragments/main :: head" />
+
+
+<body>
+
+    <div id="wrapper">
+
+        <nav th:replace="fragments/navigation :: navbar"></nav>
+
+        <div id="page-wrapper">
+       
+       		<div class="row">
+               
+               <div th:replace="fragments/main :: messages"  class="col-lg-12"></div>
+               
+               <div class="col-lg-10">
+                   <h1 class="page-header">Unidades
+                   <small>[[${empreendimento}]]</small>
+                   </h1>
+               </div>
+               
+           </div>
+	     <div class="row">
+	     	
+	        <div class="panel panel-default">
+	        	<div class="panel-heading">
+	        	
+	        		<ul class="nav navbar-top-links">
+		        		<li class="dropdown">
+		            		<button class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#">
+		                        <i class="fa fa-sitemap"></i> <i class="fa fa-carret-down">Zonas</i>
+		                    </button>
+		                    <ul class="dropdown-menu">
+		                    	<li>
+		                    		<a data-loading="loader" th:href="${'/empreendimento/' +empreendimento.id+ '/zona/add'}"><i class="fa fa-plus fa-fw"></i> Nova Zona </a>
+		                        </li>
+		                        <li>
+		                    		<a id="btn-edit-zona" data-loading="loader" href="#" class="disabled"><i class="fa fa-edit fa-fw"></i> Editar Zona</a>
+		                        </li>
+		                        <li>
+		                    		<a id="btn-remove-zona" data-loading="loader" href="#" class="disabled"><i class="fa fa-trash fa-fw"></i> Remover</a>
+		                        </li>
+		                    </ul>
+	                    </li>
+		            	<li class="dropdown">
+		            		<button class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="#">
+		                        <i class="fa fa-th"></i> <i class="fa fa-carret-down">Unidades</i>
+		                    </button>
+		                    <ul class="dropdown-menu" style="clear: both;">
+		                    	<li>
+		                    		<a data-loading="loader" id="btn-nova-unidade" href="#" class="disabled"><i class="fa fa-plus fa-fw"></i> Nova Unidade </a>
+		                        </li>
+		                        <li>
+		                    		<a data-loading="loader" id="btn-edit-unidade"  href="#" class="disabled"><i class="fa fa-edit fa-fw"></i> Editar Unidade</a>
+		                        </li>
+		                         <li>
+		                    		<a id="btn-remove-unidade" data-loading="loader" href="#" class="disabled"><i class="fa fa-trash fa-fw"></i> Remover</a>
+		                        </li>
+		                    </ul>
+			            </li>
+			       </ul>
+	        	
+	        	
+	        		
+	        	</div>
+	        	<div class="panel-body">
+	        		<div class="col-lg-4">
+	        		  <h4>Zonas do Empreendimento</h4>
+			          <div id="treeview12" class=""></div>
+			        </div>
+	        		<div id="selectable-output" class="col-lg-8">
+	        		
+	        			<table id="data-table" class="hover" style="width:100%">
+						        <thead>
+						            <tr>
+						                <th>Id</th>
+						                <th>Nome</th>
+						                <th>Descrição</th>
+						                <th>Área</th>
+						                <th>Matrícula</th>
+						            </tr>
+						        </thead>
+						    </table>			
+	        		
+	        		</div>
+	        	</div>
+	        	<div class="panel-foot">
+	        	
+	        	</div>
+	        </div>
+
+
+	     </div>     
+	          
+       </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+
+
+
+</body>
+
+<script src="https://jonmiles.github.io/bootstrap-treeview/js/bootstrap-treeview.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+
+	function criarTabela(idZona){
+		//destroi a tabela para ser reconstruida com os novos dados 
+      	//cada vez que uma zona é selecionada
+      	if ( $.fn.dataTable.isDataTable( '#data-table' ) ) {
+      	    table = $('#data-table').DataTable();
+      	  	table.destroy();
+      	}
+      	
+      	//inicia a tabela
+      	var table = $('#data-table').DataTable( {
+	        
+      		ajax: '/empreendimento/zona/'+idZona+'/unidade',
+      		paging: false,
+      		searching: false,
+      		autoFill: true,
+      		drawCallback: function () {
+
+      		}
+	    	
+      	} );
+      	
+      	addEventoSelectUnselect(table);
+   
+	}
+	
+	//adiciona o evento selecionar um alinha ao clicar em cima
+ 	function addEventoSelectUnselect(table){
+		
+ 		 table.$('tr').off('click');
+		$('#data-table tbody').on( 'click', 'tr', function () {
+	 		
+			var idUnidade = $(this).find('td').html();
+			$('#btn-edit-unidade').attr('href','/empreendimento/unidade/'+idUnidade);
+     	 	$('#btn-edit-unidade').removeClass('disabled');
+        	$('#btn-remove-unidade').attr('href','/empreendimento/unidade/'+idUnidade+'/del');
+     	 	$('#btn-remove-unidade').removeClass('disabled');
+     	 	$('#btn-remove-unidade').off('click');
+     	 	$('#btn-remove-unidade').click(function(){return confirm('Tem certeza que deseja remover a unidade selecionada?')});
+	 		 
+	 		if ( $(this).hasClass('selected') ) {
+		            $(this).removeClass('selected');
+		        }
+		        else {
+		            table.$('tr.selected').removeClass('selected');
+		            $(this).addClass('selected');
+		        }
+		    } );
+	}
+	
+	
+	$(function() {
+		
+		$.ajax({
+		    type:"GET", 
+		    url: "/empreendimento/[[${empreendimento.id}]]/unidades/tree-root", 
+		    success: function(m_data) {
+		    		treeRootData = m_data.nodes;
+		    		
+		    		var $tree = $('#treeview12').treeview({
+		  	        	data: m_data.nodes,
+			  	        onNodeSelected: function(event, node) {
+			  	        	
+			  	        	 criarTabela(node.zona.id);
+			  	        	 //alert(node.zona.id);
+			  	        	 $('#btn-edit-zona').attr('href','/empreendimento/zona/'+node.zona.id);
+			  	        	 $('#btn-edit-zona').removeClass('disabled');
+			  	           	 $('#btn-remove-zona').attr('href','/empreendimento/zona/'+node.zona.id+'/del');
+			  	        	 $('#btn-remove-zona').removeClass('disabled');
+			  	        	 $('#btn-remove-zona').off('click');
+			  	        	 $('#btn-remove-zona').click(function(){return confirm('Tem certeza que deseja remover a zona selecionada?')});
+			  	        	 
+			  	        	 $('#btn-nova-unidade').attr('href','/empreendimento/zona/'+node.zona.id+'/unidade/add');
+			  	        	 $('#btn-nova-unidade').removeClass('disabled');
+			  	        	
+			            },
+			            
+			            onNodeUnselected: function (event, node) {
+			               // $('#selectable-output').prepend('<p>' + node.text + ' was unselected</p>');
+			            }	
+		    		});
+		        }, 
+		    error: function(jqXHR, textStatus, errorThrown) {
+		            alert(jqXHR.status);
+		        },
+		   dataType: "json"
+		});
+	
+	});
+	
+
+
+</script>
+
+</html>

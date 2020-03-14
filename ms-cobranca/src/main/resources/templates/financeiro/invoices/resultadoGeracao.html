@@ -44,10 +44,10 @@
 	             			<td th:text="${debito.tipoLancamento}">Contrato</td>
 	             			<td th:text="${debito.numero}">Contrato</td>
 	             			<td>
-	             				<span th:text="${debito.statusCriacaoInvoiceMap.erro.status}" style="font-weight: bolder;">status</span>
-	             				<em th:text="${debito.statusCriacaoInvoiceMap.erro.tipo}">tipo</em>
+	             				<span th:text="${debito.erroCriacaoInvoiceMap.erro.status}" style="font-weight: bolder;">status</span>
+	             				<em th:text="${debito.erroCriacaoInvoiceMap.erro.tipo}">tipo</em>
 	             				<ul>
-	             					<li th:each="item : ${debito.statusCriacaoInvoiceMap.erro.causas}"> 
+	             					<li th:each="item : ${debito.erroCriacaoInvoiceMap.erro.causas}"> 
 	             						<a	th:href="${'/financeiro/invoices/quikfix/'+item.codigo+'/'+debito.id}"   
 	             							th:text="${'#'+item.codigo+' '+item.mensagem}" 
 	             							title="Clique para tentar corrigir rápido"

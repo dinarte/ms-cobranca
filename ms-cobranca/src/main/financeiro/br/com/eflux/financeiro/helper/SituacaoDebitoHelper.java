@@ -34,7 +34,20 @@ public class SituacaoDebitoHelper {
 	 */
 	public static List<SituacaoDebitoEnum> getPassiveisAcordo(){
 		return Arrays.asList( new SituacaoDebitoEnum[]{ 
-				SituacaoDebitoEnum.VENCIDA} );
+				SituacaoDebitoEnum.VENCIDA, 
+				SituacaoDebitoEnum.EM_ABERTO} );
+	}
+	
+	
+	/**
+	 * Retorna as situações dos dábitos que NÃO são passíveis de quitação.
+	 * @return
+	 */
+	public static List<SituacaoDebitoEnum> getNaoPassiveisQuitacao(){
+		return Arrays.asList( new SituacaoDebitoEnum[]{ 
+				SituacaoDebitoEnum.QUITADA,
+				SituacaoDebitoEnum.CANCELADA,
+				SituacaoDebitoEnum.NEGOCIADA } );
 	}
 	
 	

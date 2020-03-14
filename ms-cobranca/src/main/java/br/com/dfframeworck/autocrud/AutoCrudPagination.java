@@ -8,7 +8,7 @@ import java.util.Map;
 public class AutoCrudPagination {
 	
 	private Integer page = 1;
-	private Integer size = 20;
+	private Integer size = 100;
 	private Integer firstRow = 0;
 	private Integer totalResults = 0;
 	private String path = "";

@@ -20,9 +20,9 @@ import br.com.dfframeworck.exception.ValidacaoException;
 import br.com.dfframeworck.messages.AppFlashMessages;
 import br.com.dfframeworck.messages.AppMessages;
 import br.com.dfframeworck.security.Functionality;
+import br.com.dfframeworck.util.NavigationUtils;
 import br.com.eflux.config.financeiro.domain.ConfiguracaoBoletoConta;
 import br.com.eflux.financeiro.domain.Boleto;
-import br.com.eflux.financeiro.domain.Contrato;
 import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.financeiro.domain.SituacaoDebitoEnum;
 import br.com.eflux.financeiro.domain.StatusGeracaoInvoiceEnum;
@@ -30,6 +30,7 @@ import br.com.eflux.financeiro.repository.BoletoRepository;
 import br.com.eflux.financeiro.repository.ConfiguracaoInvoiceContaRepository;
 import br.com.eflux.financeiro.repository.DebitoRepository;
 import br.com.eflux.payments.api.Invoice;
+import br.com.eflux.payments.api.PaymentApiConfigurationAccount;
 import br.com.eflux.payments.api.PaymentApiConsumer;
 import br.com.eflux.payments.api.PaymentApiException;
 
@@ -78,14 +79,19 @@ public class GerenciadorInvoiceController {
 		
 		if (d.getInvoice() == null) {
 			m.addAttribute("debito",d);
-			m.addAttribute("referer", getRefer(request));
+			m.addAttribute("referer", NavigationUtils.getReferer(request, "/crud/Debito"));
 			return "/invoice/visualizar-no-invoice";
 		}
 		
-		if (!d.getInvoice().getStatus().equals(Boleto.STATUS_REGISTRADO))
-			throw new ErroException("Apenas é possível gerar invoices com a situação REGISTRADO e a situaçao atual deste invoice é :" +d.getInvoice().getStatus());
+		//if (!d.getInvoice().getStatus().equals(Boleto.STATUS_REGISTRADO))
+			//throw new ErroException("Apenas é possível gerar invoices com a situação REGISTRADO e a situaçao atual deste invoice é :" +d.getInvoice().getStatus());
 		
-		return "redirect:https://sandbox.boletocloud.com/boleto/2via/" + d.getInvoice().getTokenId();
+		
+		PaymentApiConfigurationAccount configConta = d.getInvoice().getConfigConta();
+		PaymentApiConsumer consumer =  (PaymentApiConsumer) context.getBean(configConta.getBoletoApiConfiguration().getApiImplementation());
+		consumer.basicAuthentication(configConta);
+		
+		return "redirect:" +  consumer.getPath(d.getInvoice().getTokenId());
 	}
 	
 	
@@ -129,7 +135,8 @@ public class GerenciadorInvoiceController {
 		appMessages.getSuccessList().add("Invoice associado com sucesso.");
 		
 		
-		return "redirect:https://sandbox.boletocloud.com/boleto/2via/" + debito.getInvoice().getTokenId();
+		return "redirect:" +  consumer.getPath(debito.getInvoice().getTokenId());
+	
 	}
 	
 	
@@ -206,13 +213,6 @@ public class GerenciadorInvoiceController {
 			appMessages.getErrorList().add("Informe a Localização");
 	}
 	
-	private String  getRefer(HttpServletRequest request) {
-		String refer = request.getHeader("referer");
-		if (refer == null)
-			return "/crud/Debito";
-		refer = refer.substring(refer.indexOf("//")+2);
-		refer = refer.substring(refer.indexOf("/"));
-		return refer;
-	}
+	
 	
 }

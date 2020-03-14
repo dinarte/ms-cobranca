@@ -7,12 +7,13 @@ import static javax.ws.rs.core.Response.Status.OK;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -25,13 +26,10 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.stereotype.Component;
 
 import br.com.dfframeworck.util.SerializationException;
-import br.com.eflux.config.financeiro.domain.ConfiguracaoBoleto;
-import br.com.eflux.config.financeiro.domain.ConfiguracaoBoletoConta;
 import br.com.eflux.financeiro.domain.Boleto;
 import br.com.eflux.financeiro.domain.Debito;
 import br.com.eflux.payments.api.BatchFile;
 import br.com.eflux.payments.api.Invoice;
-import br.com.eflux.payments.api.PaymentApiConfiguration;
 import br.com.eflux.payments.api.PaymentApiConfigurationAccount;
 import br.com.eflux.payments.api.PaymentApiConsumer;
 import br.com.eflux.payments.api.PaymentApiException;
@@ -82,7 +80,7 @@ public class ApiConsumerBoletoCLoud implements PaymentApiConsumer {
 			b.setTokenId(response.getHeaderString("X-BoletoCloud-Token"));
 			b.setStatus(Invoice.STATUS_NOVO);
 			b.setPdfFile(extractFile(response));
-			
+			b.setConfigConta(config);
 		}else{
 			throw new PaymentApiException(response.readEntity(String.class));
 		}
@@ -232,46 +230,29 @@ public class ApiConsumerBoletoCLoud implements PaymentApiConsumer {
 		return buffer.toByteArray();
 	}	
 	
-	public static void main(String[] args) throws ParseException {
 	
-		 PaymentApiConfiguration configuration = new ConfiguracaoBoleto();
-		 configuration.setApiImplementation("");
-		 configuration.setUri("https://sandbox.boletocloud.com/api/v1");
-		 configuration.setUserApi("api-key_pK0gkBALwFMhWC9oqjBVr_X_wl5Cjd5ypQbr0boZ5-8=");
-		 configuration.setPass("token");
-		 
-		 PaymentApiConfigurationAccount configAccount = new ConfiguracaoBoletoConta();
-		 configAccount.setBoletoApiConfiguration(configuration);
-		 configAccount.setToken("api-key_FNd8Szp-K1dmxG-Zh3xfmRtXs8Pa4QGKJjFXlBqmiFE=");
-		 
-		 ApiConsumerBoletoCLoud consumer = new ApiConsumerBoletoCLoud();
+
+	@Override
+	public String getPath(String tokenId) {
+		return config.getBoletoApiConfiguration().getUri().replaceAll("api/v1", "boleto/2via/") + tokenId;
+	}
+	
+	
+	public static void main(String[] args) {
 		
-		 consumer.basicAuthentication(configAccount);
+		String str = "http://teste.com/api/v1/";
 		
-		 
-		 
-		 try {
-			 SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-			 Date vencimento = formato.parse("2019-11-1");
-			 
-			//consumer.writeOff("1-wWc3yoplLcPlSRyAC3U-tlhHTj-nxSvkGduAdiumM=", "Pagamento efetuado em loco recebido por Dinarte ");
-			byte[] ret = consumer.duplicate("1-wWc3yoplLcPlSRyAC3U-tlhHTj-nxSvkGduAdiumM=", vencimento);
-			System.out.println("operacao realizada");
-		} catch (PaymentApiException e) {
-			e.printStackTrace();
-			System.out.println(e.getMessage());
-		}
-		 
-		 /*
-		byte[] pdf;
-		try {
-			pdf = consumer.get("k8htUkLzJyT8LY5PihIYjgMpIlgST1WIpdfzGalDaAc43=");
-			 System.out.println(pdf);
-		} catch (PaymentApiException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}*/
-		 
+		String patternStr = "([http:|https:]?[\\/\\/]?.*?)";
+		//String replaceStr = "";
+		//Pattern pattern = Pattern.compile(patternStr);
+		//Matcher matcher = pattern.matcher(string);
+		//System.out.println( matcher.replaceAll(string) );
+		
+		
+		
+		System.out.println( str.replaceAll("api/v?", "boleto/2via") );
+		
+		
 	}
 
 }

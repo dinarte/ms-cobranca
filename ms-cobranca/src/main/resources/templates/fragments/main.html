@@ -27,6 +27,10 @@
 	<!-- Table Responsive - CARD -->
     <link href="/vendor/table-card/table-card.css" rel="stylesheet" type="text/css">
 
+
+    <link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
+
 	<!-- DF-FRAMEWORK CUSTOM -->
     <link href="/vendor/df-framework/custom.css?v=1" rel="stylesheet" type="text/css">
 
@@ -75,34 +79,21 @@
 	
 	
 	<style>
-/**	
-	.navbar-toggle {
-    position: relative; 
-    float: left;
-    padding: 9px 10px;
-    margin-top: 8px;
-    margin-right: 2px;
-    margin-bottom: 8px;
-    background-color: transparent;
-    background-image: none;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    display: block;
-    margin-left: 15px;
+
+.dropdown-menu>li>a.disabled{
+color: #ccc;
 }
 
-.navbar:after, .navbar-header:after{
-	position: relative;
-	right: 0;
-	display: block;
-	clear: none;
+table.dataTable tbody tr.selected {
+    background-color: #428bca;
+    color: #fff;
 }
 
-.navbar-top-links {
-    float: right;
+table.dataTable tbody tr.selected:hover {
+    background-color: #428bca;
+    color: #fff;
 }
-	
-**/
+
 
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 5px 5px; white-space: nowrap; overflow: hidden; }
@@ -426,7 +417,49 @@ a.badge-dark:focus, a.badge-dark.focus {
 	 })
 	 
 	
+$(document).ready(function(){
+	  
 	
+	$('.money3').val(parseFloat($('.money3').val()));
+
+	
+	
+	
+	
+		$('.date').mask('00/00/0000');
+	  $('.time').mask('00:00:00');
+	  $('.date_time').mask('00/00/0000 00:00:00');
+	  $('.cep').mask('00000-000');
+	  $('.phone').mask('0000-0000');
+	  $('.phone_with_ddd').mask('(00) 0000-0000');
+	  $('.phone_us').mask('(000) 000-0000');
+	  $('.mixed').mask('AAA 000-S0S');
+	  $('.cpf').mask('000.000.000-00', {reverse: true});
+	  $('.cnpj').mask('00.000.000/0000-00', {reverse: true});
+	  $('.money').mask('000.000.000.000.000,00', {reverse: true});
+	//  $('.money3').mask("#.##0,00", {reverse: true});
+	  $('.ip_address').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+	    translation: {
+	      'Z': {
+	        pattern: /[0-9]/, optional: true
+	      }
+	    }
+	  });
+	  $('.ip_address').mask('099.099.099.099');
+	  $('.percent').mask('##0,00%', {reverse: true});
+	  $('.clear-if-not-match').mask("00/00/0000", {clearIfNotMatch: true});
+	  $('.placeholder').mask("00/00/0000", {placeholder: "__/__/____"});
+	  $('.fallback').mask("00r00r0000", {
+	      translation: {
+	        'r': {
+	          pattern: /[\/]/,
+	          fallback: '/'
+	        },
+	        placeholder: "__/__/____"
+	      }
+	    });
+	  $('.selectonfocus').mask("00/00/0000", {selectOnFocus: true});
+	});
 	
 	
 	

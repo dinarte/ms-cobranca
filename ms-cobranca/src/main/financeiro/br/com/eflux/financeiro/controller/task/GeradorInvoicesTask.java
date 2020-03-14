@@ -71,6 +71,7 @@ public class GeradorInvoicesTask {
 				.stream()
 				.filter(debito -> !debito.getStatusCriacaoInvoice().equals(StatusGeracaoInvoiceEnum.SUCESSO))
 				.filter(debito -> debito.getDataVencimento().after(new Date()))
+				.filter(debito -> !debito.getContrato().isBloquearCobranca())
 				.forEach(debito -> {
 					
 					log.info(debito.getDataVencimento() +" --> "+ debito.getDataVencimento().after(new Date()));

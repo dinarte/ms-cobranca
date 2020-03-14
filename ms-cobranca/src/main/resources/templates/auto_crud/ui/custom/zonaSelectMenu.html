@@ -1,4 +1,4 @@
-			
+	
 		<th:block th:fragment="ui(field)" th:with="valueId = ${field.value == null ? null : field.value.get('id')}">	
 			<select th:if="${!field.readOnly}" 
 					th:placeholder="${field.meta.label()}" 
@@ -6,9 +6,9 @@
 					th:id="${field.entity.entityName +'.'+ field.fieldName}"
 					th:value="${valueId}" 
 					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}" >
-				<option value="" th:label="${field.meta.label()}" th:selected="${valueId == null || valueId == 0}">
-				<option th:each="item : ${lookUpFinder.getAll(field)}" 
-						th:label="${item.label}" 
+				<option value="" label="Raiz" th:selected="${valueId == null || valueId == 0}">
+				<option th:each="item : ${zonaList}" 
+						th:label="${item.fullName}" 
 						th:value="${item.id}" 
 						th:selected="${valueId == item.id}" />
 			</select>

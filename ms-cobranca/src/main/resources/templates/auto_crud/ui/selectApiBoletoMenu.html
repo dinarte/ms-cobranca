@@ -1,3 +1,4 @@
+		
 			
 			
 			<select th:fragment="ui(field)"
@@ -7,7 +8,7 @@
 					th:id="${field.entity.entityName +'.'+ field.fieldName}"
 					th:value="${valueId}"
 					th:readonly="${field.readOnly}" 
-					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}"  />
+					th:class="${'form-control ' + field.fieldName + ' ' + field.type.simpleName + ' ' + field.defaultUi}">
 				<option value="" th:label="${field.meta.label()}" th:selected="${valueId == null || valueId == ''}">
 				<option th:each="item : ${lookUpFinder.allApiConsumers}" 
 						th:label="${item.label}" 

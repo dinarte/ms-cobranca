@@ -57,7 +57,8 @@ public class AutoCrudController {
 	ApplicationContext context;
 		
 	@Autowired
-	AutoCrudCusomizerProvider cutomizerProvider;
+	AutoCrudCusomizerProvider customizerProvider;
+	
 
 	/**
 	 * Exibe uma página com a listagem dos registros encontrados referentes 
@@ -74,7 +75,7 @@ public class AutoCrudController {
 	public String index(@PathVariable("entity") String entity, Model model, HttpServletRequest request) throws ErroException, InstantiationException, IllegalAccessException {
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
 		processListing(entity, model, request, crudEntity);
-		return cutomizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
+		return customizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
 	}
 
 	private void processListing(String entity, Model model, HttpServletRequest request, AutoCrudEntity crudEntity) {
@@ -91,7 +92,7 @@ public class AutoCrudController {
 		
 		if (!noFilter) {		
 			filters = helper.processFilters(crudEntity, request);
-			cutomizerProvider.getCustomizer(crudEntity.getType()).addfilters(filters);
+			customizerProvider.getCustomizer(crudEntity.getType()).addfilters(filters);
 		}
 			
 		String page = request.getParameter("page");
@@ -104,7 +105,7 @@ public class AutoCrudController {
 		AutoCrudData autoCrudData = new AutoCrudData();
 		autoCrudData.setEntity(crudEntity);
 		autoCrudData.setPagination(pagination);
-		cutomizerProvider.getCustomizer(crudEntity.getType()).addActions(autoCrudData.getActions());
+		customizerProvider.getCustomizer(crudEntity.getType()).addActions(autoCrudData.getActions());
 		autoCrudData.parseData(entityList);
 		
 		model.addAttribute("autoCrudData", autoCrudData);
@@ -126,8 +127,11 @@ public class AutoCrudController {
 	@RequestMapping("/crud/{entity}/{id}")
 	public String select(@PathVariable("entity") String entity, @PathVariable("id") Long id, Model model) throws ErroException, InstantiationException, IllegalAccessException {
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity, crudService.findOne(entity, id));
+		
+		customizerProvider.getCustomizer(crudEntity.getType()).onSelect(crudEntity, model);
+		
 		model.addAttribute("autoCrudEntity", crudEntity);
-		return cutomizerProvider.getCustomizer(crudEntity.getType()).getFormView();
+		return customizerProvider.getCustomizer(crudEntity.getType()).getFormView();
 	}
 	
 	
@@ -147,8 +151,11 @@ public class AutoCrudController {
 	public String add(@PathVariable("entity") String entity, Model model) throws ErroException, InstantiationException, IllegalAccessException {
 	
 		AutoCrudEntity crudEntity = helper.constructCrudEntity(entity);
+		
+		customizerProvider.getCustomizer(crudEntity.getType()).onCreateAddForm(crudEntity, model);
+		
 		model.addAttribute("autoCrudEntity",crudEntity);
-		return cutomizerProvider.getCustomizer(crudEntity.getType()).getFormView();
+		return customizerProvider.getCustomizer(crudEntity.getType()).getFormView();
 	}
 	
 	
@@ -196,7 +203,7 @@ public class AutoCrudController {
 		
 		crudService.save((Persistable<?>)obj);
 		processListingNoFilter(entity, model, request, crudEntity);
-		return cutomizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
+		return customizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
 		
 	}
 	
@@ -237,7 +244,7 @@ public class AutoCrudController {
 			
 		}
 		processListing(entity, model, request, crudEntity);
-		return cutomizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
+		return customizerProvider.getCustomizer(crudEntity.getType()).getIndexView();
 	}
 	
 }

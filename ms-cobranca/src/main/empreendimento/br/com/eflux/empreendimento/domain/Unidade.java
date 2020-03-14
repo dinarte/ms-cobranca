@@ -30,7 +30,7 @@ import br.com.eflux.comum.domain.Pessoa;
 @Entity
 @Table(schema="empreendimento", name="unidade")
 @AutoCrud(name="Unidades", description="Lotes, Casas, Apartamentos, etc...", 
-funtionality=@Functionality(isPublic=false, name="Gerenciar Unidades", menu="root->Empreendimentos->unidades", icon="fa fa-th"))
+funtionality=@Functionality(isPublic=false, name="Gerenciar Unidades"))
 public class Unidade implements Persistable<Long>, Migrable<Long>{
 	
 	@Id
@@ -42,7 +42,7 @@ public class Unidade implements Persistable<Long>, Migrable<Long>{
 	
 	@ManyToOne
 	@JoinColumn(name="id_zona")
-	@EnableAutoCrudField(label="Zona", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="nome")
+	@EnableAutoCrudField(label="Zona", enableForFilter=true, enableForList=true, ordinal=1, lookUpFieldName="fullName", ui="custom/zonaSelectMenu")
 	private Zona zona;
 	
 	/**
@@ -88,6 +88,12 @@ public class Unidade implements Persistable<Long>, Migrable<Long>{
 	@Column(name="original_id")
 	private String originalId;
 
+	
+	public String getFulName() {
+		if (Objects.isNull(zona))
+			return nome;
+		return zona.getFullName().concat("->").concat(nome);
+	}
 	
 	
 	public Long getId() {

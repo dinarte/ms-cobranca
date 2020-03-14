@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import br.com.dfframeworck.autocrud.AutoCrudEntity;
 import br.com.dfframeworck.autocrud.AutoCrudField;
-import br.com.dfframeworck.autocrud.Periodo;
 import br.com.dfframeworck.autocrud.annotations.AutoCrud;
 import br.com.dfframeworck.autocrud.annotations.EnableAutoCrudField;
 import br.com.dfframeworck.controller.AutoCrudControllerCustomizer;
@@ -44,7 +44,10 @@ public class AutoCrudHelper {
 	ConverteresProvider converterProvider;
 	
 	@Autowired
-	AutoCrudCusomizerProvider customizerProviger;
+	AutoCrudCusomizerProvider customizerProvider;
+	
+	@Autowired
+	LastFilters lastFilters;
 	
 	private IConverter<?> getConverter(Class<?> type){
 		return converterProvider.getForForm(type);
@@ -61,6 +64,9 @@ public class AutoCrudHelper {
 			.forEach(k -> {
 			
 				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
+					
+					lastFilters.setQueryString( lastFilters.getQueryString().concat(k+"="+request.getParameter(k)+"&") );
+					
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
 					
 					IConverter<?> converter = getConverter(field.getType());					
@@ -71,7 +77,7 @@ public class AutoCrudHelper {
 					String value = field.getValue().toString(); 
 					try {
 						if (field.getType().asSubclass(Persistable.class) != null) {
-							value = ((Persistable<?>)field.getValue()).getId().toString();
+							value = ((LinkedHashMap<?, ?>)field.getValue()).get("id").toString();
 							field.setValue(SerializationUtils.toMap(field.getValue()));
 						}
 					}catch (ClassCastException e) {
@@ -89,6 +95,8 @@ public class AutoCrudHelper {
 				}
 				
 			});
+		
+		lastFilters.setPage("/crud/"+crudEntity.getEntityName());
 		
 		return filtros;
 		
@@ -130,7 +138,7 @@ public class AutoCrudHelper {
 			.stream()
 			.filter(k -> k.contains(crudEntity.getEntityName()+"."))
 			.forEach(k -> {
-				//System.out.println(k);
+				System.out.println(k + " = " + request.getParameter(k));
 				if ( request.getParameter(k) != null && !request.getParameter(k).equals("")) {
 					
 					AutoCrudField field = crudEntity.getField(k.replace(crudEntity.getEntityName()+".", ""));
@@ -185,7 +193,7 @@ public class AutoCrudHelper {
 			crudEntity.getFields().add(field);
 		});
 		
-		AutoCrudControllerCustomizer customizer = customizerProviger.getCustomizer(crudEntity.getType());  
+		AutoCrudControllerCustomizer customizer = customizerProvider.getCustomizer(crudEntity.getType());  
 		List<Field> fields = Arrays.asList( customizer.getClass().getDeclaredFields() );
 		fields.forEach( javaField -> {
 			if (javaField.isAnnotationPresent(EnableAutoCrudField.class)) {

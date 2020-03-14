@@ -2,9 +2,12 @@ package br.com.eflux.financeiro.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.eflux.config.financeiro.domain.ConfiguracaoBoletoConta;
 import br.com.eflux.payments.api.Invoice;
+import br.com.eflux.payments.api.PaymentApiConfigurationAccount;
 
 @Entity
 @Table(schema="financeiro", name="boleto")
@@ -18,6 +21,9 @@ public class Boleto implements Invoice{
 	private String nossoNumero;
 	
 	private String status = STATUS_NOVO;
+	
+	@ManyToOne
+	private ConfiguracaoBoletoConta configConta;
 	
 	private byte[] pdfFile;
 	
@@ -85,6 +91,16 @@ public class Boleto implements Invoice{
 		this.pdfFile = pdfFile;
 	}
 
+	@Override
+	public PaymentApiConfigurationAccount getConfigConta() {
+		return configConta;
+	}
 
+	@Override
+	public void setConfigConta(PaymentApiConfigurationAccount configConta) {
+		this.configConta = (ConfiguracaoBoletoConta) configConta;
+	}
+
+	
 
 }

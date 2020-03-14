@@ -1,6 +1,7 @@
 package br.com.dfframeworck.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,7 +51,9 @@ public class MigracaoController {
 		if (Objects.isNull(file))
 			throw new ValidacaoException("Arquivo de migração precisa ser informado.");
 		
-		if (!file.getContentType().equals("text/csv") && !file.getContentType().equals("text/plain")) 
+		List<String> tiposPermitidos = Arrays.asList(new String[]{"application/vnd.ms-excel", "text/csv", "text/plain" });
+		
+		if ( !tiposPermitidos.contains(file.getContentType())) 
 			throw new ValidacaoException("Tipo de arquivo errado: ("+file.getContentType()+"). O tipo de arquivo deve ser txt ou csv.");
 		
 		

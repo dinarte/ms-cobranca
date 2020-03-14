@@ -15,11 +15,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Functionality {
 	
-	boolean isPublic();
+	boolean isPublic() default false;
 	
 	String name();
 	
-	String menu();
+	String menu() default "none";
 	
 	String icon() default "fa fa-table";
 

@@ -43,6 +43,7 @@ public class DebitoAutoCrudCustonmizedController extends AutoCrudControllerCusto
 	@Override
 	public void addActions(List<AutoCrudAction> actions) {
 		actions.add(new AutoCrudAction("Invoice", "/invoice/{id}/visualizar", "fa fa-file-pdf-o ","btn btn-info btn-circle", true, 1));
+		actions.add(new AutoCrudAction("Baixa Manual", "/debito/{id}/baixar", "fas fa-arrow-circle-down","btn btn-warning btn-circle", true, 1));
 	}
 	
 }
