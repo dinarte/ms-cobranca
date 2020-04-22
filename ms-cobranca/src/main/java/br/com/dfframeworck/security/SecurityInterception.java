@@ -46,7 +46,7 @@ public class SecurityInterception implements HandlerInterceptor {
 			if (Objects.nonNull(functionality) && !functionality.isPublic()) {
 				
 				
-				 if (! autenticacao.isAutenticado() && Objects.nonNull(autoLogin)){ 
+				 if (! autenticacao.isAutenticado() && !autoLogin.equals("false")){ 
 					 autenticacao.setUsuario(uRepo.findOneByEmail(autoLogin)); 
 					 autenticacao.processarAutenticacao(); 
 				 }

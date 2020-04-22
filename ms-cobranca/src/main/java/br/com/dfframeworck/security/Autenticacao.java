@@ -2,7 +2,6 @@ package br.com.dfframeworck.security;
 
 import javax.security.auth.login.LoginException;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.context.annotation.SessionScope;
