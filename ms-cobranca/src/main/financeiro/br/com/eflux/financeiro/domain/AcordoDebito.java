@@ -44,8 +44,6 @@ public class AcordoDebito {
 	@JoinColumn(name="id_debito")
 	private Debito debito;
 
-
-	
 	@Enumerated(EnumType.STRING)
 	private OrigemDebitoAcordoEnum origem;
 	
